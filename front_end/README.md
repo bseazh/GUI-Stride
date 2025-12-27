@@ -1,20 +1,38 @@
 
-# GUI-Stride 界面行者 - Web 审计控制台
+# GUI-Stride 界面行者 - 前端 (front_end)
 
-GUI-Stride (界面行者) 是一款专业级自动化审计与维权监控 Web 应用。支持多平台实时监测、AI 推理存证以及批量任务管理。
+该目录是 GUI-Stride 的前端界面，用于：
+- 展示任务矩阵、设备列表、实时日志
+- 点击“启动执行自动搜索”后，通过 WebSocket 通知后端启动检测脚本
 
 ## 🚀 快速启动
-1. **直接访问:** 该应用基于现代 ESM 模块，在支持 `importmap` 的现代浏览器中可直接运行。
-2. **本地托管:**
+
+### 1) 启动后端（负责执行 Python + 推送日志）
+
+后端在 `anti_piracy_system/api_server.py`，提供：
+- HTTP: `http://localhost:8765/api/status`
+- WebSocket: `ws://localhost:8766`
+
 ```bash
-npm install
-npm start
+cd ../anti_piracy_system
+source venv/bin/activate
+python api_server.py
 ```
 
-## 🛠️ 核心功能
-- **监测中心:** 支持多设备队列同步，左侧栏独立滑动查看判定逻辑与存证。
-- **数据大屏:** 全量防护统计与趋势分析，可视化平台风险分布。
-- **审计矩阵:** 极简白名单配置，一键启动全网自动化扫描。
+### 2) 启动前端（Vite）
 
-## 🌐 浏览器兼容性
-推荐使用最新版本的 Chrome, Edge 或 Safari。
+```bash
+npm install
+npm run dev
+```
+
+默认：`http://localhost:3000`
+
+## ✅ 一键运行 “众合法考” 示例
+
+前端默认已预置：
+- 关键词：`众合法考`
+- 搜索条数：`3`
+- 自动举报：开启（对应 `--report`）
+
+进入页面后看到 `Backend Connected`，直接点击“启动执行自动搜索”即可。

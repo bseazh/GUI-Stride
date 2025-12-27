@@ -1,9 +1,9 @@
-
 {
   "type": "module",
   "name": "gui-stride-web",
   "version": "1.0.0",
   "description": "GUI-Stride - Professional Web Audit Terminal",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -21,9 +21,12 @@
     "jszip": "^3.10.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.1",
-    "typescript": "^5.5.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3",
     "tailwindcss": "^3.4.0",
     "@tailwindcss/forms": "^0.5.7",
     "autoprefixer": "^10.4.19",
