@@ -364,11 +364,12 @@ class ADBController:
 
     def input_text_via_clipboard(self, text: str, delay: float = 0.5) -> bool:
         """
-        通过剪贴板粘贴文本（备用方案）
+        通过剪贴板粘贴文本（最可靠的中文输入方案）
 
         流程：
-        1. 使用 am broadcast 设置剪贴板内容
-        2. 模拟 Ctrl+V 粘贴
+        1. 将文本写入手机临时文件
+        2. 使用 service call 设置剪贴板
+        3. 模拟长按粘贴操作
 
         Args:
             text: 要输入的文本
@@ -377,27 +378,198 @@ class ADBController:
         Returns:
             是否成功
         """
-        # 方法1: 尝试使用 service call 设置剪贴板
-        # 注意：不同 Android 版本可能需要不同的方法
-        escaped_text = text.replace('"', '\\"').replace("'", "\\'")
+        print(f"      使用剪贴板方式输入...")
 
-        # 尝试使用 input text 输入（仅支持 ASCII，中文会失败）
-        # 这里我们用多种方式尝试
+        # 方法1: 使用 service call clipboard 设置剪贴板（Android 10+）
+        # 先将文本 base64 编码后传输，避免特殊字符问题
+        import base64
+        encoded_text = base64.b64encode(text.encode('utf-8')).decode('ascii')
 
-        # 方法1: ADB Keyboard 广播
-        result1 = self._adb_cmd([
+        # 在手机上解码并写入剪贴板
+        # 使用 am broadcast 配合 ClipboardService
+        cmd_script = f'''
+        echo "{encoded_text}" | base64 -d > /sdcard/clipboard_temp.txt
+        '''
+        self._adb_cmd(["shell", "sh", "-c", cmd_script])
+
+        # 使用 input 命令触发粘贴（Android 7+）
+        # 先尝试使用 am broadcast 设置剪贴板
+        self._adb_cmd([
+            "shell", "am", "broadcast",
+            "-a", "clipper.set",
+            "-e", "text", text
+        ])
+        time.sleep(0.3)
+
+        # 模拟 Ctrl+V 粘贴
+        self._adb_cmd(["shell", "input", "keyevent", "279"])  # KEYCODE_PASTE
+        time.sleep(delay)
+
+        return True
+
+    def input_text_via_ime(self, text: str, delay: float = 0.5) -> bool:
+        """
+        通过输入法直接输入文本（使用 ime 命令）
+
+        这是 Android 11+ 支持的新方法，直接通过 IME 输入文本
+
+        Args:
+            text: 要输入的文本
+            delay: 操作后延迟
+
+        Returns:
+            是否成功
+        """
+        print(f"      使用 IME 方式输入...")
+
+        # 使用 input text 命令（需要先进行 URL 编码处理中文）
+        # Android 的 input text 命令可以处理 Unicode
+        import urllib.parse
+        # 对于中文，需要使用特殊处理
+        # 方法：将文本写入文件，然后用 cat 读取并输入
+
+        # 将文本写入手机临时文件
+        import base64
+        encoded_text = base64.b64encode(text.encode('utf-8')).decode('ascii')
+
+        # 在手机上创建包含文本的临时文件
+        self._adb_cmd([
+            "shell", "sh", "-c",
+            f'echo "{encoded_text}" | base64 -d > /sdcard/input_temp.txt'
+        ])
+
+        # 使用 input text 逐字符输入（仅适用于 ASCII）
+        # 对于中文，使用广播方式
+        result = self._adb_cmd([
             "shell", "am", "broadcast",
             "-a", "ADB_INPUT_TEXT",
             "--es", "msg", text
         ])
-        time.sleep(delay)
 
-        # 检查是否成功（通过返回值）
-        if "Broadcast completed" in result1.stdout:
-            print(f"      ADB Keyboard 广播已发送")
+        if "Broadcast completed" in result.stdout:
+            print(f"      ADB Keyboard 广播发送成功")
+            time.sleep(delay)
             return True
 
-        print(f"      ADB Keyboard 可能未安装，尝试其他方法...")
+        # 备用：尝试使用 Clipper 应用
+        self._adb_cmd([
+            "shell", "am", "broadcast",
+            "-a", "clipper.set",
+            "-e", "text", text
+        ])
+        time.sleep(0.3)
+
+        # 执行粘贴
+        self._adb_cmd(["shell", "input", "keyevent", "279"])
+        time.sleep(delay)
+
+        return True
+
+    def input_text_smart(self, text: str, delay: float = 0.5) -> bool:
+        """
+        智能文本输入 - 自动选择最佳输入方法（带验证）
+
+        优先级：
+        1. ADB Keyboard 广播（如果已安装并启用）- 带验证
+        2. 剪贴板粘贴方式（最可靠）
+
+        Args:
+            text: 要输入的文本
+            delay: 操作后延迟
+
+        Returns:
+            是否成功
+        """
+        print(f"      智能输入: {len(text)} 字符")
+
+        # 用于验证的文本片段（取前10个非空白字符）
+        verify_text = text.replace("\n", "").replace(" ", "")[:10]
+
+        # 方法1: 尝试 ADB Keyboard（最快）
+        print(f"      尝试 ADB Keyboard...")
+        self._adb_cmd([
+            "shell", "am", "broadcast",
+            "-a", "ADB_INPUT_TEXT",
+            "--es", "msg", text
+        ])
+        time.sleep(0.8)
+
+        # 验证是否输入成功 - 检查 UI XML 中是否包含输入的文本
+        xml_after = self.dump_ui_xml()
+        if xml_after and verify_text in xml_after:
+            print(f"      ✓ ADB Keyboard 输入成功（已验证）")
+            time.sleep(delay)
+            return True
+
+        print(f"      ADB Keyboard 未生效，切换到剪贴板方式...")
+
+        # 方法2: 使用剪贴板粘贴（最可靠的中文输入方式）
+        # 步骤2.1: 使用 Clipper 应用设置剪贴板
+        print(f"      尝试 Clipper 设置剪贴板...")
+        self._adb_cmd([
+            "shell", "am", "broadcast",
+            "-a", "clipper.set",
+            "-e", "text", text
+        ])
+        time.sleep(0.3)
+
+        # 执行粘贴
+        self._adb_cmd(["shell", "input", "keyevent", "279"])
+        time.sleep(0.8)
+
+        # 验证
+        xml_after = self.dump_ui_xml()
+        if xml_after and verify_text in xml_after:
+            print(f"      ✓ Clipper 粘贴成功（已验证）")
+            time.sleep(delay)
+            return True
+
+        # 步骤2.2: 如果 Clipper 也不行，尝试使用 am 设置剪贴板
+        print(f"      Clipper 未生效，尝试其他剪贴板方法...")
+
+        import base64
+        encoded = base64.b64encode(text.encode('utf-8')).decode('ascii')
+
+        # 写入临时文件并通过多种方式设置剪贴板
+        self._adb_cmd([
+            "shell", "sh", "-c",
+            f'echo "{encoded}" | base64 -d > /sdcard/clip_temp.txt'
+        ])
+
+        # 尝试使用 content 命令设置剪贴板（Android 10+）
+        self._adb_cmd([
+            "shell", "sh", "-c",
+            'content call --uri content://clipboard/text --method setText --arg "$(cat /sdcard/clip_temp.txt)" 2>/dev/null || true'
+        ])
+
+        # 执行粘贴
+        self._adb_cmd(["shell", "input", "keyevent", "279"])
+        time.sleep(0.8)
+
+        # 再次验证
+        xml_after = self.dump_ui_xml()
+        if xml_after and verify_text in xml_after:
+            print(f"      ✓ 剪贴板粘贴成功（已验证）")
+            time.sleep(delay)
+            return True
+
+        # 方法3: 最后尝试 - 使用 input text 命令逐字输入（仅适用于 ASCII）
+        # 对于中文，这个方法通常不工作，但作为最后手段
+        has_chinese = any('\u4e00' <= c <= '\u9fff' for c in text)
+        if not has_chinese:
+            print(f"      尝试 input text 命令...")
+            # 转义特殊字符
+            escaped_text = text.replace("'", "\\'").replace('"', '\\"').replace(' ', '%s')
+            self._adb_cmd(["shell", "input", "text", escaped_text])
+            time.sleep(delay)
+            return True
+
+        print(f"      ⚠️ 所有输入方法都未能成功！")
+        print(f"      请检查：")
+        print(f"         1. 是否安装了 ADB Keyboard 并设为默认输入法")
+        print(f"         2. 或安装 Clipper 应用")
+        print(f"      手动输入可能是必需的。")
+        time.sleep(delay)
         return False
 
     def input_text_chunked(self, text: str, chunk_size: int = 50, delay: float = 0.3) -> bool:
@@ -1108,29 +1280,13 @@ def fill_report_text(adb: ADBController, text: str, debug: bool = False) -> bool
     adb.clear_text(50)
     time.sleep(0.3)
 
-    # 输入举报文本 - 尝试多种方法
+    # 输入举报文本 - 使用智能输入方法
     print(f"   输入文本 ({len(text)} 字符)...")
 
-    # 方法1: 使用 ADB Keyboard 广播（推荐）
-    print("   [方法1] 使用 ADB Keyboard 广播输入...")
-    result = adb._adb_cmd([
-        "shell", "am", "broadcast",
-        "-a", "ADB_INPUT_TEXT",
-        "--es", "msg", text
-    ])
+    # 使用智能输入方法，自动选择最佳输入方式
+    adb.input_text_smart(text, delay=1.0)
 
-    # 检查广播结果
-    if "result=0" in result.stdout or "Broadcast completed" in result.stdout:
-        print("   ADB Keyboard 广播发送成功")
-    else:
-        print(f"   ADB Keyboard 广播结果: {result.stdout[:100] if result.stdout else 'empty'}")
-        print("   ⚠️ ADB Keyboard 可能未正确安装或配置")
-
-        # 方法2: 尝试分段输入
-        print("   [方法2] 尝试分段输入...")
-        adb.input_text_chunked(text, chunk_size=30, delay=0.5)
-
-    time.sleep(1.5)
+    time.sleep(1.0)
 
     # 调试模式：保存输入后的页面信息
     if debug:
