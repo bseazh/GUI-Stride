@@ -465,13 +465,94 @@ class ADBController:
 
         return True
 
+    def input_text_via_file(self, text: str, delay: float = 0.5) -> bool:
+        """
+        通过文件传输方式输入中文文本（最可靠的方法）
+
+        核心原理：使用 adb push 传输文件，避免 shell 命令行的编码问题
+
+        流程：
+        1. 在本地创建临时文件，写入中文文本（UTF-8 编码）
+        2. 使用 adb push 推送到手机（二进制传输，无编码问题）
+        3. 在手机上用 shell 读取文件内容，通过 ADB Keyboard 广播发送
+
+        Args:
+            text: 要输入的文本
+            delay: 操作后延迟
+
+        Returns:
+            是否成功
+        """
+        print(f"      使用文件传输方式输入...")
+
+        import tempfile
+
+        # 步骤1: 在本地创建临时文件，写入中文文本
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt',
+                                             encoding='utf-8', delete=False) as f:
+                f.write(text)
+                local_path = f.name
+        except Exception as e:
+            print(f"      ⚠️ 创建临时文件失败: {e}")
+            return False
+
+        # 步骤2: 使用 adb push 推送到手机（关键：避免编码问题）
+        remote_path = "/sdcard/adb_input_text.txt"
+        result = self._adb_cmd(["push", local_path, remote_path])
+
+        # 清理本地临时文件
+        try:
+            os.unlink(local_path)
+        except:
+            pass
+
+        if result.returncode != 0:
+            print(f"      ⚠️ 文件推送失败: {result.stderr}")
+            return False
+
+        print(f"      ✓ 文件已推送到手机")
+        time.sleep(0.2)
+
+        # 步骤3: 在手机上读取文件内容并通过广播发送
+        # 关键：文件内容在手机端读取，避免通过命令行传递中文
+        result = self._adb_cmd([
+            "shell", "sh", "-c",
+            'am broadcast -a ADB_INPUT_TEXT --es msg "$(cat /sdcard/adb_input_text.txt)"'
+        ])
+
+        if "Broadcast completed" in result.stdout:
+            print(f"      ✓ ADB Keyboard 广播发送成功")
+            time.sleep(delay)
+            return True
+
+        # 备用方案：尝试使用 ADB_INPUT_B64
+        print(f"      尝试 ADB_INPUT_B64 方式...")
+        import base64
+        encoded = base64.b64encode(text.encode('utf-8')).decode('ascii')
+        result = self._adb_cmd([
+            "shell", "am", "broadcast",
+            "-a", "ADB_INPUT_B64",
+            "--es", "msg", encoded
+        ])
+
+        if "Broadcast completed" in result.stdout:
+            print(f"      ✓ ADB Keyboard (B64) 广播发送成功")
+            time.sleep(delay)
+            return True
+
+        print(f"      ⚠️ 文件传输方式发送失败")
+        time.sleep(delay)
+        return False
+
     def input_text_smart(self, text: str, delay: float = 0.5) -> bool:
         """
         智能文本输入 - 自动选择最佳输入方法（带验证）
 
         优先级：
-        1. ADB Keyboard 广播（如果已安装并启用）- 带验证
-        2. 剪贴板粘贴方式（最可靠）
+        1. 文件传输方式（最可靠的中文输入）
+        2. ADB Keyboard 广播（如果已安装并启用）
+        3. 剪贴板粘贴方式
 
         Args:
             text: 要输入的文本
@@ -485,76 +566,64 @@ class ADBController:
         # 用于验证的文本片段（取前10个非空白字符）
         verify_text = text.replace("\n", "").replace(" ", "")[:10]
 
-        # 方法1: 尝试 ADB Keyboard（最快）
-        print(f"      尝试 ADB Keyboard...")
-        self._adb_cmd([
-            "shell", "am", "broadcast",
-            "-a", "ADB_INPUT_TEXT",
-            "--es", "msg", text
-        ])
-        time.sleep(0.8)
+        # 方法1: 优先尝试文件传输方式（对中文最可靠）
+        print(f"      尝试文件传输方式...")
+        self.input_text_via_file(text, delay=0.5)
+        time.sleep(0.5)
 
-        # 验证是否输入成功 - 检查 UI XML 中是否包含输入的文本
+        # 验证是否输入成功
         xml_after = self.dump_ui_xml()
         if xml_after and verify_text in xml_after:
-            print(f"      ✓ ADB Keyboard 输入成功（已验证）")
+            print(f"      ✓ 文件传输方式输入成功（已验证）")
             time.sleep(delay)
             return True
 
-        print(f"      ADB Keyboard 未生效，切换到剪贴板方式...")
+        print(f"      文件传输方式未生效，尝试剪贴板方式...")
 
-        # 方法2: 使用剪贴板粘贴（最可靠的中文输入方式）
-        # 步骤2.1: 使用 Clipper 应用设置剪贴板
-        print(f"      尝试 Clipper 设置剪贴板...")
-        self._adb_cmd([
-            "shell", "am", "broadcast",
-            "-a", "clipper.set",
-            "-e", "text", text
-        ])
-        time.sleep(0.3)
-
-        # 执行粘贴
-        self._adb_cmd(["shell", "input", "keyevent", "279"])
-        time.sleep(0.8)
-
-        # 验证
-        xml_after = self.dump_ui_xml()
-        if xml_after and verify_text in xml_after:
-            print(f"      ✓ Clipper 粘贴成功（已验证）")
-            time.sleep(delay)
-            return True
-
-        # 步骤2.2: 如果 Clipper 也不行，尝试使用 am 设置剪贴板
-        print(f"      Clipper 未生效，尝试其他剪贴板方法...")
-
+        # 方法2: 使用剪贴板粘贴（通过文件避免编码问题）
+        import tempfile
         import base64
-        encoded = base64.b64encode(text.encode('utf-8')).decode('ascii')
 
-        # 写入临时文件并通过多种方式设置剪贴板
-        self._adb_cmd([
-            "shell", "sh", "-c",
-            f'echo "{encoded}" | base64 -d > /sdcard/clip_temp.txt'
-        ])
+        # 创建本地临时文件
+        try:
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt',
+                                             encoding='utf-8', delete=False) as f:
+                f.write(text)
+                clip_local_path = f.name
+        except Exception as e:
+            print(f"      ⚠️ 创建临时文件失败: {e}")
+            clip_local_path = None
 
-        # 尝试使用 content 命令设置剪贴板（Android 10+）
-        self._adb_cmd([
-            "shell", "sh", "-c",
-            'content call --uri content://clipboard/text --method setText --arg "$(cat /sdcard/clip_temp.txt)" 2>/dev/null || true'
-        ])
+        if clip_local_path:
+            # 推送到手机
+            clip_remote_path = "/sdcard/clip_temp.txt"
+            self._adb_cmd(["push", clip_local_path, clip_remote_path])
 
-        # 执行粘贴
-        self._adb_cmd(["shell", "input", "keyevent", "279"])
-        time.sleep(0.8)
+            # 清理本地临时文件
+            try:
+                os.unlink(clip_local_path)
+            except:
+                pass
 
-        # 再次验证
-        xml_after = self.dump_ui_xml()
-        if xml_after and verify_text in xml_after:
-            print(f"      ✓ 剪贴板粘贴成功（已验证）")
-            time.sleep(delay)
-            return True
+            # 尝试使用 content 命令设置剪贴板（Android 10+）
+            print(f"      尝试剪贴板粘贴...")
+            self._adb_cmd([
+                "shell", "sh", "-c",
+                'content call --uri content://clipboard/text --method setText --arg "$(cat /sdcard/clip_temp.txt)" 2>/dev/null || true'
+            ])
 
-        # 方法3: 最后尝试 - 使用 input text 命令逐字输入（仅适用于 ASCII）
-        # 对于中文，这个方法通常不工作，但作为最后手段
+            # 执行粘贴
+            self._adb_cmd(["shell", "input", "keyevent", "279"])
+            time.sleep(0.8)
+
+            # 验证
+            xml_after = self.dump_ui_xml()
+            if xml_after and verify_text in xml_after:
+                print(f"      ✓ 剪贴板粘贴成功（已验证）")
+                time.sleep(delay)
+                return True
+
+        # 方法3: 最后尝试 - 使用 input text 命令（仅适用于 ASCII）
         has_chinese = any('\u4e00' <= c <= '\u9fff' for c in text)
         if not has_chinese:
             print(f"      尝试 input text 命令...")
@@ -567,7 +636,7 @@ class ADBController:
         print(f"      ⚠️ 所有输入方法都未能成功！")
         print(f"      请检查：")
         print(f"         1. 是否安装了 ADB Keyboard 并设为默认输入法")
-        print(f"         2. 或安装 Clipper 应用")
+        print(f"         2. 确保 ADB Keyboard 已激活")
         print(f"      手动输入可能是必需的。")
         time.sleep(delay)
         return False
@@ -1496,9 +1565,9 @@ def report_product(adb: ADBController, evidence: EvidenceManager,
     report_text = generate_report_text(keyword, shop_name, price, title=title)
     fill_report_text(adb, report_text, debug=debug)
 
-    # Step 6: 上传图片证据（最多3张）
+    # Step 6: 上传图片证据（最多2张）
     print("\n[Step 6] 上传图片证据...")
-    upload_evidence_images(adb, evidence, shop_name, max_images=3)
+    upload_evidence_images(adb, evidence, shop_name, max_images=2)
 
     # Step 7: 提交举报
     print("\n[Step 7] 提交举报...")
