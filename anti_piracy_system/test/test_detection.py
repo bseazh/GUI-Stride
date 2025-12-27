@@ -934,7 +934,7 @@ def generate_report_text(keyword: str, shop_name: str, price: float,
     # 构建关键词描述
     if piracy_keywords:
         keywords_desc = "、".join(piracy_keywords[:3])  # 最多取3个
-        keyword_evidence = f"商品描述中包含"{keywords_desc}"等非法分发关键词"
+        keyword_evidence = f'商品描述中包含"{keywords_desc}"等非法分发关键词'
     else:
         keyword_evidence = "商品以电子资料形式销售，涉嫌非法复制分发"
 
