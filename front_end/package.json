@@ -1,0 +1,16 @@
+
+{
+  "name": "gui-stride-web",
+  "version": "1.0.0",
+  "description": "GUI-Stride - Professional Web Audit Terminal",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Standard web project, no build step required for ESM version'"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
+    "@google/genai": "^1.34.0"
+  }
+}
