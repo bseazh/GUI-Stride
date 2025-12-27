@@ -15,6 +15,12 @@
 import argparse
 import sys
 import os
+from pathlib import Path
+
+# 加载 .env 文件
+from dotenv import load_dotenv
+env_path = Path(__file__).parent / ".env"
+load_dotenv(env_path)
 
 # 添加 Open-AutoGLM 到 Python 路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../Open-AutoGLM'))

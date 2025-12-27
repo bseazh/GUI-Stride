@@ -265,10 +265,29 @@ class AntiPiracyAgent:
                 parsed_data = self._parse_model_response(str(response)) if response else None
 
                 if parsed_data and isinstance(parsed_data, dict):
-                    # 从解析的数据中提取信息
-                    title = parsed_data.get('title') or parsed_data.get('商品标题') or f"未识别商品_{index}"
-                    shop_name = parsed_data.get('shop_name') or parsed_data.get('店铺名称') or "未知店铺"
-                    price_val = parsed_data.get('price') or parsed_data.get('价格') or parsed_data.get('商品价格')
+                    # 调试：打印解析后的所有字段
+                    print(f"   📊 解析的字段: {list(parsed_data.keys())}")
+
+                    # 从解析的数据中提取信息（支持多种字段名）
+                    title = (parsed_data.get('title') or
+                            parsed_data.get('商品标题') or
+                            parsed_data.get('product_title') or
+                            f"未识别商品_{index}")
+
+                    # 店铺名称 - 支持多种可能的字段名
+                    shop_name = (parsed_data.get('shop_name') or
+                                parsed_data.get('店铺名称') or
+                                parsed_data.get('卖家昵称') or
+                                parsed_data.get('卖家名称') or
+                                parsed_data.get('商家名称') or
+                                parsed_data.get('seller_name') or
+                                parsed_data.get('store_name') or
+                                "未知店铺")
+
+                    price_val = (parsed_data.get('price') or
+                                parsed_data.get('价格') or
+                                parsed_data.get('商品价格') or
+                                parsed_data.get('售价'))
 
                     # 处理价格
                     price = 0.0
@@ -489,6 +508,11 @@ class AntiPiracyAgent:
         """
         解析模型返回的JSON响应
 
+        支持多种JSON格式：
+        1. 纯JSON: {"key": "value"}
+        2. 代码块: ```json {...} ```
+        3. 嵌套在文本中的JSON
+
         Args:
             response: 模型返回的文本
 
@@ -496,13 +520,19 @@ class AntiPiracyAgent:
             解析后的字典或None
         """
         if not response:
+            print("   ⚠️  模型响应为空")
             return None
+
+        # 打印原始响应的前200个字符用于调试
+        print(f"   🔍 原始响应预览: {response[:200]}...")
 
         try:
             # 方法1: 直接解析JSON
-            return json.loads(response)
-        except json.JSONDecodeError:
-            pass
+            result = json.loads(response)
+            print("   ✅ 使用方法1解析成功（直接JSON）")
+            return result
+        except json.JSONDecodeError as e:
+            print(f"   ⚠️  方法1失败: {str(e)[:50]}")
 
         try:
             # 方法2: 查找JSON代码块
@@ -510,25 +540,48 @@ class AntiPiracyAgent:
             json_pattern = r'```(?:json)?\s*(\{.*?\}|\[.*?\])\s*```'
             matches = re.findall(json_pattern, response, re.DOTALL)
             if matches:
-                return json.loads(matches[0])
-        except (json.JSONDecodeError, IndexError):
-            pass
+                result = json.loads(matches[0])
+                print("   ✅ 使用方法2解析成功（代码块）")
+                return result
+        except (json.JSONDecodeError, IndexError) as e:
+            print(f"   ⚠️  方法2失败: {str(e)[:50]}")
 
         try:
-            # 方法3: 查找裸JSON对象或数组
-            # 匹配 {...} 或 [...]
-            json_pattern = r'(\{[^{}]*\}|\[[^\[\]]*\])'
+            # 方法3: 查找嵌套的JSON对象（支持嵌套花括号）
+            # 更强大的正则，支持嵌套
+            json_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
+            matches = re.findall(json_pattern, response, re.DOTALL)
+            if matches:
+                # 尝试最长的匹配（通常是完整的JSON）
+                matches_sorted = sorted(matches, key=len, reverse=True)
+                for match in matches_sorted:
+                    try:
+                        result = json.loads(match)
+                        print("   ✅ 使用方法3解析成功（嵌套JSON）")
+                        return result
+                    except json.JSONDecodeError:
+                        continue
+        except Exception as e:
+            print(f"   ⚠️  方法3失败: {str(e)[:50]}")
+
+        try:
+            # 方法4: 查找简单的JSON对象（无嵌套）
+            json_pattern = r'(\{[^{}]+\})'
             matches = re.findall(json_pattern, response, re.DOTALL)
             if matches:
                 for match in matches:
                     try:
-                        return json.loads(match)
+                        result = json.loads(match)
+                        print("   ✅ 使用方法4解析成功（简单JSON）")
+                        return result
                     except json.JSONDecodeError:
                         continue
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"   ⚠️  方法4失败: {str(e)[:50]}")
 
-        print(f"⚠️  无法解析模型响应为JSON: {response[:100]}...")
+        # 所有方法都失败
+        print(f"   ❌ 所有解析方法均失败")
+        print(f"   完整响应: {response}")
         return None
 
     def _generate_patrol_report(self) -> str:
