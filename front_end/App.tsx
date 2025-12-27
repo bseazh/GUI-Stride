@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  LayoutDashboard, 
-  ShieldCheck, 
-  Terminal, 
-  Plus, 
-  Trash2, 
-  User, 
-  Monitor, 
-  Play, 
-  FileSpreadsheet, 
-  Activity, 
-  Zap, 
+import {
+  LayoutDashboard,
+  ShieldCheck,
+  Terminal,
+  Plus,
+  Trash2,
+  User,
+  Monitor,
+  Play,
+  FileSpreadsheet,
+  Activity,
+  Zap,
   X,
   SlidersHorizontal,
   Tags,
@@ -31,7 +31,10 @@ import {
   Package,
   Loader2,
   Store,
-  CheckCircle
+  CheckCircle,
+  Wifi,
+  WifiOff,
+  Square
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -49,27 +52,28 @@ const AUDIT_KEYWORDS = [
   "翻印", "扫描", "讲义", "真题", "解析", "押题", "专柜", "代购", "包邮", "原装"
 ];
 
-const MOCK_DEVICES: Device[] = [
-  { id: 'dev-001', name: 'Pixel 6 Pro - Node 01', status: 'online', isSelected: true },
-  { id: 'dev-002', name: 'Samsung S22 - Node 02', status: 'online', isSelected: false },
-  { id: 'dev-003', name: 'Xiaomi 13 - Node 03', status: 'offline', isSelected: false },
-  { id: 'dev-004', name: 'Oppo Find X5 - Node 04', status: 'online', isSelected: false },
-];
-
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<ViewType>('terminal');
   const [merchants] = useState<Merchant[]>(MOCK_MERCHANTS);
   const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(MOCK_MERCHANTS[0]);
   const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
-  const [platform, setPlatform] = useState<'xianyu' | 'xhs'>('xianyu');
-  const [searchCount, setSearchCount] = useState<number>(20);
+  const [platform, setPlatform] = useState<'xianyu' | 'xhs'>('xhs');
+  const [searchCount, setSearchCount] = useState<number>(3);
   const [showConfig, setShowConfig] = useState(false);
-  const [devices, setDevices] = useState<Device[]>(MOCK_DEVICES);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [enableAutoReport, setEnableAutoReport] = useState(true);
+  const [enableDebugMode, setEnableDebugMode] = useState(false);
+  const [enableMockMode, setEnableMockMode] = useState(false);
   const [reportMenuOpen, setReportMenuOpen] = useState(false);
   const [isProcessingExport, setIsProcessingExport] = useState(false);
+
+  // WebSocket connection state
+  const [wsConnected, setWsConnected] = useState(false);
+  const [isDetectionRunning, setIsDetectionRunning] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
   
   const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([
-    { id: '1', officialMerchantName: '官方出版社', productName: '2025法考全套资料', price: '299', allowedShops: ['官方旗舰店', '正版分销商', '法律社直营'] }
+    { id: '1', officialMerchantName: '官方出版社', productName: '众合法考', price: '299', allowedShops: ['官方旗舰店', '正版分销商', '法律社直营'] }
   ]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(['1']));
 
@@ -83,6 +87,123 @@ const App: React.FC = () => {
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
+
+  // WebSocket connection effect
+  useEffect(() => {
+    const connectWebSocket = () => {
+      const ws = new WebSocket('ws://localhost:8766');
+
+      ws.onopen = () => {
+        setWsConnected(true);
+        setLogs(prev => [...prev, {
+          id: Date.now().toString(),
+          timestamp: new Date().toLocaleTimeString(),
+          type: 'info',
+          message: '[WS] 已连接到后端服务 ws://localhost:8766'
+        }]);
+      };
+
+      ws.onclose = () => {
+        setWsConnected(false);
+        setIsDetectionRunning(false);
+        // Auto-reconnect after 3 seconds
+        setTimeout(connectWebSocket, 3000);
+      };
+
+      ws.onerror = () => {
+        setWsConnected(false);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'pong') return;
+
+          // Check for completion message
+          if (data.message && data.message.includes('[DONE]')) {
+            setIsDetectionRunning(false);
+          }
+
+          setLogs(prev => [...prev, {
+            id: data.id || Date.now().toString(),
+            timestamp: data.timestamp || new Date().toLocaleTimeString(),
+            type: data.type || 'info',
+            message: data.message
+          }]);
+        } catch (e) {
+          console.error('WebSocket message parse error:', e);
+        }
+      };
+
+      wsRef.current = ws;
+    };
+
+    connectWebSocket();
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
+
+  // Fetch ADB device list from backend (optional, falls back to mock list)
+  useEffect(() => {
+    if (!wsConnected) return;
+
+    let cancelled = false;
+
+    type ApiDevice = {
+      id: string;
+      status?: 'online' | 'offline';
+      state?: string;
+      model?: string | null;
+    };
+
+    const syncDevices = async () => {
+      try {
+        const res = await fetch('http://localhost:8765/api/devices');
+        if (!res.ok) return;
+        const data = await res.json();
+        const apiDevices: ApiDevice[] = Array.isArray(data?.devices) ? data.devices : [];
+
+        if (cancelled) return;
+
+        setDevices(prev => {
+          const prevSelected = new Set(prev.filter(d => d.isSelected).map(d => d.id));
+          const next = apiDevices.map((d) => {
+            const isOnline = (d.status ?? (d.state === 'device' ? 'online' : 'offline')) === 'online';
+            return {
+              id: d.id,
+              name: d.model ? `${d.model} (${d.id})` : d.id,
+              status: isOnline ? 'online' : 'offline',
+              isSelected: prevSelected.has(d.id),
+            } as Device;
+          });
+
+          // 如果之前没有选择任何设备，且当前只发现一台在线设备，则自动选中
+          if (prevSelected.size === 0) {
+            const online = next.filter(d => d.status === 'online');
+            if (online.length === 1) {
+              return next.map(d => d.id === online[0].id ? { ...d, isSelected: true } : d);
+            }
+          }
+
+          return next;
+        });
+      } catch {
+        // Ignore - backend may not expose devices endpoint yet
+      }
+    };
+
+    syncDevices();
+    const interval = window.setInterval(syncDevices, 5000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [wsConnected]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (isResizingLeft) {
@@ -324,13 +445,86 @@ const App: React.FC = () => {
   const handleStartSearch = () => {
     const activeRows = whitelist.filter(row => selectedIds.has(row.id));
     const activeDevices = devices.filter(d => d.isSelected && d.status === 'online');
-    if (activeRows.length === 0 || activeDevices.length === 0) return;
-    setLogs(prev => [...prev, {
-      id: Date.now().toString(),
-      timestamp: new Date().toLocaleTimeString(),
-      type: 'action',
-      message: `[EXE] 启动自动搜索: 平台=${platform.toUpperCase()}, 任务数=${activeRows.length}, 活跃设备=${activeDevices.length}, 条数=${searchCount}`
-    }]);
+    const onlineDevices = devices.filter(d => d.status === 'online');
+
+    if (activeRows.length === 0) {
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'performance',
+        message: '[ERROR] 请至少选择一个审计任务'
+      }]);
+      return;
+    }
+
+    if (!wsConnected) {
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'performance',
+        message: '[ERROR] 后端服务未连接，请先启动 api_server.py'
+      }]);
+      return;
+    }
+
+    if (platform !== 'xhs') {
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'performance',
+        message: '[ERROR] 当前后端仅对接了小红书流程 (test_detection.py)，请切换到“小红书”后再启动'
+      }]);
+      return;
+    }
+
+    if (onlineDevices.length === 0 && !enableMockMode) {
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'performance',
+        message: '[ERROR] 未检测到任何在线设备。请确认 ADB 已连接手机，或开启 Mock 模式'
+      }]);
+      return;
+    }
+
+    const keywords = Array.from(new Set(
+      activeRows
+        .map(r => (r.productName || '').trim())
+        .filter(Boolean)
+    ));
+    const keyword = keywords[0] || '众合法考';
+    const deviceId = activeDevices[0]?.id;
+
+    // Send start command via WebSocket
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        command: 'start_detection',
+        params: {
+          platform,
+          keywords,
+          keyword,
+          num: searchCount,
+          device: deviceId,
+          report: enableAutoReport,
+          debug: enableDebugMode,
+          mock: enableMockMode
+        }
+      }));
+      setIsDetectionRunning(true);
+    }
+  };
+
+  const handleStopSearch = () => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ command: 'stop_detection' }));
+      setIsDetectionRunning(false);
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'action',
+        message: '[STOP] 检测任务已手动停止'
+      }]);
+    }
   };
 
   const renderSummary = () => (
@@ -582,6 +776,30 @@ const App: React.FC = () => {
                     ))}</tbody>
                  </table>
               </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setEnableAutoReport(v => !v)}
+                  disabled={isDetectionRunning}
+                  className={`h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${enableAutoReport ? 'bg-rose-600 text-white border-rose-600 shadow-lg shadow-rose-600/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'} ${isDetectionRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  自动举报 {enableAutoReport ? 'ON' : 'OFF'}
+                </button>
+                <button
+                  onClick={() => setEnableDebugMode(v => !v)}
+                  disabled={isDetectionRunning}
+                  className={`h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${enableDebugMode ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'} ${isDetectionRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  Debug {enableDebugMode ? 'ON' : 'OFF'}
+                </button>
+                <button
+                  onClick={() => setEnableMockMode(v => !v)}
+                  disabled={isDetectionRunning}
+                  className={`h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${enableMockMode ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-600/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'} ${isDetectionRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  Mock {enableMockMode ? 'ON' : 'OFF'}
+                </button>
+              </div>
             </div>
           )}
 
@@ -674,12 +892,25 @@ const App: React.FC = () => {
             </div>
             <div className="flex-[2.5] flex gap-3">
               <button onClick={() => setShowConfig(!showConfig)} className={`h-10 px-4 rounded-xl font-black text-[10px] uppercase border transition-all flex items-center gap-2 ${showConfig ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}><SlidersHorizontal size={14} /> 审计配置</button>
-              <button onClick={handleStartSearch} className="flex-1 h-10 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl shadow-slate-900/10"><Play size={14} fill="white" /> 启动执行自动搜索</button>
+              {isDetectionRunning ? (
+                <button onClick={handleStopSearch} className="flex-1 h-10 bg-rose-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl shadow-rose-600/20"><Square size={14} fill="white" /> 停止检测</button>
+              ) : (
+                <button onClick={handleStartSearch} disabled={!wsConnected} className={`flex-1 h-10 rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl ${wsConnected ? 'bg-slate-900 text-white shadow-slate-900/10' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}><Play size={14} fill="white" /> 启动执行自动搜索</button>
+              )}
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between"><h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">REALTIME STREAM</h3><button onClick={() => setLogs([])} className="text-[9px] text-slate-300 font-black hover:text-rose-500 transition-colors uppercase tracking-widest">Flush Logs</button></div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">REALTIME STREAM</h3>
+                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${wsConnected ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'}`}>
+                  {wsConnected ? <Wifi size={10} /> : <WifiOff size={10} />}
+                  {wsConnected ? 'Backend Connected' : 'Backend Offline'}
+                </div>
+              </div>
+              <button onClick={() => setLogs([])} className="text-[9px] text-slate-300 font-black hover:text-rose-500 transition-colors uppercase tracking-widest">Flush Logs</button>
+            </div>
             <div className="h-44 bg-slate-50 rounded-2xl p-5 overflow-y-auto mono text-[10px] space-y-2 border border-slate-100 scrollbar-thin shadow-inner">
               {logs.map(log => (
                 <div key={log.id} className="text-slate-500 leading-relaxed"><span className="opacity-40">[{log.timestamp}]</span> <span className={log.type === 'action' ? 'text-indigo-600 font-bold' : log.type === 'performance' ? 'text-rose-500' : ''}>{log.message}</span></div>
