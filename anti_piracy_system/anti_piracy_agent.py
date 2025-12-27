@@ -291,7 +291,18 @@ class AntiPiracyAgent:
                                 parsed_data.get('商家名称') or
                                 parsed_data.get('seller_name') or
                                 parsed_data.get('store_name') or
-                                "未知店铺")
+                                parsed_data.get('shopName') or
+                                parsed_data.get('seller') or
+                                parsed_data.get('shop') or
+                                None)
+
+                    # 如果店铺名称为空或为默认值，尝试备用方案提取
+                    if not shop_name or shop_name in ["未知店铺", "未知", "", None]:
+                        print("   ⚠️  首次提取店铺名称失败，使用备用方案...")
+                        shop_name = self._extract_shop_name_fallback()
+
+                    if not shop_name:
+                        shop_name = "未知店铺"
 
                     price_val = (parsed_data.get('price') or
                                 parsed_data.get('价格') or
@@ -368,6 +379,37 @@ class AntiPiracyAgent:
         except Exception as e:
             print(f"❌ 进入详情页失败: {e}")
             return False
+
+    def _extract_shop_name_fallback(self) -> Optional[str]:
+        """
+        备用方案：专门提取店铺名称
+
+        当主提取方法无法获取店铺名称时使用
+
+        Returns:
+            店铺名称或None
+        """
+        try:
+            task = get_task_prompt("extract_shop_name_only")
+            response = self.base_agent.run(task)
+
+            if response:
+                # 清理响应，提取纯文本店铺名
+                shop_name = str(response).strip()
+                # 移除可能的引号和多余字符
+                shop_name = shop_name.strip('"\'')
+                # 移除常见的无效响应
+                invalid_responses = ["未知", "无", "null", "none", "未找到", "未识别"]
+                if shop_name.lower() not in invalid_responses and len(shop_name) > 0:
+                    print(f"   ✅ 备用方案提取成功: {shop_name}")
+                    return shop_name
+
+            print("   ❌ 备用方案也未能提取店铺名称")
+            return None
+
+        except Exception as e:
+            print(f"   ❌ 备用提取店铺名称失败: {e}")
+            return None
 
     def _detect_piracy(self, product_info: ProductInfo) -> DetectionResult:
         """

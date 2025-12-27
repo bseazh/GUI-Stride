@@ -104,18 +104,18 @@ def test_reporter_module():
     print("-" * 40)
 
     context = ReportContext(
-        product_title="薛兆丰经济学课程 超低价",
+        product_title="众合法考客观题学习包 超低价",
         shop_name="某个人卖家",
-        price=9.9,
+        price=99.0,
         platform="小红书",
         detection_reasons=[
             "❌ 店铺名称'某个人卖家'不在官方授权列表中",
-            "❌ 价格异常: ¥9.9 仅为原价¥199.0的5%",
+            "❌ 价格异常: ¥99.0 仅为原价¥898.0的11%",
             "✅ 内容匹配度高: 73%"
         ],
         confidence=0.8,
-        matched_product_name="薛兆丰的经济学课",
-        original_price=199.0,
+        matched_product_name="2026众合法考客观题学习包（书课包，不过全退，技术流）",
+        original_price=898.0,
         report_id="test_001"
     )
 
@@ -144,9 +144,9 @@ def test_report_flow():
     )
 
     context = ReportContext(
-        product_title="薛兆丰经济学课程",
+        product_title="众合法考客观题学习包",
         shop_name="盗版店铺",
-        price=9.9,
+        price=99.0,
         platform="小红书",
         detection_reasons=["店铺不匹配", "价格过低"],
         confidence=0.85,
@@ -180,14 +180,14 @@ def test_detection_logic():
 
     print(f"\n数据库状态: {db.get_stats()}")
 
-    # 测试案例
+    # 测试案例 - 众合法考
     test_cases = [
         {
             "name": "正版商品（官方店铺）",
             "info": ProductInfo(
-                title="薛兆丰的经济学课",
-                shop_name="得到官方旗舰店",
-                price=199.0,
+                title="2026众合法考客观题学习包",
+                shop_name="方圆众合教育",
+                price=898.0,
                 platform="小红书"
             ),
             "expected": False  # 不是盗版
@@ -195,9 +195,9 @@ def test_detection_logic():
         {
             "name": "疑似盗版（价格过低）",
             "info": ProductInfo(
-                title="薛兆丰经济学课程 超值",
+                title="众合法考客观题学习包 超值",
                 shop_name="某个人卖家",
-                price=9.9,
+                price=99.0,
                 platform="小红书"
             ),
             "expected": True  # 是盗版
@@ -205,9 +205,9 @@ def test_detection_logic():
         {
             "name": "疑似盗版（非官方店铺）",
             "info": ProductInfo(
-                title="得到 薛兆丰经济学",
+                title="众合法考 技术流 书课包",
                 shop_name="便宜资料店",
-                price=29.9,
+                price=199.0,
                 platform="闲鱼"
             ),
             "expected": True  # 是盗版
