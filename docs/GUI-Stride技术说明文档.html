@@ -1,0 +1,6018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUI-Stride 多模态反盗版监控系统技术说明文档</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        h1 {
+            font-size: 28px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 22px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        h3 {
+            font-size: 18px;
+            color: #34495e;
+        }
+        h4 {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+            line-height: 1.8;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1.5em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        td {
+            vertical-align: top;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1.5em auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .toc {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 2em;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+            margin: 1.5em 0;
+            color: #666;
+            font-style: italic;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 2em 0;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body {
+                font-size: 12pt;
+                padding: 15mm;
+            }
+            h1 {
+                font-size: 20pt;
+            }
+            h2 {
+                font-size: 16pt;
+            }
+            h3 {
+                font-size: 14pt;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        @media screen {
+            .print-only {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1 id="gui-stride">GUI-Stride 多模态反盗版系统技术说明文档</h1>
+<blockquote>
+<p><strong>版本</strong>：1.0
+<strong>日期</strong>：2025年12月28日
+<strong>作者</strong>：GUI-Stride开发团队</p>
+</blockquote>
+<hr />
+<h2 id="_1">目录</h2>
+<div class="toc">
+<ul>
+<li><a href="#gui-stride">GUI-Stride 多模态反盗版系统技术说明文档</a><ul>
+<li><a href="#_1">目录</a></li>
+<li><a href="#_2">一、文档概述</a><ul>
+<li><a href="#11">1.1 文档目的与范围</a></li>
+<li><a href="#12">1.2 系统价值与创新点</a></li>
+<li><a href="#13">1.3 目标读者</a></li>
+</ul>
+</li>
+<li><a href="#_3">二、项目概述</a><ul>
+<li><a href="#21">2.1 项目背景与意义</a><ul>
+<li><a href="#211">2.1.1 知识产权保护需求</a></li>
+<li><a href="#212">2.1.2 传统人工巡查的局限性</a></li>
+<li><a href="#213-ai">2.1.3 AI技术的应用价值</a></li>
+</ul>
+</li>
+<li><a href="#22">2.2 系统目标</a><ul>
+<li><a href="#221">2.2.1 自动化盗版监测</a></li>
+<li><a href="#222">2.2.2 智能内容识别</a></li>
+<li><a href="#223">2.2.3 高效举报流程</a></li>
+<li><a href="#224">2.2.4 全平台覆盖</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_4">三、系统架构设计</a><ul>
+<li><a href="#31">3.1 整体架构图</a><ul>
+<li><a href="#311">3.1.1 三层架构</a></li>
+<li><a href="#312">3.1.2 双重通信机制</a></li>
+<li><a href="#313">3.1.3 模块间交互关系</a></li>
+</ul>
+</li>
+<li><a href="#32">3.2 技术栈选型</a><ul>
+<li><a href="#321">3.2.1 前端技术栈</a></li>
+<li><a href="#322">3.2.2 后端技术栈</a></li>
+<li><a href="#323">3.2.3 数据存储</a></li>
+<li><a href="#324">3.2.4 通信协议</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_5">四、多模态模型架构与功能</a><ul>
+<li><a href="#41-open-autoglm">4.1 Open-AutoGLM框架集成</a><ul>
+<li><a href="#411">4.1.1 模型配置与初始化</a></li>
+<li><a href="#412-agent">4.1.2 Agent扩展与定制</a></li>
+<li><a href="#413">4.1.3 服务端部署架构</a></li>
+</ul>
+</li>
+<li><a href="#42">4.2 多模态能力实现</a><ul>
+<li><a href="#421">4.2.1 视觉识别能力</a><ul>
+<li><a href="#ui">UI界面理解</a></li>
+<li><a href="#_6">商品图像识别</a></li>
+<li><a href="#_7">截图采集与存储</a></li>
+</ul>
+</li>
+<li><a href="#422">4.2.2 文本处理能力</a><ul>
+<li><a href="#ocr">OCR文本提取</a></li>
+<li><a href="#_8">中文输入支持</a></li>
+<li><a href="#_9">文本相似度计算</a></li>
+<li><a href="#_10">自然语言理解</a></li>
+</ul>
+</li>
+<li><a href="#423">4.2.3 交互执行能力</a><ul>
+<li><a href="#_11">自动化点击操作</a></li>
+<li><a href="#_12">页面导航</a></li>
+<li><a href="#_13">表单填写</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#43">4.3 提示词工程</a><ul>
+<li><a href="#431">4.3.1 结构化提示词模板</a></li>
+<li><a href="#432">4.3.2 任务指令设计</a></li>
+<li><a href="#433">4.3.3 上下文管理</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_14">五、界面控制策略</a><ul>
+<li><a href="#51">5.1 多平台适配策略</a><ul>
+<li><a href="#511">5.1.1 小红书平台（完整实现）</a></li>
+<li><a href="#512">5.1.2 闲鱼平台（接口预留）</a></li>
+<li><a href="#513">5.1.3 淘宝平台（接口预留）</a></li>
+<li><a href="#514">5.1.4 平台扩展机制</a></li>
+</ul>
+</li>
+<li><a href="#52">5.2 设备控制机制</a><ul>
+<li><a href="#521-adb">5.2.1 ADB连接管理</a></li>
+<li><a href="#522">5.2.2 屏幕截图采集</a></li>
+<li><a href="#523-ui">5.2.3 UI元素识别</a></li>
+</ul>
+</li>
+<li><a href="#53">5.3 智能交互设计</a><ul>
+<li><a href="#531">5.3.1 操作序列优化</a></li>
+<li><a href="#532">5.3.2 异常处理机制</a></li>
+<li><a href="#533">5.3.3 重试策略</a></li>
+</ul>
+</li>
+<li><a href="#54">5.4 用户输入处理</a><ul>
+<li><a href="#541">5.4.1 文本输入三种方式</a></li>
+<li><a href="#542">5.4.2 动态白名单管理</a></li>
+<li><a href="#543">5.4.3 配置参数实时更新</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_15">六、数据处理流程</a><ul>
+<li><a href="#61">6.1 数据采集流程</a><ul>
+<li><a href="#611">6.1.1 商品信息抓取</a></li>
+<li><a href="#612">6.1.2 页面元素提取</a></li>
+<li><a href="#613">6.1.3 证据图片采集</a></li>
+</ul>
+</li>
+<li><a href="#62">6.2 数据处理管道</a><ul>
+<li><a href="#621">6.2.1 数据清洗</a></li>
+<li><a href="#622">6.2.2 格式标准化</a></li>
+<li><a href="#623">6.2.3 临时文件管理</a></li>
+</ul>
+</li>
+<li><a href="#63">6.3 实时数据流</a><ul>
+<li><a href="#631-websocket">6.3.1 WebSocket通信协议</a></li>
+<li><a href="#632">6.3.2 事件驱动架构</a></li>
+<li><a href="#633">6.3.3 状态同步机制</a></li>
+<li><a href="#634">6.3.4 日志轮转与备份</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_16">七、判定逻辑说明</a><ul>
+<li><a href="#71">7.1 三层判定机制</a><ul>
+<li><a href="#711">7.1.1 第一层：正版商品匹配</a><ul>
+<li><a href="#_17">数据库查询算法</a></li>
+<li><a href="#_18">相似度计算</a></li>
+<li><a href="#_19">精确匹配策略</a></li>
+</ul>
+</li>
+<li><a href="#712">7.1.2 第二层：店铺名称检查</a><ul>
+<li><a href="#_20">官方店铺验证</a></li>
+<li><a href="#_21">品牌名称识别</a></li>
+<li><a href="#_22">异常店铺检测</a></li>
+</ul>
+</li>
+<li><a href="#713">7.1.3 第三层：价格异常检测</a><ul>
+<li><a href="#_23">价格阈值计算</a></li>
+<li><a href="#_24">市场价格对比</a></li>
+<li><a href="#_25">警告级别判定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#72">7.2 综合置信度算法</a><ul>
+<li><a href="#721">7.2.1 权重分配策略</a></li>
+<li><a href="#722">7.2.2 多因子融合计算</a></li>
+<li><a href="#723">7.2.3 判定阈值设定</a></li>
+</ul>
+</li>
+<li><a href="#73">7.3 结果输出策略</a><ul>
+<li><a href="#731">7.3.1 盗版概率计算</a></li>
+<li><a href="#732">7.3.2 风险等级划分</a></li>
+<li><a href="#733">7.3.3 生成举报建议</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_26">八、系统核心模块</a><ul>
+<li><a href="#81">8.1 前端模块</a><ul>
+<li><a href="#811">8.1.1 组件化设计</a></li>
+<li><a href="#812">8.1.2 三大视图模式</a><ul>
+<li><a href="#_27">终端视图</a></li>
+<li><a href="#_28">概览视图</a></li>
+<li><a href="#_29">设备视图</a></li>
+</ul>
+</li>
+<li><a href="#813">8.1.3 状态管理</a></li>
+</ul>
+</li>
+<li><a href="#82-api">8.2 后端API模块</a><ul>
+<li><a href="#821-fastapi">8.2.1 FastAPI服务设计</a></li>
+<li><a href="#822">8.2.2 任务管理器</a></li>
+<li><a href="#823">8.2.3 数据接口</a></li>
+<li><a href="#824-websocket">8.2.4 WebSocket实时通信</a></li>
+</ul>
+</li>
+<li><a href="#83">8.3 反盗版系统</a><ul>
+<li><a href="#831-piracydetector">8.3.1 PiracyDetector引擎</a></li>
+<li><a href="#832-productdatabase">8.3.2 ProductDatabase</a></li>
+<li><a href="#833-reportmanager">8.3.3 ReportManager</a></li>
+<li><a href="#834-reporter">8.3.4 Reporter执行器</a></li>
+<li><a href="#835-websocket-api">8.3.5 WebSocket API服务器</a></li>
+</ul>
+</li>
+<li><a href="#84">8.4 通信模块</a><ul>
+<li><a href="#841-http-rest-api">8.4.1 HTTP REST API</a></li>
+<li><a href="#842-websocket">8.4.2 WebSocket实时通信</a></li>
+<li><a href="#843">8.4.3 错误处理机制</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_30">九、系统架构图与流程图</a><ul>
+<li><a href="#91">9.1 系统整体架构图</a><ul>
+<li><a href="#911">9.1.1 前后端分离架构</a></li>
+<li><a href="#912">9.1.2 模块依赖关系</a></li>
+<li><a href="#913">9.1.3 数据流向</a></li>
+</ul>
+</li>
+<li><a href="#92">9.2 业务流程图</a><ul>
+<li><a href="#921">9.2.1 盗版检测流程</a></li>
+<li><a href="#922">9.2.2 举报执行流程</a></li>
+<li><a href="#923">9.2.3 报告生成流程</a></li>
+</ul>
+</li>
+<li><a href="#93">9.3 数据流图</a><ul>
+<li><a href="#931">9.3.1 采集→处理→判定→存储</a></li>
+<li><a href="#932">9.3.2 实时数据同步</a></li>
+</ul>
+</li>
+<li><a href="#94">9.4 时序图</a><ul>
+<li><a href="#941">9.4.1 前后端交互时序</a></li>
+<li><a href="#942-ai">9.4.2 AI模型调用流程</a></li>
+<li><a href="#943">9.4.3 多设备协作时序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_31">十、技术实现细节</a><ul>
+<li><a href="#101">10.1 关键技术实现</a><ul>
+<li><a href="#1011">10.1.1 中文输入智能处理</a></li>
+<li><a href="#1012-ui">10.1.2 多平台UI适配</a></li>
+<li><a href="#1013">10.1.3 实时性能优化</a></li>
+</ul>
+</li>
+<li><a href="#102">10.2 数据存储机制</a><ul>
+<li><a href="#1021-json">10.2.1 JSON文件存储策略</a></li>
+<li><a href="#1022">10.2.2 截图文件管理</a></li>
+<li><a href="#1023">10.2.3 日志轮转机制</a></li>
+</ul>
+</li>
+<li><a href="#103">10.3 容错处理</a><ul>
+<li><a href="#1031">10.3.1 异常捕获机制</a></li>
+<li><a href="#1032">10.3.2 自动恢复策略</a></li>
+<li><a href="#1033">10.3.3 降级服务方案</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_32">十一、性能优化与扩展性</a><ul>
+<li><a href="#111">11.1 性能优化策略</a><ul>
+<li><a href="#1111-io">11.1.1 异步IO处理</a></li>
+<li><a href="#1112">11.1.2 数据缓存机制</a></li>
+<li><a href="#1113">11.1.3 连接池管理</a></li>
+</ul>
+</li>
+<li><a href="#112">11.2 扩展性设计</a><ul>
+<li><a href="#1121">11.2.1 微服务架构</a></li>
+<li><a href="#1122">11.2.2 平台扩展接口</a></li>
+<li><a href="#1123">11.2.3 功能模块解耦</a></li>
+</ul>
+</li>
+<li><a href="#113">11.3 部署方案</a><ul>
+<li><a href="#1131-docker">11.3.1 Docker容器化</a></li>
+<li><a href="#1132-docker-composeyml">11.3.2 docker-compose.yml</a></li>
+<li><a href="#1133">11.3.3 负载均衡</a></li>
+<li><a href="#1134">11.3.4 监控告警</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_33">十二、应用场景与案例</a><ul>
+<li><a href="#121">12.1 典型应用场景</a><ul>
+<li><a href="#1211">12.1.1 知识产权保护</a></li>
+<li><a href="#1212">12.1.2 品牌维权</a></li>
+<li><a href="#1213">12.1.3 平台合规管理</a></li>
+</ul>
+</li>
+<li><a href="#122">12.2 实际案例分析</a><ul>
+<li><a href="#1221">12.2.1 众合法考案例</a><ul>
+<li><a href="#_34">背景介绍</a></li>
+<li><a href="#_35">系统实施</a></li>
+<li><a href="#_36">实施效果</a></li>
+</ul>
+</li>
+<li><a href="#1222">12.2.2 检测效果统计</a><ul>
+<li><a href="#_37">准确率分析</a></li>
+<li><a href="#_38">效率提升对比</a></li>
+</ul>
+</li>
+<li><a href="#1223">12.2.3 效率提升对比</a><ul>
+<li><a href="#_39">处理效率对比</a></li>
+<li><a href="#_40">案例总结</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_41">十三、技术亮点与创新</a><ul>
+<li><a href="#131">13.1 技术创新点</a><ul>
+<li><a href="#1311-ai">13.1.1 多模态AI集成应用</a></li>
+<li><a href="#1312">13.1.2 自动化举报流程</a></li>
+<li><a href="#1313">13.1.3 三层判定算法</a></li>
+<li><a href="#1314">13.1.4 实时监控机制</a></li>
+</ul>
+</li>
+<li><a href="#132">13.2 行业优势</a><ul>
+<li><a href="#1321">13.2.1 高效准确（自动化程度高）</a></li>
+<li><a href="#1322">13.2.2 全覆盖（多平台支持）</a></li>
+<li><a href="#1323-ai">13.2.3 低成本（AI驱动）</a></li>
+</ul>
+</li>
+<li><a href="#133">13.3 未来发展方向</a><ul>
+<li><a href="#1331">13.3.1 更多平台支持</a></li>
+<li><a href="#1332">13.3.2 更精准的检测</a></li>
+<li><a href="#1333">13.3.3 商业化应用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_42">十四、总结与展望</a><ul>
+<li><a href="#141">14.1 技术总结</a><ul>
+<li><a href="#_43">核心技术成就</a></li>
+<li><a href="#_44">技术创新亮点</a></li>
+</ul>
+</li>
+<li><a href="#142">14.2 应用价值</a><ul>
+<li><a href="#_45">对知识产权保护的价值</a></li>
+<li><a href="#_46">对行业的推动作用</a></li>
+</ul>
+</li>
+<li><a href="#143">14.3 未来规划</a><ul>
+<li><a href="#6">短期目标（6个月内）</a></li>
+<li><a href="#1">中期目标（1年内）</a></li>
+<li><a href="#3">长期愿景（3年内）</a></li>
+</ul>
+</li>
+<li><a href="#_47">结语</a></li>
+</ul>
+</li>
+<li><a href="#_48">附录</a><ul>
+<li><a href="#a-api">A. API接口文档</a><ul>
+<li><a href="#a1-http-rest-api">A.1 HTTP REST API</a><ul>
+<li><a href="#1_1">1. 巡查任务管理</a></li>
+<li><a href="#2">2. 获取任务状态</a></li>
+<li><a href="#3_1">3. 获取实时日志</a></li>
+<li><a href="#4">4. 获取系统统计</a></li>
+</ul>
+</li>
+<li><a href="#a2-websocket">A.2 WebSocket接口</a><ul>
+<li><a href="#1_2">1. 连接建立</a></li>
+<li><a href="#2_1">2. 发送命令</a></li>
+<li><a href="#3_2">3. 接收消息</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#b">B. 数据模型定义</a><ul>
+<li><a href="#b1-typescript">B.1 TypeScript接口定义</a></li>
+<li><a href="#b2-python">B.2 Python数据类</a></li>
+</ul>
+</li>
+<li><a href="#c">C. 配置参数说明</a><ul>
+<li><a href="#c1">C.1 系统配置</a></li>
+<li><a href="#c2">C.2 平台配置</a></li>
+</ul>
+</li>
+<li><a href="#d">D. 故障排查指南</a><ul>
+<li><a href="#d1">D.1 常见问题</a><ul>
+<li><a href="#1_3">1. 设备连接失败</a></li>
+<li><a href="#2_2">2. 模型服务不可用</a></li>
+<li><a href="#3_3">3. 截图失败</a></li>
+</ul>
+</li>
+<li><a href="#d2">D.2 错误码说明</a></li>
+<li><a href="#d3">D.3 性能优化建议</a><ul>
+<li><a href="#1_4">1. 内存优化</a></li>
+<li><a href="#2_3">2. 网络优化</a></li>
+<li><a href="#3_4">3. 数据库优化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<hr />
+<h2 id="_2">一、文档概述</h2>
+<h3 id="11">1.1 文档目的与范围</h3>
+<p>本文档详细介绍了GUI-Stride多模态反盗版系统的技术架构、实现细节和创新点。文档旨在为技术评审人员、系统架构师和开发人员提供全面的系统理解，包括：</p>
+<ul>
+<li>系统整体架构设计</li>
+<li>多模态AI模型的集成与应用</li>
+<li>界面控制策略和数据处理流程</li>
+<li>盗版检测的判定逻辑</li>
+<li>系统核心模块功能</li>
+<li>性能优化与扩展性方案</li>
+</ul>
+<p>本文档不涉及具体的安装和配置步骤，重点聚焦于技术实现和系统架构。</p>
+<h3 id="12">1.2 系统价值与创新点</h3>
+<p>GUI-Stride系统通过将多模态AI技术与传统反盗工作相结合，实现了以下创新：</p>
+<ol>
+<li><strong>全自动化巡查</strong>：从商品搜索到举报执行的全流程自动化</li>
+<li><strong>多模态智能识别</strong>：结合视觉、文本和交互数据进行综合判断</li>
+<li><strong>三层判定机制</strong>：提高检测准确率，减少误判</li>
+<li><strong>实时监控</strong>：WebSocket实时推送，掌握巡查动态</li>
+<li><strong>多平台支持</strong>：适配主流电商平台的UI特点</li>
+</ol>
+<h3 id="13">1.3 目标读者</h3>
+<ul>
+<li><strong>技术评审人员</strong>：了解系统技术架构和实现细节</li>
+<li><strong>系统架构师</strong>：参考系统的架构设计和模块划分</li>
+<li><strong>开发人员</strong>：理解代码实现和接口设计</li>
+<li><strong>产品经理</strong>：了解系统功能和技术可行性</li>
+<li><strong>运维人员</strong>：了解系统部署和运维要点</li>
+</ul>
+<hr />
+<h2 id="_3">二、项目概述</h2>
+<h3 id="21">2.1 项目背景与意义</h3>
+<h4 id="211">2.1.1 知识产权保护需求</h4>
+<p>随着数字经济的快速发展，知识产权保护面临新的挑战：</p>
+<ul>
+<li><strong>盗版内容泛滥</strong>：电商平台上的盗版商品日益增多</li>
+<li><strong>人工巡查效率低</strong>：传统的人工巡查方式耗时长、成本高</li>
+<li><strong>隐蔽性强</strong>：盗版商家采用更隐蔽的销售方式</li>
+<li><strong>跨平台传播</strong>：盗版内容在多个平台快速传播</li>
+</ul>
+<h4 id="212">2.1.2 传统人工巡查的局限性</h4>
+<p>传统反盗版工作主要依赖人工巡查，存在以下局限性：</p>
+<ol>
+<li><strong>效率低下</strong>：人工搜索和判定效率有限</li>
+<li><strong>成本高昂</strong>：需要大量人力投入</li>
+<li><strong>覆盖范围有限</strong>：难以全面覆盖所有平台</li>
+<li><strong>主观性强</strong>：判定标准不统一，存在主观偏差</li>
+<li><strong>实时性差</strong>：无法实时发现和处理盗版内容</li>
+</ol>
+<h4 id="213-ai">2.1.3 AI技术的应用价值</h4>
+<p>人工智能技术的发展为反盗版工作提供了新的解决方案：</p>
+<ol>
+<li><strong>自动化处理</strong>：AI可以实现7×24小时不间断巡查</li>
+<li><strong>智能识别</strong>：多模态AI可以准确识别盗版特征</li>
+<li><strong>实时监测</strong>：及时发现新出现的盗版内容</li>
+<li><strong>成本优化</strong>：大幅降低人力成本</li>
+<li><strong>数据驱动</strong>：基于数据做出客观判断</li>
+</ol>
+<h3 id="22">2.2 系统目标</h3>
+<p>GUI-Stride系统旨在构建一个智能化的反盗版平台，主要目标包括：</p>
+<h4 id="221">2.2.1 自动化盗版监测</h4>
+<ul>
+<li><strong>自动搜索</strong>：根据关键词自动搜索目标商品</li>
+<li><strong>智能识别</strong>：利用AI技术识别盗版商品特征</li>
+<li><strong>批量处理</strong>：支持批量检测和处理商品信息</li>
+<li><strong>实时反馈</strong>：及时反馈检测结果和处理进度</li>
+</ul>
+<h4 id="222">2.2.2 智能内容识别</h4>
+<ul>
+<li><strong>多模态分析</strong>：结合图像、文本等多种数据源</li>
+<li><strong>相似度计算</strong>：计算商品内容的相似程度</li>
+<li><strong>特征提取</strong>：提取盗版商品的典型特征</li>
+<li><strong>模式识别</strong>：识别盗版商品的常见模式</li>
+</ul>
+<h4 id="223">2.2.3 高效举报流程</h4>
+<ul>
+<li><strong>自动举报</strong>：自动执行举报流程</li>
+<li><strong>证据收集</strong>：自动收集和保存证据</li>
+<li><strong>报告生成</strong>：生成详细的举报报告</li>
+<li><strong>跟踪管理</strong>：跟踪举报处理进度</li>
+</ul>
+<h4 id="224">2.2.4 全平台覆盖</h4>
+<ul>
+<li><strong>小红书</strong>：已完成平台适配</li>
+<li><strong>闲鱼</strong>：接口预留，待实现</li>
+<li><strong>淘宝</strong>：接口预留，待实现</li>
+<li><strong>扩展性</strong>：支持更多平台的快速接入</li>
+</ul>
+<hr />
+<h2 id="_4">三、系统架构设计</h2>
+<h3 id="31">3.1 整体架构图</h3>
+<h4 id="311">3.1.1 三层架构</h4>
+<p>GUI-Stride系统采用现代化的三层架构设计，实现了前后端分离和模块化开发：</p>
+<pre class="codehilite"><code class="language-mermaid">graph TB
+    subgraph &quot;前端层 (Frontend Layer)&quot;
+        A[React前端]
+        B[用户界面组件]
+        C[实时数据显示]
+        D[可视化图表]
+    end
+
+    subgraph &quot;API层 (API Layer)&quot;
+        E[FastAPI后端]
+        F[WebSocket服务器]
+        G[RESTful API]
+        H[任务管理器]
+    end
+
+    subgraph &quot;服务层 (Service Layer)&quot;
+        I[反盗版引擎]
+        J[多模态AI模型]
+        K[数据存储系统]
+        L[报告生成器]
+    end
+
+    A --&gt; G
+    A --&gt; F
+    B --&gt; A
+    C --&gt; A
+    D --&gt; A
+    G --&gt; E
+    F --&gt; E
+    E --&gt; H
+    H --&gt; I
+    I --&gt; J
+    I --&gt; K
+    I --&gt; L
+</code></pre>
+
+<h4 id="312">3.1.2 双重通信机制</h4>
+<p>系统采用HTTP + WebSocket双重通信机制，确保数据传输的高效性和实时性：</p>
+<pre class="codehilite"><code class="language-mermaid">graph LR
+    subgraph &quot;前端通信&quot;
+        A[React前端]
+        B[HTTP REST API]
+        C[WebSocket实时通信]
+    end
+
+    subgraph &quot;后端服务&quot;
+        D[FastAPI服务器]
+        E[WebSocket服务器]
+        F[任务队列]
+    end
+
+    subgraph &quot;反盗版系统&quot;
+        G[AI模型服务]
+        H[数据存储]
+        I[日志系统]
+    end
+
+    A --&gt; B
+    A --&gt; C
+    B --&gt; D
+    C --&gt; E
+    D --&gt; F
+    E --&gt; F
+    F --&gt; G
+    F --&gt; H
+    G --&gt; I
+</code></pre>
+
+<h4 id="313">3.1.3 模块间交互关系</h4>
+<p>各模块之间通过清晰的接口进行交互，实现了高度解耦：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>依赖</th>
+<th>通信方式</th>
+<th>数据格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>前端</td>
+<td>API层</td>
+<td>HTTP/WebSocket</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>API层</td>
+<td>服务层</td>
+<td>内部调用</td>
+<td>Python对象</td>
+</tr>
+<tr>
+<td>反盗版引擎</td>
+<td>AI模型</td>
+<td>API调用</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>各模块</td>
+<td>文件IO</td>
+<td>JSON/二进制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32">3.2 技术栈选型</h3>
+<h4 id="321">3.2.1 前端技术栈</h4>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>版本</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>React</td>
+<td>19.2.3</td>
+<td>前端框架</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>5.5.0</td>
+<td>类型安全</td>
+</tr>
+<tr>
+<td>Tailwind CSS</td>
+<td>3.4.0</td>
+<td>样式框架</td>
+</tr>
+<tr>
+<td>Vite</td>
+<td>5.4.1</td>
+<td>构建工具</td>
+</tr>
+<tr>
+<td>jsPDF</td>
+<td>最新</td>
+<td>PDF生成</td>
+</tr>
+<tr>
+<td>html2canvas</td>
+<td>最新</td>
+<td>截图生成</td>
+</tr>
+<tr>
+<td>Lucide React</td>
+<td>0.562.0</td>
+<td>图标库</td>
+</tr>
+</tbody>
+</table>
+<h4 id="322">3.2.2 后端技术栈</h4>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>版本</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>3.9+</td>
+<td>开发语言</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>最新</td>
+<td>Web框架</td>
+</tr>
+<tr>
+<td>Open-AutoGLM</td>
+<td>最新</td>
+<td>多模态AI模型</td>
+</tr>
+<tr>
+<td>Pydantic</td>
+<td>最新</td>
+<td>数据验证</td>
+</tr>
+<tr>
+<td>asyncio</td>
+<td>内置</td>
+<td>异步编程</td>
+</tr>
+<tr>
+<td>websockets</td>
+<td>最新</td>
+<td>WebSocket支持</td>
+</tr>
+</tbody>
+</table>
+<h4 id="323">3.2.3 数据存储</h4>
+<table>
+<thead>
+<tr>
+<th>存储类型</th>
+<th>用途</th>
+<th>格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSON文件</td>
+<td>配置和数据存储</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>截图文件</td>
+<td>证据存储</td>
+<td>PNG</td>
+</tr>
+<tr>
+<td>日志文件</td>
+<td>系统日志</td>
+<td>文本</td>
+</tr>
+<tr>
+<td>临时文件</td>
+<td>中间数据</td>
+<td>多种格式</td>
+</tr>
+</tbody>
+</table>
+<h4 id="324">3.2.4 通信协议</h4>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>用途</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP REST API</td>
+<td>数据交互</td>
+<td>8000</td>
+</tr>
+<tr>
+<td>WebSocket</td>
+<td>实时通信</td>
+<td>8766</td>
+</tr>
+<tr>
+<td>ADB</td>
+<td>设备控制</td>
+<td>动态</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_5">四、多模态模型架构与功能</h2>
+<h3 id="41-open-autoglm">4.1 Open-AutoGLM框架集成</h3>
+<h4 id="411">4.1.1 模型配置与初始化</h4>
+<pre class="codehilite"><code class="language-python">from phone_agent.model import ModelConfig
+
+# 模型配置
+model_config = ModelConfig(
+    base_url=&quot;http://localhost:8000/v1&quot;,  # 模型服务地址
+    model_name=&quot;autoglm-phone-9b&quot;,        # 模型名称
+    max_tokens=4096,                      # 最大令牌数
+    temperature=0.7,                      # 温度参数
+    top_p=0.9                           # 采样参数
+)
+
+# Agent配置
+agent_config = AgentConfig(
+    max_steps=50,           # 最大执行步数
+    wait_after_action=2.0,  # 操作后等待时间
+    verbose=True           # 详细输出
+)
+</code></pre>
+
+<h4 id="412-agent">4.1.2 Agent扩展与定制</h4>
+<p>系统基于Open-AutoGLM框架进行了专门的扩展：</p>
+<pre class="codehilite"><code class="language-python">class AntiPiracyAgent:
+    &quot;&quot;&quot;反盗版巡查 Agent&quot;&quot;&quot;
+
+    def __init__(self, model_config, agent_config=None, platform=&quot;xiaohongshu&quot;):
+        # 初始化基础Agent
+        self.base_agent = PhoneAgent(
+            model_config=model_config,
+            agent_config=agent_config
+        )
+
+        # 初始化反盗版专用组件
+        self.product_db = ProductDatabase()
+        self.detector = PiracyDetector()
+        self.report_manager = ReportManager()
+</code></pre>
+
+<h4 id="413">4.1.3 服务端部署架构</h4>
+<pre class="codehilite"><code class="language-mermaid">graph TB
+    subgraph &quot;模型服务层&quot;
+        A[Open-AutoGLM服务]
+        B[模型推理API]
+        C[多模态处理]
+    end
+
+    subgraph &quot;Agent服务层&quot;
+        D[PhoneAgent]
+        E[反盗版Agent]
+        F[任务调度]
+    end
+
+    subgraph &quot;应用服务层&quot;
+        G[反盗版引擎]
+        H[数据存储]
+        I[报告生成]
+    end
+
+    A --&gt; B
+    B --&gt; C
+    C --&gt; D
+    D --&gt; E
+    E --&gt; F
+    F --&gt; G
+    G --&gt; H
+    G --&gt; I
+</code></pre>
+
+<h3 id="42">4.2 多模态能力实现</h3>
+<h4 id="421">4.2.1 视觉识别能力</h4>
+<h5 id="ui">UI界面理解</h5>
+<p>系统利用Open-AutoGLM的视觉理解能力，能够：</p>
+<ul>
+<li><strong>页面元素定位</strong>：识别并定位UI控件</li>
+<li><strong>界面结构分析</strong>：理解页面布局和层次</li>
+<li><strong>按钮识别</strong>：准确识别可点击元素</li>
+<li><strong>文本区域识别</strong>：定位输入框和文本显示区</li>
+</ul>
+<pre class="codehilite"><code class="language-python"># 视觉理解示例
+task = &quot;分析当前页面，识别出所有可点击的元素&quot;
+response = agent.run(task)
+clickable_elements = response.extract_clickable_elements()
+</code></pre>
+
+<h5 id="_6">商品图像识别</h5>
+<pre class="codehilite"><code class="language-python"># 商品图像分析
+task = &quot;&quot;&quot;
+请分析这张商品图片，提取以下信息：
+1. 商品的主要特征
+2. 品牌/商标信息
+3. 产品型号
+4. 包装特点
+&quot;&quot;&quot;
+response = agent.run(task)
+product_features = response.extract_features()
+</code></pre>
+
+<h5 id="_7">截图采集与存储</h5>
+<pre class="codehilite"><code class="language-python">def capture_evidence(task_id, element_info):
+    &quot;&quot;&quot;采集证据截图&quot;&quot;&quot;
+    timestamp = datetime.now().strftime(&quot;%Y%m%d_%H%M%S&quot;)
+    filename = f&quot;evidence_{task_id}_{timestamp}.png&quot;
+    filepath = os.path.join(EVIDENCE_DIR, filename)
+
+    # 截图保存
+    agent.screenshot(filepath)
+
+    # 记录截图信息
+    evidence_record = {
+        &quot;filename&quot;: filename,
+        &quot;timestamp&quot;: timestamp,
+        &quot;element&quot;: element_info,
+        &quot;path&quot;: filepath
+    }
+
+    return evidence_record
+</code></pre>
+
+<h4 id="422">4.2.2 文本处理能力</h4>
+<h5 id="ocr">OCR文本提取</h5>
+<pre class="codehilite"><code class="language-python">def extract_text_from_image(image_path):
+    &quot;&quot;&quot;从图片中提取文本&quot;&quot;&quot;
+    task = f&quot;&quot;&quot;
+    请从图片中提取所有可见文本，包括：
+    1. 商品标题
+    2. 价格信息
+    3. 店铺名称
+    4. 描述文字
+    5. 其他相关文本
+
+    请以JSON格式返回提取结果。
+    &quot;&quot;&quot;
+
+    response = agent.run(task)
+    text_content = response.extract_text()
+    return text_content
+</code></pre>
+
+<h5 id="_8">中文输入支持</h5>
+<p>系统支持三种中文输入方式，确保输入的可靠性：</p>
+<pre class="codehilite"><code class="language-python">def input_text_smart(self, text: str):
+    &quot;&quot;&quot;智能中文输入（优先级从高到低）&quot;&quot;&quot;
+
+    # 方案1：文件传输方式（最可靠）
+    if self._use_file_input(text):
+        return True
+
+    # 方案2：ADB Keyboard广播
+    elif self._use_adb_keyboard(text):
+        return True
+
+    # 方案3：剪贴板粘贴方式
+    elif self._use_clipboard_paste(text):
+        return True
+
+    return False
+</code></pre>
+
+<h5 id="_9">文本相似度计算</h5>
+<pre class="codehilite"><code class="language-python">def _calculate_text_similarity(text1, text2):
+    &quot;&quot;&quot;计算文本相似度&quot;&quot;&quot;
+    import re
+    from difflib import SequenceMatcher
+
+    # 文本预处理
+    text1_clean = re.sub(r'[^\w\s]', '', text1.lower())
+    text2_clean = re.sub(r'[^\w\s]', '', text2.lower())
+
+    # 使用SequenceMatcher计算相似度
+    similarity = SequenceMatcher(None, text1_clean, text2_clean).ratio()
+
+    return similarity
+</code></pre>
+
+<h5 id="_10">自然语言理解</h5>
+<pre class="codehilite"><code class="language-python">def understand_natural_language(text):
+    &quot;&quot;&quot;自然语言理解&quot;&quot;&quot;
+    task = f&quot;&quot;&quot;
+    请理解并分析以下文本的含义：
+    &quot;{text}&quot;
+
+    提取关键信息：
+    1. 主要主题
+    2. 关键词
+    3. 情感倾向
+    4. 意图判断
+    &quot;&quot;&quot;
+
+    response = agent.run(task)
+    intent = response.extract_intent()
+    return intent
+</code></pre>
+
+<h4 id="423">4.2.3 交互执行能力</h4>
+<h5 id="_11">自动化点击操作</h5>
+<pre class="codehilite"><code class="language-python">def click_element(self, element_info):
+    &quot;&quot;&quot;点击指定元素&quot;&quot;&quot;
+    task = f&quot;&quot;&quot;
+    请点击页面上的指定元素：
+    - 元素类型：{element_info['type']}
+    - 元素描述：{element_info['description']}
+    - 位置信息：{element_info.get('position', '未知')}
+    &quot;&quot;&quot;
+
+    response = agent.run(task)
+    return response.success
+</code></pre>
+
+<h5 id="_12">页面导航</h5>
+<pre class="codehilite"><code class="language-python">def navigate_to_page(self, target_page):
+    &quot;&quot;&quot;导航到指定页面&quot;&quot;&quot;
+    navigation_tasks = {
+        &quot;search&quot;: &quot;进入搜索页面&quot;,
+        &quot;product&quot;: &quot;查看商品详情&quot;,
+        &quot;shop&quot;: &quot;访问店铺主页&quot;,
+        &quot;cart&quot;: &quot;进入购物车&quot;
+    }
+
+    task = navigation_tasks.get(target_page, &quot;导航到指定页面&quot;)
+    response = agent.run(task)
+    return response.success
+</code></pre>
+
+<h5 id="_13">表单填写</h5>
+<pre class="codehilite"><code class="language-python">def fill_form(self, form_data):
+    &quot;&quot;&quot;填写表单&quot;&quot;&quot;
+    task = f&quot;&quot;&quot;
+    请填写表单，输入以下信息：
+    {form_data}
+
+    注意：
+    1. 逐项填写
+    2. 确保输入准确
+    3. 提交表单
+    &quot;&quot;&quot;
+
+    response = agent.run(task)
+    return {
+        &quot;success&quot;: response.success,
+        &quot;message&quot;: response.message
+    }
+</code></pre>
+
+<h3 id="43">4.3 提示词工程</h3>
+<h4 id="431">4.3.1 结构化提示词模板</h4>
+<p>系统采用结构化的提示词设计，确保AI理解任务需求：</p>
+<pre class="codehilite"><code class="language-python">TASK_PROMPTS = {
+    &quot;extract_info&quot;: &quot;&quot;&quot;
+    请识别并提取以下信息：
+    - shop_name: 店铺名称（最关键）
+    - title: 商品标题
+    - price: 商品价格
+    - description: 商品描述
+    - images: 商品图片信息
+
+    请以JSON格式返回结果。
+    &quot;&quot;&quot;,
+
+    &quot;detect_piracy&quot;: &quot;&quot;&quot;
+    基于以下信息判断是否为盗版：
+    1. 正版商品信息：{genuine_product}
+    2. 当前商品信息：{current_product}
+
+    检查要点：
+    - 店铺名称是否匹配
+    - 价格是否异常（低于70%）
+    - 内容相似度
+
+    返回判定结果和置信度。
+    &quot;&quot;&quot;,
+
+    &quot;report_piracy&quot;: &quot;&quot;&quot;
+    执行举报操作：
+    1. 点击举报按钮
+    2. 选择原因: &quot;盗版侵权&quot;
+    3. 填写说明: {report_reason}
+    4. 提交举报
+
+    操作完成后确认举报成功。
+    &quot;&quot;&quot;
+}
+</code></pre>
+
+<h4 id="432">4.3.2 任务指令设计</h4>
+<pre class="codehilite"><code class="language-python">class TaskPromptBuilder:
+    &quot;&quot;&quot;任务提示词构建器&quot;&quot;&quot;
+
+    @staticmethod
+    def build_extract_prompt(element_type):
+        &quot;&quot;&quot;构建信息提取提示词&quot;&quot;&quot;
+        prompts = {
+            &quot;product&quot;: &quot;&quot;&quot;
+            提取商品详细信息：
+            - 标题
+            - 价格
+            - 店铺名称
+            &quot;&quot;&quot;,
+
+            &quot;shop&quot;: &quot;&quot;&quot;
+            提取店铺信息：
+            - 店铺名称
+            - 店铺等级
+            - 认证信息
+            &quot;&quot;&quot;,
+
+            &quot;review&quot;: &quot;&quot;&quot;
+            提取评论信息：
+            - 评论内容
+            - 评分
+            - 发布时间
+            &quot;&quot;&quot;
+        }
+
+        return prompts.get(element_type, &quot;&quot;)
+</code></pre>
+
+<h4 id="433">4.3.3 上下文管理</h4>
+<pre class="codehilite"><code class="language-python">class ContextManager:
+    &quot;&quot;&quot;上下文管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.context = {
+            &quot;current_task&quot;: None,
+            &quot;history&quot;: [],
+            &quot;variables&quot;: {}
+        }
+
+    def add_context(self, key, value):
+        &quot;&quot;&quot;添加上下文信息&quot;&quot;&quot;
+        self.context[&quot;variables&quot;][key] = value
+
+    def get_context(self, key):
+        &quot;&quot;&quot;获取上下文信息&quot;&quot;&quot;
+        return self.context[&quot;variables&quot;].get(key)
+
+    def build_prompt(self, base_prompt):
+        &quot;&quot;&quot;构建带上下文的提示词&quot;&quot;&quot;
+        context_info = &quot;\n&quot;.join([
+            f&quot;{k}: {v}&quot;
+            for k, v in self.context[&quot;variables&quot;].items()
+        ])
+
+        return f&quot;{base_prompt}\n\n上下文信息：\n{context_info}&quot;
+</code></pre>
+
+<hr />
+<h2 id="_14">五、界面控制策略</h2>
+<h3 id="51">5.1 多平台适配策略</h3>
+<h4 id="511">5.1.1 小红书平台（完整实现）</h4>
+<p>小红书作为首个实现的目标平台，具有以下特点：</p>
+<pre class="codehilite"><code class="language-python">XIAOHONGSHU_CONFIG = {
+    &quot;app_package&quot;: &quot;com.xingin.xhs&quot;,
+    &quot;search_keywords&quot;: [&quot;众合法考&quot;, &quot;众合法考客观题&quot;],
+    &quot;ui_elements&quot;: {
+        &quot;search_bar&quot;: &quot;搜索框&quot;,
+        &quot;product_list&quot;: &quot;商品列表&quot;,
+        &quot;shop_info&quot;: &quot;店铺信息&quot;,
+        &quot;price_tag&quot;: &quot;价格标签&quot;
+    },
+    &quot;navigation&quot;: {
+        &quot;home&quot;: &quot;首页&quot;,
+        &quot;search&quot;: &quot;搜索页&quot;,
+        &quot;detail&quot;: &quot;详情页&quot;
+    }
+}
+</code></pre>
+
+<h4 id="512">5.1.2 闲鱼平台（接口预留）</h4>
+<pre class="codehilite"><code class="language-python">XIANYU_CONFIG = {
+    &quot;app_package&quot;: &quot;com.taobao.idlefish&quot;,
+    &quot;status&quot;: &quot;reserved&quot;,
+    &quot;features&quot;: [
+        &quot;search_interface&quot;,
+        &quot;product_display&quot;,
+        &quot;shop_verification&quot;,
+        &quot;report_function&quot;
+    ]
+}
+</code></pre>
+
+<h4 id="513">5.1.3 淘宝平台（接口预留）</h4>
+<pre class="codehilite"><code class="language-python">TAOBAO_CONFIG = {
+    &quot;app_package&quot;: &quot;com.taobao.taobao&quot;,
+    &quot;status&quot;: &quot;reserved&quot;,
+    &quot;implementation_notes&quot;: &quot;待实现淘宝平台适配&quot;
+}
+</code></pre>
+
+<h4 id="514">5.1.4 平台扩展机制</h4>
+<pre class="codehilite"><code class="language-python">class PlatformAdapter:
+    &quot;&quot;&quot;平台适配器&quot;&quot;&quot;
+
+    def __init__(self, platform_config):
+        self.config = platform_config
+        self.ui_mapper = self._load_ui_mapper()
+
+    def _load_ui_mapper(self):
+        &quot;&quot;&quot;加载UI元素映射&quot;&quot;&quot;
+        return {
+            &quot;search_bar&quot;: self.config.get(&quot;ui_elements&quot;, {}).get(&quot;search_bar&quot;),
+            &quot;price_tag&quot;: self.config.get(&quot;ui_elements&quot;, {}).get(&quot;price_tag&quot;)
+        }
+
+    def adapt_ui_interaction(self, element_type):
+        &quot;&quot;&quot;适配UI交互&quot;&quot;&quot;
+        element_info = self.ui_mapper.get(element_type)
+        if not element_info:
+            raise ValueError(f&quot;不支持的元素类型: {element_type}&quot;)
+
+        return element_info
+</code></pre>
+
+<h3 id="52">5.2 设备控制机制</h3>
+<h4 id="521-adb">5.2.1 ADB连接管理</h4>
+<pre class="codehilite"><code class="language-python">class ADBManager:
+    &quot;&quot;&quot;ADB连接管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.connected_devices = []
+        self.current_device = None
+
+    def connect_device(self, device_id):
+        &quot;&quot;&quot;连接设备&quot;&quot;&quot;
+        try:
+            # 检查设备连接状态
+            result = subprocess.run(
+                [&quot;adb&quot;, &quot;-s&quot;, device_id, &quot;shell&quot;, &quot;echo&quot;, &quot;test&quot;],
+                capture_output=True,
+                text=True
+            )
+
+            if result.returncode == 0:
+                self.current_device = device_id
+                return True
+            return False
+        except Exception as e:
+            print(f&quot;连接设备失败: {e}&quot;)
+            return False
+</code></pre>
+
+<h4 id="522">5.2.2 屏幕截图采集</h4>
+<pre class="codehilite"><code class="language-python">def capture_screen(device_id=None):
+    &quot;&quot;&quot;采集屏幕截图&quot;&quot;&quot;
+    if device_id:
+        cmd = f&quot;adb -s {device_id} exec-out screencap -p&quot;
+    else:
+        cmd = &quot;adb exec-out screencap -p&quot;
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, shell=True)
+        if result.returncode == 0:
+            return result.stdout
+        return None
+    except Exception as e:
+        print(f&quot;截图失败: {e}&quot;)
+        return None
+</code></pre>
+
+<h4 id="523-ui">5.2.3 UI元素识别</h4>
+<pre class="codehilite"><code class="language-python">def locate_ui_element(element_type):
+    &quot;&quot;&quot;定位UI元素&quot;&quot;&quot;
+    element_templates = {
+        &quot;search_button&quot;: {
+            &quot;resource-id&quot;: &quot;com.xingin.xhs:id/search_button&quot;,
+            &quot;bounds&quot;: &quot;[100,200][300,400]&quot;
+        },
+        &quot;price_text&quot;: {
+            &quot;resource-id&quot;: &quot;com.xingin.xhs:id/price&quot;,
+            &quot;text_pattern&quot;: r&quot;\d+\.?\d*&quot;
+        }
+    }
+
+    template = element_templates.get(element_type)
+    if not template:
+        return None
+
+    # 使用uiautomator或AI进行元素定位
+    return template
+</code></pre>
+
+<h3 id="53">5.3 智能交互设计</h3>
+<h4 id="531">5.3.1 操作序列优化</h4>
+<pre class="codehilite"><code class="language-python">class InteractionOptimizer:
+    &quot;&quot;&quot;交互优化器&quot;&quot;&quot;
+
+    def optimize_sequence(self, operations):
+        &quot;&quot;&quot;优化操作序列&quot;&quot;&quot;
+        # 分析操作之间的依赖关系
+        dependency_graph = self._build_dependency_graph(operations)
+
+        # 拓扑排序
+        optimized_sequence = self._topological_sort(dependency_graph)
+
+        # 合并相似操作
+        optimized_sequence = self._merge_similar_operations(optimized_sequence)
+
+        return optimized_sequence
+
+    def _build_dependency_graph(self, operations):
+        &quot;&quot;&quot;构建依赖图&quot;&quot;&quot;
+        # 实现依赖关系分析
+        pass
+
+    def _merge_similar_operations(self, operations):
+        &quot;&quot;&quot;合并相似操作&quot;&quot;&quot;
+        # 实现操作合并逻辑
+        pass
+</code></pre>
+
+<h4 id="532">5.3.2 异常处理机制</h4>
+<pre class="codehilite"><code class="language-python">class ExceptionHandler:
+    &quot;&quot;&quot;异常处理器&quot;&quot;&quot;
+
+    def handle_adb_error(self, error):
+        &quot;&quot;&quot;处理ADB错误&quot;&quot;&quot;
+        error_patterns = {
+            &quot;device_not_found&quot;: &quot;设备未连接&quot;,
+            &quot;adb_not_found&quot;: &quot;ADB未找到&quot;,
+            &quot;permission_denied&quot;: &quot;权限被拒绝&quot;,
+            &quot;timeout&quot;: &quot;操作超时&quot;
+        }
+
+        for pattern, message in error_patterns.items():
+            if pattern in str(error):
+                return self._handle_specific_error(pattern, message)
+
+        return self._handle_unknown_error(error)
+
+    def retry_operation(self, operation, max_retries=3):
+        &quot;&quot;&quot;重试操作&quot;&quot;&quot;
+        for attempt in range(max_retries):
+            try:
+                return operation()
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    raise e
+                time.sleep(2 ** attempt)  # 指数退避
+</code></pre>
+
+<h4 id="533">5.3.3 重试策略</h4>
+<pre class="codehilite"><code class="language-python">class RetryStrategy:
+    &quot;&quot;&quot;重试策略&quot;&quot;&quot;
+
+    def __init__(self):
+        self.retry_config = {
+            &quot;max_retries&quot;: 3,
+            &quot;retry_intervals&quot;: [1, 2, 4],  # 秒
+            &quot;error_types&quot;: [&quot;timeout&quot;, &quot;network&quot;, &quot;ui_not_found&quot;]
+        }
+
+    def should_retry(self, error):
+        &quot;&quot;&quot;判断是否应该重试&quot;&quot;&quot;
+        error_str = str(error).lower()
+
+        for error_type in self.retry_config[&quot;error_types&quot;]:
+            if error_type in error_str:
+                return True
+
+        return False
+
+    def get_retry_interval(self, attempt):
+        &quot;&quot;&quot;获取重试间隔&quot;&quot;&quot;
+        if attempt &lt; len(self.retry_config[&quot;retry_intervals&quot;]):
+            return self.retry_config[&quot;retry_intervals&quot;][attempt]
+        return 5  # 默认间隔
+</code></pre>
+
+<h3 id="54">5.4 用户输入处理</h3>
+<h4 id="541">5.4.1 文本输入三种方式</h4>
+<pre class="codehilite"><code class="language-python">class TextInputManager:
+    &quot;&quot;&quot;文本输入管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.input_methods = [
+            self._file_input_method,
+            self._adb_keyboard_method,
+            self._clipboard_method
+        ]
+
+    def input_text(self, text):
+        &quot;&quot;&quot;智能选择输入方式&quot;&quot;&quot;
+        for method in self.input_methods:
+            try:
+                if method(text):
+                    return True
+            except Exception:
+                continue
+
+        return False
+
+    def _file_input_method(self, text):
+        &quot;&quot;&quot;文件输入方式（最可靠）&quot;&quot;&quot;
+        # 创建临时文件
+        temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
+        temp_file.write(text)
+        temp_file.close()
+
+        # 推送到设备
+        try:
+            subprocess.run([
+                &quot;adb&quot;, &quot;push&quot;, temp_file.name,
+                &quot;/sdcard/input_temp.txt&quot;
+            ], check=True)
+
+            # 使用输入法读取文件
+            self._execute_input_command(&quot;cat /sdcard/input_temp.txt&quot;)
+
+            # 清理临时文件
+            os.unlink(temp_file.name)
+            return True
+        except Exception:
+            if os.path.exists(temp_file.name):
+                os.unlink(temp_file.name)
+            return False
+</code></pre>
+
+<h4 id="542">5.4.2 动态白名单管理</h4>
+<pre class="codehilite"><code class="language-python">class WhitelistManager:
+    &quot;&quot;&quot;白名单管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.whitelist = set()
+        self.load_whitelist()
+
+    def add_to_whitelist(self, shop_name):
+        &quot;&quot;&quot;添加到白名单&quot;&quot;&quot;
+        self.whitelist.add(shop_name.strip())
+        self.save_whitelist()
+
+    def is_whitelisted(self, shop_name):
+        &quot;&quot;&quot;检查是否在白名单&quot;&quot;&quot;
+        return shop_name.strip() in self.whitelist
+
+    def load_whitelist(self):
+        &quot;&quot;&quot;加载白名单&quot;&quot;&quot;
+        try:
+            if os.path.exists(WHITELIST_FILE):
+                with open(WHITELIST_FILE, 'r', encoding='utf-8') as f:
+                    self.whitelist = set(line.strip() for line in f)
+        except Exception as e:
+            print(f&quot;加载白名单失败: {e}&quot;)
+
+    def save_whitelist(self):
+        &quot;&quot;&quot;保存白名单&quot;&quot;&quot;
+        try:
+            with open(WHITELIST_FILE, 'w', encoding='utf-8') as f:
+                for shop in self.whitelist:
+                    f.write(f&quot;{shop}\n&quot;)
+        except Exception as e:
+            print(f&quot;保存白名单失败: {e}&quot;)
+</code></pre>
+
+<h4 id="543">5.4.3 配置参数实时更新</h4>
+<pre class="codehilite"><code class="language-python">class ConfigManager:
+    &quot;&quot;&quot;配置管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.config = self.load_config()
+        self.watchers = []
+
+    def update_config(self, key, value):
+        &quot;&quot;&quot;更新配置&quot;&quot;&quot;
+        old_value = self.config.get(key)
+        self.config[key] = value
+
+        # 通知观察者
+        self._notify_watchers(key, old_value, value)
+
+        # 保存配置
+        self.save_config()
+
+    def add_watcher(self, callback):
+        &quot;&quot;&quot;添加配置变更观察者&quot;&quot;&quot;
+        self.watchers.append(callback)
+
+    def _notify_watchers(self, key, old_value, new_value):
+        &quot;&quot;&quot;通知观察者&quot;&quot;&quot;
+        for watcher in self.watchers:
+            try:
+                watcher(key, old_value, new_value)
+            except Exception as e:
+                print(f&quot;通知观察者失败: {e}&quot;)
+</code></pre>
+
+<hr />
+<h2 id="_15">六、数据处理流程</h2>
+<h3 id="61">6.1 数据采集流程</h3>
+<h4 id="611">6.1.1 商品信息抓取</h4>
+<pre class="codehilite"><code class="language-mermaid">sequenceDiagram
+    participant F as 前端
+    participant A as API
+    participant T as TaskManager
+    participant I as AntiPiracyAgent
+    participant P as PhoneAgent
+
+    F-&gt;&gt;A: POST /api/patrol (启动巡查)
+    A-&gt;&gt;T: 创建任务
+    T-&gt;&gt;I: 执行巡查任务
+    I-&gt;&gt;P: 启动PhoneAgent
+    P-&gt;&gt;P: 导航到搜索页
+    P-&gt;&gt;P: 输入搜索关键词
+    P-&gt;&gt;P: 获取商品列表
+
+    Note over P: 多轮循环处理
+
+    P-&gt;&gt;P: 提取商品信息
+    P-&gt;&gt;I: 返回商品数据
+    I-&gt;&gt;T: 更新任务进度
+    T-&gt;&gt;A: 推送进度信息
+    A-&gt;&gt;F: WebSocket推送
+</code></pre>
+
+<h4 id="612">6.1.2 页面元素提取</h4>
+<pre class="codehilite"><code class="language-python">def extract_page_elements():
+    &quot;&quot;&quot;提取页面元素&quot;&quot;&quot;
+    task = &quot;&quot;&quot;
+    请分析当前页面，提取以下信息：
+    1. 商品列表
+    2. 商品标题
+    3. 价格信息
+    4. 店铺名称
+    5. 商品图片
+
+    请以JSON格式返回结果。
+    &quot;&quot;&quot;
+
+    response = agent.run(task)
+
+    # 解析响应数据
+    elements = {
+        &quot;products&quot;: response.extract_products(),
+        &quot;shop_info&quot;: response.extract_shop_info(),
+        &quot;images&quot;: response.extract_images()
+    }
+
+    return elements
+</code></pre>
+
+<h4 id="613">6.1.3 证据图片采集</h4>
+<pre class="codehilite"><code class="language-python">def collect_evidence_images(task_id, product_info):
+    &quot;&quot;&quot;收集证据图片&quot;&quot;&quot;
+    evidence_images = []
+
+    # 截取商品信息页面
+    product_screenshot = capture_evidence(
+        task_id,
+        {&quot;type&quot;: &quot;product_page&quot;, &quot;product&quot;: product_info}
+    )
+    evidence_images.append(product_screenshot)
+
+    # 截取店铺信息页面
+    if product_info.get(&quot;shop_name&quot;):
+        shop_screenshot = capture_evidence(
+            task_id,
+            {&quot;type&quot;: &quot;shop_page&quot;, &quot;shop&quot;: product_info[&quot;shop_name&quot;]}
+        )
+        evidence_images.append(shop_screenshot)
+
+    # 保存证据记录
+    save_evidence_record(task_id, evidence_images)
+
+    return evidence_images
+</code></pre>
+
+<h3 id="62">6.2 数据处理管道</h3>
+<h4 id="621">6.2.1 数据清洗</h4>
+<pre class="codehilite"><code class="language-python">class DataCleaner:
+    &quot;&quot;&quot;数据清洗器&quot;&quot;&quot;
+
+    @staticmethod
+    def clean_product_info(raw_data):
+        &quot;&quot;&quot;清洗商品信息&quot;&quot;&quot;
+        cleaned = {
+            &quot;title&quot;: DataCleaner._clean_text(raw_data.get(&quot;title&quot;, &quot;&quot;)),
+            &quot;shop_name&quot;: DataCleaner._clean_shop_name(raw_data.get(&quot;shop_name&quot;, &quot;&quot;)),
+            &quot;price&quot;: DataCleaner._clean_price(raw_data.get(&quot;price&quot;, 0)),
+            &quot;description&quot;: DataCleaner._clean_text(raw_data.get(&quot;description&quot;, &quot;&quot;)),
+            &quot;platform&quot;: raw_data.get(&quot;platform&quot;, &quot;unknown&quot;),
+            &quot;timestamp&quot;: datetime.now().isoformat()
+        }
+
+        return cleaned
+
+    @staticmethod
+    def _clean_text(text):
+        &quot;&quot;&quot;清洗文本&quot;&quot;&quot;
+        if not text:
+            return &quot;&quot;
+
+        # 移除多余空白
+        text = ' '.join(text.split())
+
+        # 移除特殊字符（保留中文、英文、数字）
+        text = re.sub(r'[^\w\s\u4e00-\u9fff]', '', text)
+
+        return text.strip()
+
+    @staticmethod
+    def _clean_price(price):
+        &quot;&quot;&quot;清洗价格&quot;&quot;&quot;
+        if isinstance(price, (int, float)):
+            return float(price)
+
+        # 从字符串中提取数字
+        import re
+        numbers = re.findall(r'\d+\.?\d*', str(price))
+
+        if numbers:
+            return float(numbers[0])
+
+        return 0.0
+</code></pre>
+
+<h4 id="622">6.2.2 格式标准化</h4>
+<pre class="codehilite"><code class="language-python">class DataNormalizer:
+    &quot;&quot;&quot;数据标准化器&quot;&quot;&quot;
+
+    def normalize_product_info(self, product_info):
+        &quot;&quot;&quot;标准化商品信息&quot;&quot;&quot;
+        normalized = {}
+
+        # 标准化标题
+        normalized[&quot;title&quot;] = self._normalize_text(product_info[&quot;title&quot;])
+
+        # 标准化店铺名称
+        normalized[&quot;shop_name&quot;] = self._normalize_shop_name(
+            product_info[&quot;shop_name&quot;]
+        )
+
+        # 标准化价格
+        normalized[&quot;price&quot;] = self._normalize_price(product_info[&quot;price&quot;])
+
+        # 标准化平台
+        normalized[&quot;platform&quot;] = self._normalize_platform(
+            product_info[&quot;platform&quot;]
+        )
+
+        return normalized
+
+    def _normalize_platform(self, platform):
+        &quot;&quot;&quot;标准化平台名称&quot;&quot;&quot;
+        platform_mapping = {
+            &quot;xiaohongshu&quot;: &quot;小红书&quot;,
+            &quot;xianyu&quot;: &quot;闲鱼&quot;,
+            &quot;taobao&quot;: &quot;淘宝&quot;
+        }
+
+        return platform_mapping.get(platform.lower(), platform)
+</code></pre>
+
+<h4 id="623">6.2.3 临时文件管理</h4>
+<pre class="codehilite"><code class="language-python">class TempFileManager:
+    &quot;&quot;&quot;临时文件管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.temp_dir = tempfile.mkdtemp()
+        self.cleanup_timer = None
+
+    def create_temp_file(self, content, suffix=&quot;.txt&quot;):
+        &quot;&quot;&quot;创建临时文件&quot;&quot;&quot;
+        temp_file = tempfile.NamedTemporaryFile(
+            mode='w',
+            suffix=suffix,
+            dir=self.temp_dir,
+            delete=False
+        )
+
+        temp_file.write(content)
+        temp_file.close()
+
+        # 设置定时清理
+        self._schedule_cleanup(temp_file.name)
+
+        return temp_file.name
+
+    def _schedule_cleanup(self, file_path):
+        &quot;&quot;&quot;定时清理文件&quot;&quot;&quot;
+        if self.cleanup_timer:
+            self.cleanup_timer.cancel()
+
+        # 5分钟后清理
+        self.cleanup_timer = Timer(
+            300,
+            lambda: self._cleanup_file(file_path)
+        )
+        self.cleanup_timer.start()
+
+    def _cleanup_file(self, file_path):
+        &quot;&quot;&quot;清理文件&quot;&quot;&quot;
+        try:
+            if os.path.exists(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(f&quot;清理临时文件失败: {e}&quot;)
+</code></pre>
+
+<h3 id="63">6.3 实时数据流</h3>
+<h4 id="631-websocket">6.3.1 WebSocket通信协议</h4>
+<pre class="codehilite"><code class="language-python">class WebSocketServer:
+    &quot;&quot;&quot;WebSocket服务器&quot;&quot;&quot;
+
+    def __init__(self, host=&quot;localhost&quot;, port=8766):
+        self.host = host
+        self.port = port
+        self.clients = set()
+        self.start_server()
+
+    async def start_server(self):
+        &quot;&quot;&quot;启动WebSocket服务器&quot;&quot;&quot;
+        self.server = await websockets.serve(
+            self.handle_client,
+            self.host,
+            self.port
+        )
+        print(f&quot;WebSocket服务器启动: ws://{self.host}:{self.port}&quot;)
+
+    async def handle_client(self, websocket, path):
+        &quot;&quot;&quot;处理客户端连接&quot;&quot;&quot;
+        self.clients.add(websocket)
+        try:
+            async for message in websocket:
+                await self.process_message(message, websocket)
+        except websockets.exceptions.ConnectionClosed:
+            pass
+        finally:
+            self.clients.remove(websocket)
+
+    async def broadcast(self, message):
+        &quot;&quot;&quot;广播消息给所有客户端&quot;&quot;&quot;
+        if self.clients:
+            await asyncio.gather(
+                *[client.send(json.dumps(message)) for client in self.clients],
+                return_exceptions=True
+            )
+</code></pre>
+
+<h4 id="632">6.3.2 事件驱动架构</h4>
+<pre class="codehilite"><code class="language-mermaid">graph TB
+    subgraph &quot;事件源&quot;
+        A[用户操作]
+        B[系统事件]
+        C[AI处理结果]
+    end
+
+    subgraph &quot;事件总线&quot;
+        D[EventBus]
+    end
+
+    subgraph &quot;事件处理器&quot;
+        E[UI更新处理器]
+        F[数据存储处理器]
+        G[日志记录处理器]
+        H[通知处理器]
+    end
+
+    A --&gt; D
+    B --&gt; D
+    C --&gt; D
+    D --&gt; E
+    D --&gt; F
+    D --&gt; G
+    D --&gt; H
+
+    E --&gt; I[前端更新]
+    F --&gt; J[数据持久化]
+    G --&gt; K[日志记录]
+    H --&gt; L[消息通知]
+</code></pre>
+
+<h4 id="633">6.3.3 状态同步机制</h4>
+<pre class="codehilite"><code class="language-python">class StateManager:
+    &quot;&quot;&quot;状态管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.state = {
+            &quot;tasks&quot;: {},
+            &quot;current_task&quot;: None,
+            &quot;system_status&quot;: &quot;idle&quot;,
+            &quot;statistics&quot;: {}
+        }
+        self.subscribers = []
+
+    def update_state(self, key, value):
+        &quot;&quot;&quot;更新状态&quot;&quot;&quot;
+        old_value = self.state.get(key)
+        self.state[key] = value
+
+        # 通知订阅者
+        self._notify_subscribers(key, old_value, value)
+
+    def subscribe(self, callback):
+        &quot;&quot;&quot;订阅状态变化&quot;&quot;&quot;
+        self.subscribers.append(callback)
+
+    def _notify_subscribers(self, key, old_value, new_value):
+        &quot;&quot;&quot;通知订阅者&quot;&quot;&quot;
+        for subscriber in self.subscribers:
+            try:
+                subscriber(key, old_value, new_value)
+            except Exception as e:
+                print(f&quot;通知订阅者失败: {e}&quot;)
+</code></pre>
+
+<h4 id="634">6.3.4 日志轮转与备份</h4>
+<pre class="codehilite"><code class="language-python">class LogManager:
+    &quot;&quot;&quot;日志管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.log_config = {
+            &quot;filename&quot;: &quot;logs/anti_piracy.log&quot;,
+            &quot;max_size&quot;: 10 * 1024 * 1024,  # 10MB
+            &quot;backup_count&quot;: 5,
+            &quot;encoding&quot;: &quot;utf-8&quot;
+        }
+
+        # 配置日志
+        self._setup_logging()
+
+        # 启动日志轮转
+        self.rotator = TimedRotatingFileHandler(
+            self.log_config[&quot;filename&quot;],
+            when=&quot;midnight&quot;,
+            interval=1,
+            backupCount=self.log_config[&quot;backup_count&quot;],
+            encoding=self.log_config[&quot;encoding&quot;]
+        )
+
+    def _setup_logging(self):
+        &quot;&quot;&quot;设置日志配置&quot;&quot;&quot;
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(self.log_config[&quot;filename&quot;]),
+                logging.StreamHandler()
+            ]
+        )
+
+    def rotate_logs(self):
+        &quot;&quot;&quot;轮转日志&quot;&quot;&quot;
+        for handler in logging.getLogger().handlers[:]:
+            if isinstance(handler, TimedRotatingFileHandler):
+                handler.doRollover()
+
+    def backup_logs(self):
+        &quot;&quot;&quot;备份日志&quot;&quot;&quot;
+        backup_dir = &quot;logs/backups&quot;
+        os.makedirs(backup_dir, exist_ok=True)
+
+        timestamp = datetime.now().strftime(&quot;%Y%m%d_%H%M%S&quot;)
+        backup_file = os.path.join(backup_dir, f&quot;log_backup_{timestamp}.tar.gz&quot;)
+
+        # 创建备份
+        with tarfile.open(backup_file, &quot;w:gz&quot;) as tar:
+            tar.add(&quot;logs&quot;, arcname=&quot;logs&quot;)
+</code></pre>
+
+<hr />
+<h2 id="_16">七、判定逻辑说明</h2>
+<h3 id="71">7.1 三层判定机制</h3>
+<h4 id="711">7.1.1 第一层：正版商品匹配</h4>
+<h5 id="_17">数据库查询算法</h5>
+<pre class="codehilite"><code class="language-python">def query_genuine_products(product_name, platform=None):
+    &quot;&quot;&quot;查询正版商品数据库&quot;&quot;&quot;
+    query_conditions = []
+
+    # 商品名称匹配
+    if product_name:
+        query_conditions.append({
+            &quot;field&quot;: &quot;product_name&quot;,
+            &quot;operator&quot;: &quot;contains&quot;,
+            &quot;value&quot;: product_name
+        })
+
+    # 平台匹配
+    if platform:
+        query_conditions.append({
+            &quot;field&quot;: &quot;platform&quot;,
+            &quot;operator&quot;: &quot;equals&quot;,
+            &quot;value&quot;: platform
+        })
+
+    # 执行查询
+    results = []
+    for product in GENUINE_PRODUCTS:
+        if all(self._match_condition(product, cond) for cond in query_conditions):
+            results.append(product)
+
+    return results
+</code></pre>
+
+<h5 id="_18">相似度计算</h5>
+<pre class="codehilite"><code class="language-python">def calculate_similarity_score(text1, text2):
+    &quot;&quot;&quot;计算文本相似度分数&quot;&quot;&quot;
+    from difflib import SequenceMatcher
+
+    # 预处理文本
+    text1_clean = self._preprocess_text(text1)
+    text2_clean = self._preprocess_text(text2)
+
+    # 计算SequenceMatcher相似度
+    sequence_similarity = SequenceMatcher(
+        None, text1_clean, text2_clean
+    ).ratio()
+
+    # 计算Jaccard相似度
+    set1 = set(text1_clean.split())
+    set2 = set(text2_clean.split())
+    jaccard_similarity = len(set1 &amp; set2) / len(set1 | set2) if set1 or set2 else 0
+
+    # 综合相似度
+    combined_similarity = (sequence_similarity * 0.7 + jaccard_similarity * 0.3)
+
+    return combined_similarity
+</code></pre>
+
+<h5 id="_19">精确匹配策略</h5>
+<pre class="codehilite"><code class="language-python">def exact_match_check(current_product, genuine_products):
+    &quot;&quot;&quot;精确匹配检查&quot;&quot;&quot;
+    for genuine in genuine_products:
+        # 标题完全匹配
+        if (current_product[&quot;title&quot;].lower() ==
+            genuine[&quot;product_name&quot;].lower()):
+            return genuine
+
+        # SKU匹配
+        if (&quot;sku&quot; in current_product and &quot;sku&quot; in genuine and
+            current_product[&quot;sku&quot;] == genuine[&quot;sku&quot;]):
+            return genuine
+
+    return None
+</code></pre>
+
+<h4 id="712">7.1.2 第二层：店铺名称检查</h4>
+<h5 id="_20">官方店铺验证</h5>
+<pre class="codehilite"><code class="language-python">def verify_official_shop(shop_name, platform):
+    &quot;&quot;&quot;验证官方店铺&quot;&quot;&quot;
+    # 获取平台官方店铺列表
+    official_shops = get_official_shops(platform)
+
+    # 清理店铺名称
+    cleaned_shop_name = self._clean_shop_name(shop_name)
+
+    # 检查是否匹配官方店铺
+    for official_shop in official_shops:
+        if (cleaned_shop_name.lower() ==
+            official_shop.lower()):
+            return True, &quot;匹配官方店铺&quot;
+
+    # 检查是否包含品牌关键词
+    brand_keywords = get_brand_keywords(platform)
+    for keyword in brand_keywords:
+        if keyword in cleaned_shop_name.lower():
+            return True, f&quot;包含品牌关键词: {keyword}&quot;
+
+    return False, &quot;非官方店铺&quot;
+</code></pre>
+
+<h5 id="_21">品牌名称识别</h5>
+<pre class="codehilite"><code class="language-python">def identify_brand_keywords(shop_name):
+    &quot;&quot;&quot;识别品牌关键词&quot;&quot;&quot;
+    brand_patterns = {
+        &quot;众合法考&quot;: [&quot;众合&quot;, &quot;法考&quot;, &quot;众合法考&quot;],
+        &quot;瑞达法考&quot;: [&quot;瑞达&quot;, &quot;法考&quot;, &quot;瑞达法考&quot;],
+        &quot;厚大法考&quot;: [&quot;厚大&quot;, &quot;法考&quot;, &quot;厚大法考&quot;]
+    }
+
+    detected_brands = []
+    cleaned_name = shop_name.lower()
+
+    for brand, keywords in brand_patterns.items():
+        for keyword in keywords:
+            if keyword in cleaned_name:
+                detected_brands.append(brand)
+                break
+
+    return detected_brands
+</code></pre>
+
+<h5 id="_22">异常店铺检测</h5>
+<pre class="codehilite"><code class="language-python">def detect_anomalous_shop(shop_name, platform):
+    &quot;&quot;&quot;检测异常店铺&quot;&quot;&quot;
+    anomalies = []
+
+    # 检查关键词
+    suspicious_keywords = [
+        &quot;低价&quot;, &quot;秒发&quot;, &quot;资源&quot;, &quot;全套&quot;, &quot;网盘&quot;,
+        &quot;微信&quot;, &quot;私聊&quot;, &quot;引流&quot;, &quot;盗版&quot;
+    ]
+
+    for keyword in suspicious_keywords:
+        if keyword in shop_name.lower():
+            anomalies.append(f&quot;包含可疑关键词: {keyword}&quot;)
+
+    # 检查店铺名称长度
+    if len(shop_name) &lt; 2:
+        anomalies.append(&quot;店铺名称过短&quot;)
+
+    # 检查特殊字符
+    if re.search(r'[^\w\u4e00-\u9fff]', shop_name):
+        anomalies.append(&quot;店铺名称包含特殊字符&quot;)
+
+    return anomalies if anomalies else None
+</code></pre>
+
+<h4 id="713">7.1.3 第三层：价格异常检测</h4>
+<h5 id="_23">价格阈值计算</h5>
+<pre class="codehilite"><code class="language-python">def calculate_price_ratio(current_price, genuine_price):
+    &quot;&quot;&quot;计算价格比例&quot;&quot;&quot;
+    if genuine_price &lt;= 0 or current_price &lt;= 0:
+        return 0.0
+
+    ratio = current_price / genuine_price
+    return ratio
+
+def check_price_anomaly(current_price, genuine_price, platform):
+    &quot;&quot;&quot;检查价格异常&quot;&quot;&quot;
+    price_ratio = calculate_price_ratio(current_price, genuine_price)
+
+    # 定义价格区间
+    price_ranges = {
+        &quot;normal&quot;: (0.7, 1.2),      # 正常价格区间
+        &quot;suspicious&quot;: (0.5, 0.7),  # 可疑区间
+        &quot;clearly_pirated&quot;: (0, 0.5) # 明显盗版区间
+    }
+
+    if price_ratio &lt; price_ranges[&quot;clearly_pirated&quot;][1]:
+        return &quot;clearly_pirated&quot;, f&quot;价格过低: {price_ratio:.1%}&quot;
+    elif price_ratio &lt; price_ranges[&quot;suspicious&quot;][1]:
+        return &quot;suspicious&quot;, f&quot;价格偏低: {price_ratio:.1%}&quot;
+    else:
+        return &quot;normal&quot;, f&quot;价格正常: {price_ratio:.1%}&quot;
+</code></pre>
+
+<h5 id="_24">市场价格对比</h5>
+<pre class="codehilite"><code class="language-python">def compare_with_market_price(current_price, product_category, platform):
+    &quot;&quot;&quot;与市场价格对比&quot;&quot;&quot;
+    # 获取历史价格数据
+    historical_prices = get_historical_prices(product_category, platform)
+
+    if not historical_prices:
+        return None, &quot;无历史价格数据&quot;
+
+    # 计算平均价格
+    avg_price = sum(historical_prices) / len(historical_prices)
+
+    # 计算价格偏离度
+    deviation = abs(current_price - avg_price) / avg_price
+
+    # 判断价格偏离程度
+    if deviation &gt; 0.5:  # 偏离超过50%
+        return &quot;significantly_different&quot;, f&quot;价格偏离市场均价{deviation:.1%}&quot;
+    elif deviation &gt; 0.3:  # 偏离30-50%
+        return &quot;somewhat_different&quot;, f&quot;价格略偏离市场均价{deviation:.1%}&quot;
+    else:
+        return &quot;normal&quot;, f&quot;价格接近市场均价&quot;
+</code></pre>
+
+<h5 id="_25">警告级别判定</h5>
+<pre class="codehilite"><code class="language-python">def determine_price_warning_level(price_ratio, platform):
+    &quot;&quot;&quot;确定价格警告级别&quot;&quot;&quot;
+    warning_levels = {
+        &quot;xiaohongshu&quot;: {
+            &quot;low&quot;: 0.6,
+            &quot;medium&quot;: 0.8,
+            &quot;high&quot;: 1.0
+        },
+        &quot;xianyu&quot;: {
+            &quot;low&quot;: 0.5,
+            &quot;medium&quot;: 0.7,
+            &quot;high&quot;: 0.9
+        }
+    }
+
+    thresholds = warning_levels.get(platform, warning_levels[&quot;xiaohongshu&quot;])
+
+    if price_ratio &lt; thresholds[&quot;low&quot;]:
+        return &quot;high&quot;, &quot;严重警告：价格异常低&quot;
+    elif price_ratio &lt; thresholds[&quot;medium&quot;]:
+        return &quot;medium&quot;, &quot;中等警告：价格偏低&quot;
+    else:
+        return &quot;low&quot;, &quot;轻微提示：价格略低&quot;
+</code></pre>
+
+<h3 id="72">7.2 综合置信度算法</h3>
+<h4 id="721">7.2.1 权重分配策略</h4>
+<pre class="codehilite"><code class="language-python">class ConfidenceCalculator:
+    &quot;&quot;&quot;置信度计算器&quot;&quot;&quot;
+
+    def __init__(self):
+        # 权重配置
+        self.weights = {
+            &quot;shop_match&quot;: 0.4,      # 店铺匹配权重
+            &quot;price_anomaly&quot;: 0.4,  # 价格异常权重
+            &quot;content_similarity&quot;: 0.2  # 内容相似度权重
+        }
+
+        # 阈值配置
+        self.thresholds = {
+            &quot;piracy_confidence&quot;: 0.7,   # 盗版判定阈值
+            &quot;suspicious_confidence&quot;: 0.5  # 可疑判定阈值
+        }
+</code></pre>
+
+<h4 id="722">7.2.2 多因子融合计算</h4>
+<pre class="codehilite"><code class="language-python">def calculate_piracy_confidence(
+    shop_match_score,
+    price_anomaly_score,
+    content_similarity_score
+):
+    &quot;&quot;&quot;计算盗版置信度&quot;&quot;&quot;
+
+    # 归一化各因子分数
+    normalized_shop = self._normalize_score(shop_match_score, reverse=True)
+    normalized_price = self._normalize_score(price_anomaly_score, reverse=True)
+    normalized_content = self._normalize_score(content_similarity_score)
+
+    # 加权计算
+    confidence = (
+        normalized_shop * self.weights[&quot;shop_match&quot;] +
+        normalized_price * self.weights[&quot;price_anomaly&quot;] +
+        normalized_content * self.weights[&quot;content_similarity&quot;]
+    )
+
+    return confidence
+
+def _normalize_score(self, score, reverse=False):
+    &quot;&quot;&quot;归一化分数到[0,1]区间&quot;&quot;&quot;
+    if reverse:
+        # 对于负面因素（如价格异常），分数越高风险越大
+        return min(score / 0.5, 1.0)  # 假设0.5为最大异常值
+    else:
+        # 对于正面因素（如内容相似），分数越高匹配度越好
+        return min(score, 1.0)
+</code></pre>
+
+<h4 id="723">7.2.3 判定阈值设定</h4>
+<pre class="codehilite"><code class="language-python">def make_piracy_decision(confidence_score):
+    &quot;&quot;&quot;做出盗版判定&quot;&quot;&quot;
+
+    if confidence_score &gt;= self.thresholds[&quot;piracy_confidence&quot;]:
+        return {
+            &quot;is_piracy&quot;: True,
+            &quot;confidence&quot;: confidence_score,
+            &quot;level&quot;: &quot;high&quot;,
+            &quot;message&quot;: &quot;高度疑似盗版商品&quot;
+        }
+    elif confidence_score &gt;= self.thresholds[&quot;suspicious_confidence&quot;]:
+        return {
+            &quot;is_piracy&quot;: True,
+            &quot;confidence&quot;: confidence_score,
+            &quot;level&quot;: &quot;medium&quot;,
+            &quot;message&quot;: &quot;疑似盗版商品，需人工复核&quot;
+        }
+    else:
+        return {
+            &quot;is_piracy&quot;: False,
+            &quot;confidence&quot;: confidence_score,
+            &quot;level&quot;: &quot;low&quot;,
+            &quot;message&quot;: &quot;正常商品&quot;
+        }
+</code></pre>
+
+<h3 id="73">7.3 结果输出策略</h3>
+<h4 id="731">7.3.1 盗版概率计算</h4>
+<pre class="codehilite"><code class="language-python">def calculate_piracy_probability(factors):
+    &quot;&quot;&quot;计算盗版概率&quot;&quot;&quot;
+
+    # 基础概率
+    base_probability = 0.1
+
+    # 根据因素调整概率
+    probability_adjustments = {
+        &quot;shop_not_official&quot;: 0.4,    # 非官方店铺
+        &quot;price_too_low&quot;: 0.3,       # 价格过低
+        &quot;content_similar&quot;: 0.2,     # 内容相似
+        &quot;suspicious_keywords&quot;: 0.1  # 可疑关键词
+    }
+
+    for factor, adjustment in probability_adjustments.items():
+        if factor in factors:
+            base_probability += adjustment
+
+    # 限制概率在[0,1]区间
+    return min(max(base_probability, 0), 1)
+</code></pre>
+
+<h4 id="732">7.3.2 风险等级划分</h4>
+<pre class="codehilite"><code class="language-python">def determine_risk_level(confidence_score, additional_factors):
+    &quot;&quot;&quot;确定风险等级&quot;&quot;&quot;
+
+    base_level = self._get_base_level(confidence_score)
+
+    # 根据附加因素调整风险等级
+    if additional_factors.get(&quot;price_extremely_low&quot;):
+        base_level = self._upgrade_risk_level(base_level)
+    if additional_factors.get(&quot;multiple_violations&quot;):
+        base_level = self._upgrade_risk_level(base_level)
+
+    return base_level
+
+def _get_base_level(self, confidence_score):
+    &quot;&quot;&quot;获取基础风险等级&quot;&quot;&quot;
+    if confidence_score &gt;= 0.8:
+        return &quot;critical&quot;  # 严重风险
+    elif confidence_score &gt;= 0.6:
+        return &quot;high&quot;      # 高风险
+    elif confidence_score &gt;= 0.4:
+        return &quot;medium&quot;    # 中等风险
+    else:
+        return &quot;low&quot;       # 低风险
+</code></pre>
+
+<h4 id="733">7.3.3 生成举报建议</h4>
+<pre class="codehilite"><code class="language-python">def generate_report_suggestions(detection_result):
+    &quot;&quot;&quot;生成举报建议&quot;&quot;&quot;
+
+    suggestions = []
+
+    if detection_result[&quot;is_piracy&quot;]:
+        # 基硍举报建议
+        suggestions.append({
+            &quot;action&quot;: &quot;report&quot;,
+            &quot;reason&quot;: &quot;盗版侵权&quot;,
+            &quot;confidence&quot;: detection_result[&quot;confidence&quot;]
+        })
+
+        # 根据风险等级添加具体建议
+        if detection_result[&quot;level&quot;] == &quot;high&quot;:
+            suggestions.append({
+                &quot;action&quot;: &quot;priority_report&quot;,
+                &quot;description&quot;: &quot;建议优先处理，防止扩散&quot;
+            })
+
+        # 添加证据收集建议
+        suggestions.append({
+            &quot;action&quot;: &quot;collect_evidence&quot;,
+            &quot;items&quot;: [&quot;商品截图&quot;, &quot;店铺信息&quot;, &quot;价格对比&quot;]
+        })
+
+    return suggestions
+</code></pre>
+
+<hr />
+<h2 id="_26">八、系统核心模块</h2>
+<h3 id="81">8.1 前端模块</h3>
+<h4 id="811">8.1.1 组件化设计</h4>
+<p>前端采用组件化设计，实现了高度的可维护性和复用性：</p>
+<pre class="codehilite"><code class="language-mermaid">graph TB
+    subgraph &quot;核心组件&quot;
+        A[App.tsx] --&gt; B[MerchantCard.tsx]
+        A --&gt; C[PhoneMockup.tsx]
+        A --&gt; D[ControlPanel.tsx]
+    end
+
+    subgraph &quot;功能组件&quot;
+        B --&gt; E[ProductInfo.tsx]
+        B --&gt; F[ShopInfo.tsx]
+        B --&gt; G[EvidenceDisplay.tsx]
+        C --&gt; H[DeviceFrame.tsx]
+        D --&gt; I[TaskManager.tsx]
+        D --&gt; J[LogViewer.tsx]
+    end
+
+    subgraph &quot;UI组件&quot;
+        E --&gt; K[Button.tsx]
+        E --&gt; L[Modal.tsx]
+        E --&gt; M[Input.tsx]
+        H --&gt; N[ScreenDisplay.tsx]
+        H --&gt; O[ButtonBar.tsx]
+    end
+</code></pre>
+
+<h4 id="812">8.1.2 三大视图模式</h4>
+<pre class="codehilite"><code class="language-typescript">// App.tsx 主组件
+const App: React.FC = () =&gt; {
+  const [currentView, setCurrentView] = useState&lt;'terminal' | 'summary' | 'devices'&gt;('terminal');
+
+  return (
+    &lt;div className=&quot;app-container&quot;&gt;
+      &lt;Header onSwitchView={setCurrentView} /&gt;
+
+      {currentView === 'terminal' &amp;&amp; &lt;TerminalView /&gt;}
+      {currentView === 'summary' &amp;&amp; &lt;SummaryView /&gt;}
+      {currentView === 'devices' &amp;&amp; &lt;DevicesView /&gt;}
+
+      &lt;StatusBar /&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+
+<h5 id="_27">终端视图</h5>
+<pre class="codehilite"><code class="language-typescript">const TerminalView: React.FC = () =&gt; {
+  return (
+    &lt;div className=&quot;terminal-view flex h-full&quot;&gt;
+      {/* 左侧：监测中心 */}
+      &lt;div className=&quot;monitoring-center w-1/4 border-r&quot;&gt;
+        &lt;MerchantList /&gt;
+        &lt;WhitelistManager /&gt;
+      &lt;/div&gt;
+
+      {/* 中间：手机预览 */}
+      &lt;div className=&quot;phone-preview w-2/4 flex items-center justify-center&quot;&gt;
+        &lt;PhoneMockup /&gt;
+      &lt;/div&gt;
+
+      {/* 右侧：控制面板 */}
+      &lt;div className=&quot;control-panel w-1/4 border-l&quot;&gt;
+        &lt;TaskConfiguration /&gt;
+        &lt;RealtimeLogs /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+
+<h5 id="_28">概览视图</h5>
+<pre class="codehilite"><code class="language-typescript">const SummaryView: React.FC = () =&gt; {
+  const [stats, setStats] = useState&lt;Statistics&gt;({});
+
+  return (
+    &lt;div className=&quot;summary-view&quot;&gt;
+      {/* 关键指标卡片 */}
+      &lt;div className=&quot;metrics-grid grid grid-cols-4 gap-4&quot;&gt;
+        &lt;MetricCard
+          title=&quot;扫描节点数&quot;
+          value={stats.totalNodes || 0}
+          icon=&quot;Users&quot;
+        /&gt;
+        &lt;MetricCard
+          title=&quot;违规商家数&quot;
+          value={stats.piratedCount || 0}
+          icon=&quot;AlertTriangle&quot;
+          color=&quot;red&quot;
+        /&gt;
+        &lt;MetricCard
+          title=&quot;挽回损失&quot;
+          value={stats.lossPrevented || 0}
+          icon=&quot;DollarSign&quot;
+          color=&quot;green&quot;
+        /&gt;
+        &lt;MetricCard
+          title=&quot;今日巡查&quot;
+          value={stats.todayPatrols || 0}
+          icon=&quot;Search&quot;
+        /&gt;
+      &lt;/div&gt;
+
+      {/* 图表区域 */}
+      &lt;div className=&quot;charts-grid grid grid-cols-2 gap-4&quot;&gt;
+        &lt;TrendChart data={stats.trendData} /&gt;
+        &lt;PlatformDistribution data={stats.platformData} /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+
+<h5 id="_29">设备视图</h5>
+<pre class="codehilite"><code class="language-typescript">const DevicesView: React.FC = () =&gt; {
+  const [devices, setDevices] = useState&lt;Device[]&gt;([]);
+
+  return (
+    &lt;div className=&quot;devices-view&quot;&gt;
+      &lt;div className=&quot;device-grid grid grid-cols-3 gap-4&quot;&gt;
+        {devices.map(device =&gt; (
+          &lt;DeviceCard
+            key={device.id}
+            device={device}
+            onSelect={handleDeviceSelect}
+          /&gt;
+        ))}
+      &lt;/div&gt;
+
+      &lt;DeviceDetails /&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+
+<h4 id="813">8.1.3 状态管理</h4>
+<p>前端使用React hooks进行状态管理：</p>
+<pre class="codehilite"><code class="language-typescript">// 状态管理示例
+const useAppStore = create&lt;AppStore&gt;((set) =&gt; ({
+  // 任务状态
+  tasks: [],
+  currentTask: null,
+
+  // 用户配置
+  config: {
+    platform: 'xiaohongshu',
+    maxItems: 10,
+    testMode: false,
+    whitelist: []
+  },
+
+  // 系统状态
+  systemStatus: 'idle',
+
+  // 操作方法
+  startTask: (taskConfig) =&gt; {
+    // 实现任务启动逻辑
+  },
+
+  updateTask: (taskId, updates) =&gt; {
+    // 实现任务更新逻辑
+  }
+}));
+</code></pre>
+
+<h3 id="82-api">8.2 后端API模块</h3>
+<h4 id="821-fastapi">8.2.1 FastAPI服务设计</h4>
+<pre class="codehilite"><code class="language-python">from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from .task_manager import TaskManager
+from .api_handlers import APIHandlers
+
+app = FastAPI(
+    title=&quot;GUI-Stride API&quot;,
+    description=&quot;反盗版巡查系统API&quot;,
+    version=&quot;1.0.0&quot;
+)
+
+# CORS配置
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[&quot;http://localhost:5173&quot;],
+    allow_credentials=True,
+    allow_methods=[&quot;*&quot;],
+    allow_headers=[&quot;*&quot;]
+)
+
+# 初始化任务管理器
+task_manager = TaskManager()
+api_handlers = APIHandlers()
+
+# 注册路由
+api_handlers.register_routes(app)
+</code></pre>
+
+<h4 id="822">8.2.2 任务管理器</h4>
+<pre class="codehilite"><code class="language-python">class TaskManager:
+    &quot;&quot;&quot;任务管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.tasks = {}
+        self.active_tasks = set()
+        self.task_queue = queue.Queue()
+        self.executor = ThreadPoolExecutor(max_workers=5)
+
+    async def create_task(self, request: TaskRequest):
+        &quot;&quot;&quot;创建新任务&quot;&quot;&quot;
+        task_id = str(uuid.uuid4())
+
+        task = Task(
+            id=task_id,
+            platform=request.platform,
+            keyword=request.keyword,
+            max_items=request.max_items,
+            test_mode=request.test_mode,
+            status=&quot;pending&quot;
+        )
+
+        self.tasks[task_id] = task
+        self.task_queue.put(task_id)
+
+        # 异步执行任务
+        self.executor.submit(self._execute_task, task_id)
+
+        return task
+
+    def _execute_task(self, task_id: str):
+        &quot;&quot;&quot;执行任务&quot;&quot;&quot;
+        try:
+            task = self.tasks[task_id]
+            task.status = &quot;running&quot;
+
+            # 创建反盗版Agent
+            agent = AntiPiracyAgent(
+                platform=task.platform,
+                test_mode=task.test_mode
+            )
+
+            # 执行巡查
+            results = agent.patrol(
+                keyword=task.keyword,
+                max_items=task.max_items
+            )
+
+            task.status = &quot;completed&quot;
+            task.results = results
+
+        except Exception as e:
+            task.status = &quot;failed&quot;
+            task.error = str(e)
+
+        # 通知前端
+        self._notify_frontend(task_id)
+</code></pre>
+
+<h4 id="823">8.2.3 数据接口</h4>
+<pre class="codehilite"><code class="language-python">@app.get(&quot;/api/merchants&quot;)
+async def get_merchants(
+    platform: str = &quot;xiaohongshu&quot;,
+    limit: int = 20,
+    offset: int = 0
+):
+    &quot;&quot;&quot;获取商家列表&quot;&quot;&quot;
+    merchants = await get_merchants_from_db(platform, limit, offset)
+    return {
+        &quot;code&quot;: 200,
+        &quot;data&quot;: merchants,
+        &quot;pagination&quot;: {
+            &quot;total&quot;: await get_total_merchants(platform),
+            &quot;limit&quot;: limit,
+            &quot;offset&quot;: offset
+        }
+    }
+
+@app.get(&quot;/api/patrol/{task_id}&quot;)
+async def get_task_status(task_id: str):
+    &quot;&quot;&quot;获取任务状态&quot;&quot;&quot;
+    task = task_manager.get_task(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail=&quot;任务不存在&quot;)
+
+    return {
+        &quot;code&quot;: 200,
+        &quot;data&quot;: {
+            &quot;task_id&quot;: task.id,
+            &quot;status&quot;: task.status,
+            &quot;progress&quot;: task.progress,
+            &quot;results&quot;: task.results
+        }
+    }
+
+@app.post(&quot;/api/patrol&quot;)
+async def start_patrol(request: PatrolRequest):
+    &quot;&quot;&quot;启动巡查任务&quot;&quot;&quot;
+    task = await task_manager.create_task(request)
+    return {
+        &quot;code&quot;: 200,
+        &quot;data&quot;: {
+            &quot;task_id&quot;: task.id,
+            &quot;message&quot;: &quot;任务已创建&quot;
+        }
+    }
+</code></pre>
+
+<h4 id="824-websocket">8.2.4 WebSocket实时通信</h4>
+<pre class="codehilite"><code class="language-python">@app.websocket(&quot;/ws&quot;)
+async def websocket_endpoint(websocket: WebSocket):
+    &quot;&quot;&quot;WebSocket连接端点&quot;&quot;&quot;
+    await websocket.accept()
+
+    try:
+        while True:
+            # 接收客户端消息
+            message = await websocket.receive_json()
+
+            if message[&quot;command&quot;] == &quot;start_detection&quot;:
+                # 处理检测请求
+                response = await handle_detection_request(message)
+                await websocket.send_json(response)
+
+            elif message[&quot;command&quot;] == &quot;ping&quot;:
+                # 心跳检测
+                await websocket.send_json({&quot;type&quot;: &quot;pong&quot;})
+
+    except WebSocketDisconnect:
+        # 客户端断开连接
+        pass
+    except Exception as e:
+        # 错误处理
+        await websocket.send_json({
+            &quot;type&quot;: &quot;error&quot;,
+            &quot;message&quot;: str(e)
+        })
+</code></pre>
+
+<h3 id="83">8.3 反盗版系统</h3>
+<h4 id="831-piracydetector">8.3.1 PiracyDetector引擎</h4>
+<pre class="codehilite"><code class="language-python">class PiracyDetector:
+    &quot;&quot;&quot;盗版检测引擎&quot;&quot;&quot;
+
+    def __init__(self, product_db, price_threshold=0.7, similarity_threshold=0.6):
+        self.product_db = product_db
+        self.price_threshold = price_threshold
+        self.similarity_threshold = similarity_threshold
+
+    def detect(self, product_info: ProductInfo) -&gt; DetectionResult:
+        &quot;&quot;&quot;执行盗版检测&quot;&quot;&quot;
+
+        # Step 1: 匹配正版商品
+        matched_product = self.product_db.match_product(product_info)
+
+        if matched_product:
+            # 找到正版商品，直接判定为正版
+            return DetectionResult(
+                is_piracy=False,
+                confidence=0.0,
+                reasons=[&quot;匹配正版商品&quot;],
+                matched_product=matched_product
+            )
+
+        # Step 2: 执行三层检测
+        shop_check, shop_reason = self._check_shop_name(product_info.shop_name)
+        price_check, price_reason, price_ratio = self._check_price(
+            product_info.price, matched_product
+        )
+        content_check, content_reason = self._check_content(
+            product_info, matched_product
+        )
+
+        # Step 3: 计算置信度
+        confidence = self._calculate_confidence(
+            not shop_check,
+            not price_check,
+            content_check
+        )
+
+        # Step 4: 综合判定
+        is_piracy = confidence &gt;= 0.7
+
+        return DetectionResult(
+            is_piracy=is_piracy,
+            confidence=confidence,
+            reasons=[shop_reason, price_reason, content_reason],
+            matched_product=matched_product,
+            shop_check=shop_check,
+            price_check=price_check,
+            content_check=content_check,
+            price_ratio=price_ratio
+        )
+
+    def _check_shop_name(self, shop_name: str) -&gt; Tuple[bool, str]:
+        &quot;&quot;&quot;检查店铺名称&quot;&quot;&quot;
+        # 检查是否为官方店铺
+        is_official, reason = verify_official_shop(shop_name)
+
+        if is_official:
+            return True, &quot;官方店铺&quot;
+
+        # 检查异常店铺
+        anomalies = detect_anomalous_shop(shop_name)
+        if anomalies:
+            return False, f&quot;异常店铺: {', '.join(anomalies)}&quot;
+
+        return False, &quot;非官方店铺&quot;
+</code></pre>
+
+<h4 id="832-productdatabase">8.3.2 ProductDatabase</h4>
+<pre class="codehilite"><code class="language-python">class ProductDatabase:
+    &quot;&quot;&quot;正版商品数据库&quot;&quot;&quot;
+
+    def __init__(self, db_path: str):
+        self.db_path = db_path
+        self.products = []
+        self._load_database()
+
+    def _load_database(self):
+        &quot;&quot;&quot;加载数据库&quot;&quot;&quot;
+        try:
+            with open(self.db_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.products = [
+                    GenuineProduct(**item) for item in data
+                ]
+        except FileNotFoundError:
+            # 数据库不存在，创建空数据库
+            self.products = []
+            self._save_database()
+
+    def match_product(self, product_info: ProductInfo) -&gt; Optional[GenuineProduct]:
+        &quot;&quot;&quot;匹配正版商品&quot;&quot;&quot;
+        # 精确匹配
+        exact_match = self._exact_match(product_info)
+        if exact_match:
+            return exact_match
+
+        # 模糊匹配
+        fuzzy_matches = self._fuzzy_match(product_info)
+        if fuzzy_matches:
+            # 返回相似度最高的商品
+            return max(fuzzy_matches, key=lambda x: x.similarity_score)
+
+        return None
+
+    def _exact_match(self, product_info: ProductInfo) -&gt; Optional[GenuineProduct]:
+        &quot;&quot;&quot;精确匹配&quot;&quot;&quot;
+        for product in self.products:
+            # SKU匹配
+            if (product_info.sku and product.sku and
+                product_info.sku == product.sku):
+                return product
+
+            # 标题完全匹配
+            if (product_info.title.lower() ==
+                product.product_name.lower()):
+                return product
+
+        return None
+
+    def _fuzzy_match(self, product_info: ProductInfo) -&gt; List[GenuineProduct]:
+        &quot;&quot;&quot;模糊匹配&quot;&quot;&quot;
+        matches = []
+
+        for product in self.products:
+            similarity = calculate_similarity(
+                product_info.title,
+                product.product_name
+            )
+
+            if similarity &gt;= 0.8:  # 相似度阈值
+                product.similarity_score = similarity
+                matches.append(product)
+
+        return matches
+</code></pre>
+
+<h4 id="833-reportmanager">8.3.3 ReportManager</h4>
+<pre class="codehilite"><code class="language-python">class ReportManager:
+    &quot;&quot;&quot;报告管理器&quot;&quot;&quot;
+
+    def __init__(self, log_path: str):
+        self.log_path = log_path
+        self.reports = {}
+        self._load_reports()
+
+    def create_report(self,
+                     platform: str,
+                     target_title: str,
+                     target_shop: str,
+                     detection_result: DetectionResult) -&gt; str:
+        &quot;&quot;&quot;创建举报记录&quot;&quot;&quot;
+
+        # 生成唯一ID
+        report_id = f&quot;report_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{len(self.reports)}&quot;
+
+        # 创建举报记录
+        report = ReportRecord(
+            report_id=report_id,
+            platform=platform,
+            target_title=target_title,
+            target_shop=target_shop,
+            detection_result=detection_result,
+            report_status=&quot;pending&quot;,
+            created_time=datetime.now().isoformat()
+        )
+
+        self.reports[report_id] = report
+        self._save_reports()
+
+        return report_id
+
+    def update_report_status(self, report_id: str, status: str):
+        &quot;&quot;&quot;更新举报状态&quot;&quot;&quot;
+        if report_id in self.reports:
+            self.reports[report_id].report_status = status
+            self._save_reports()
+
+    def get_report_history(self, limit: int = 50) -&gt; List[ReportRecord]:
+        &quot;&quot;&quot;获取举报历史&quot;&quot;&quot;
+        # 按创建时间倒序排列
+        sorted_reports = sorted(
+            self.reports.values(),
+            key=lambda x: x.created_time,
+            reverse=True
+        )
+
+        return sorted_reports[:limit]
+
+    def export_report(self, report_id: str, format: str = &quot;json&quot;):
+        &quot;&quot;&quot;导出报告&quot;&quot;&quot;
+        if report_id not in self.reports:
+            raise ValueError(f&quot;报告不存在: {report_id}&quot;)
+
+        report = self.reports[report_id]
+
+        if format == &quot;json&quot;:
+            return report.to_dict()
+        elif format == &quot;txt&quot;:
+            return self._format_report_text(report)
+        else:
+            raise ValueError(f&quot;不支持的格式: {format}&quot;)
+</code></pre>
+
+<h4 id="834-reporter">8.3.4 Reporter执行器</h4>
+<pre class="codehilite"><code class="language-python">class Reporter:
+    &quot;&quot;&quot;举报执行器&quot;&quot;&quot;
+
+    def __init__(self, platform: str):
+        self.platform = platform
+        self.supported_platforms = {
+            &quot;xiaohongshu&quot;: XiaohongshuReporter(),
+            &quot;xianyu&quot;: XianyuReporter(),  # 待实现
+            &quot;taobao&quot;: TaobaoReporter()   # 待实现
+        }
+
+    async def report_piracy(self,
+                          report_context: ReportContext) -&gt; bool:
+        &quot;&quot;&quot;执行举报&quot;&quot;&quot;
+
+        if self.platform not in self.supported_platforms:
+            raise ValueError(f&quot;不支持的平台: {self.platform}&quot;)
+
+        reporter = self.supported_platforms[self.platform]
+
+        try:
+            # 执行举报流程
+            success = await reporter.report(report_context)
+
+            if success:
+                # 记录举报成功
+                log_report_success(report_context)
+            else:
+                # 记录举报失败
+                log_report_failure(report_context)
+
+            return success
+
+        except Exception as e:
+            # 记录异常
+            log_report_error(report_context, str(e))
+            raise e
+
+class XiaohongshuReporter:
+    &quot;&quot;&quot;小红书举报器&quot;&quot;&quot;
+
+    async def report(self, context: ReportContext) -&gt; bool:
+        &quot;&quot;&quot;执行小红书举报&quot;&quot;&quot;
+
+        steps = [
+            self._navigate_to_item,
+            self._click_report_button,
+            self._select_report_reason,
+            self._fill_report_details,
+            self._submit_report
+        ]
+
+        for step in steps:
+            try:
+                success = await step(context)
+                if not success:
+                    return False
+            except Exception as e:
+                print(f&quot;举报步骤失败: {e}&quot;)
+                return False
+
+        return True
+
+    async def _click_report_button(self, context: ReportContext) -&gt; bool:
+        &quot;&quot;&quot;点击举报按钮&quot;&quot;&quot;
+        task = &quot;&quot;&quot;
+        点击商品页面上的举报按钮
+        &quot;&quot;&quot;
+        response = context.agent.run(task)
+        return response.success
+
+    async def _select_report_reason(self, context: ReportContext) -&gt; bool:
+        &quot;&quot;&quot;选择举报原因&quot;&quot;&quot;
+        task = &quot;&quot;&quot;
+        在举报选项中选择&quot;盗版侵权&quot;
+        &quot;&quot;&quot;
+        response = context.agent.run(task)
+        return response.success
+</code></pre>
+
+<h4 id="835-websocket-api">8.3.5 WebSocket API服务器</h4>
+<pre class="codehilite"><code class="language-python">class AntiPiracyWebSocketServer:
+    &quot;&quot;&quot;反盗版WebSocket服务器&quot;&quot;&quot;
+
+    def __init__(self, host=&quot;localhost&quot;, port=8766):
+        self.host = host
+        self.port = port
+        self.server = None
+        self.clients = set()
+
+    async def start(self):
+        &quot;&quot;&quot;启动服务器&quot;&quot;&quot;
+        self.server = await websockets.serve(
+            self.handle_client,
+            self.host,
+            self.port
+        )
+        print(f&quot;反盗版WebSocket服务器启动: ws://{self.host}:{self.port}&quot;)
+
+    async def handle_client(self, websocket, path):
+        &quot;&quot;&quot;处理客户端连接&quot;&quot;&quot;
+        self.clients.add(websocket)
+        try:
+            async for message in websocket:
+                await self.process_message(message, websocket)
+        except websockets.exceptions.ConnectionClosed:
+            pass
+        finally:
+            self.clients.remove(websocket)
+
+    async def process_message(self, message, websocket):
+        &quot;&quot;&quot;处理客户端消息&quot;&quot;&quot;
+        try:
+            data = json.loads(message)
+
+            if data[&quot;command&quot;] == &quot;start_detection&quot;:
+                await self.handle_start_detection(data, websocket)
+            elif data[&quot;command&quot;] == &quot;stop_detection&quot;:
+                await self.handle_stop_detection(data, websocket)
+            elif data[&quot;command&quot;] == &quot;ping&quot;:
+                await websocket.send(json.dumps({&quot;type&quot;: &quot;pong&quot;}))
+
+        except Exception as e:
+            await websocket.send(json.dumps({
+                &quot;type&quot;: &quot;error&quot;,
+                &quot;message&quot;: str(e)
+            }))
+
+    async def broadcast_detection_result(self, result):
+        &quot;&quot;&quot;广播检测结果&quot;&quot;&quot;
+        if self.clients:
+            message = json.dumps({
+                &quot;type&quot;: &quot;detection_result&quot;,
+                &quot;data&quot;: result
+            })
+
+            await asyncio.gather(
+                *[client.send(message) for client in self.clients],
+                return_exceptions=True
+            )
+</code></pre>
+
+<h3 id="84">8.4 通信模块</h3>
+<h4 id="841-http-rest-api">8.4.1 HTTP REST API</h4>
+<p>前端与后端通过REST API进行通信：</p>
+<pre class="codehilite"><code class="language-typescript">// API服务类
+class ApiService {
+  private baseUrl = 'http://localhost:8000';
+
+  // 启动巡查任务
+  async startPatrol(request: PatrolRequest): Promise&lt;PatrolResponse&gt; {
+    const response = await fetch(`${this.baseUrl}/api/patrol`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    return response.json();
+  }
+
+  // 获取任务状态
+  async getTaskStatus(taskId: string): Promise&lt;TaskStatus&gt; {
+    const response = await fetch(`${this.baseUrl}/api/patrol/${taskId}`);
+    return response.json();
+  }
+
+  // 获取实时日志
+  async getNewPatrolLogs(taskId: string): Promise&lt;LogEntry[]&gt; {
+    const response = await fetch(
+      `${this.baseUrl}/api/patrol/${taskId}/logs/new`
+    );
+    return response.json();
+  }
+}
+</code></pre>
+
+<h4 id="842-websocket">8.4.2 WebSocket实时通信</h4>
+<pre class="codehilite"><code class="language-typescript">// WebSocket服务类
+class WebSocketService {
+  private ws: WebSocket | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+
+  connect(url: string) {
+    this.ws = new WebSocket(url);
+
+    this.ws.onopen = () =&gt; {
+      console.log('WebSocket连接已建立');
+      this.reconnectAttempts = 0;
+    };
+
+    this.ws.onmessage = (event) =&gt; {
+      const data = JSON.parse(event.data);
+      this.handleMessage(data);
+    };
+
+    this.ws.onclose = () =&gt; {
+      console.log('WebSocket连接已关闭');
+      this.reconnect();
+    };
+
+    this.ws.onerror = (error) =&gt; {
+      console.error('WebSocket错误:', error);
+    };
+  }
+
+  private handleMessage(data: any) {
+    switch (data.type) {
+      case 'detection_result':
+        this.eventEmitter.emit('detectionResult', data.data);
+        break;
+      case 'task_progress':
+        this.eventEmitter.emit('taskProgress', data.data);
+        break;
+      case 'log':
+        this.eventEmitter.emit('log', data.data);
+        break;
+    }
+  }
+
+  private reconnect() {
+    if (this.reconnectAttempts &lt; this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      setTimeout(() =&gt; {
+        console.log(`尝试重新连接... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+        this.connect('ws://localhost:8766');
+      }, 1000 * Math.pow(2, this.reconnectAttempts));
+    }
+  }
+
+  send(message: any) {
+    if (this.ws &amp;&amp; this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    }
+  }
+}
+</code></pre>
+
+<h4 id="843">8.4.3 错误处理机制</h4>
+<pre class="codehilite"><code class="language-typescript">// 全局错误处理器
+class ErrorHandler {
+  static handleApiError(error: any) {
+    if (error.response) {
+      // HTTP错误响应
+      switch (error.response.status) {
+        case 400:
+          return '请求参数错误';
+        case 401:
+          return '未授权访问';
+        case 404:
+          return '资源不存在';
+        case 500:
+          return '服务器内部错误';
+        default:
+          return `请求失败: ${error.response.status}`;
+      }
+    } else if (error.request) {
+      // 网络错误
+      return '网络连接失败，请检查网络设置';
+    } else {
+      // 其他错误
+      return error.message || '未知错误';
+    }
+  }
+
+  static handleWebSocketError(error: any) {
+    console.error('WebSocket错误:', error);
+
+    if (error.message.includes('Connection closed')) {
+      return '连接已断开，正在重新连接...';
+    } else if (error.message.includes('Network Error')) {
+      return '网络错误，请检查网络连接';
+    } else {
+      return 'WebSocket连接异常';
+    }
+  }
+}
+</code></pre>
+
+<hr />
+<h2 id="_30">九、系统架构图与流程图</h2>
+<h3 id="91">9.1 系统整体架构图</h3>
+<h4 id="911">9.1.1 前后端分离架构</h4>
+<pre class="codehilite"><code class="language-mermaid">graph TB
+    subgraph &quot;前端层&quot;
+        A[React前端应用]
+        B[用户界面组件]
+        C[状态管理]
+        D[实时通信]
+    end
+
+    subgraph &quot;网络层&quot;
+        E[HTTP REST API]
+        F[WebSocket实时通信]
+        G[数据加密传输]
+    end
+
+    subgraph &quot;后端层&quot;
+        H[FastAPI服务]
+        I[任务管理器]
+        J[WebSocket服务器]
+    end
+
+    subgraph &quot;业务层&quot;
+        K[反盗版引擎]
+        L[多模态AI模型]
+        M[数据存储系统]
+        N[报告生成器]
+    end
+
+    subgraph &quot;基础设施层&quot;
+        O[文件系统]
+        P[日志系统]
+        Q[监控系统]
+    end
+
+    A --&gt; E
+    A --&gt; F
+    B --&gt; C
+    C --&gt; D
+    D --&gt; F
+    E --&gt; H
+    F --&gt; J
+    H --&gt; I
+    J --&gt; I
+    I --&gt; K
+    K --&gt; L
+    K --&gt; M
+    K --&gt; N
+    M --&gt; O
+    K --&gt; P
+    P --&gt; Q
+</code></pre>
+
+<h4 id="912">9.1.2 模块依赖关系</h4>
+<pre class="codehilite"><code class="language-mermaid">graph LR
+    subgraph &quot;前端模块&quot;
+        A[App组件]
+        B[MerchantCard组件]
+        C[API服务]
+        D[WebSocket服务]
+    end
+
+    subgraph &quot;后端模块&quot;
+        E[FastAPI路由]
+        F[任务处理器]
+        G[反盗版服务]
+        H[数据服务]
+    end
+
+    subgraph &quot;核心模块&quot;
+        I[PiracyDetector]
+        J[ProductDatabase]
+        K[ReportManager]
+        L[Reporter]
+    end
+
+    A --&gt; C
+    A --&gt; D
+    B --&gt; C
+    C --&gt; E
+    D --&gt; F
+    E --&gt; F
+    F --&gt; G
+    G --&gt; I
+    G --&gt; J
+    G --&gt; K
+    G --&gt; L
+    H --&gt; J
+    H --&gt; K
+</code></pre>
+
+<h4 id="913">9.1.3 数据流向</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart TB
+    subgraph &quot;数据源&quot;
+        A[用户输入]
+        B[商品数据]
+        C[平台API]
+        D[AI模型输出]
+    end
+
+    subgraph &quot;数据处理&quot;
+        E[数据清洗]
+        F[格式标准化]
+        G[特征提取]
+        H[缓存存储]
+    end
+
+    subgraph &quot;数据应用&quot;
+        I[盗版检测]
+        J[结果判定]
+        K[报告生成]
+        L[数据统计]
+    end
+
+    subgraph &quot;数据输出&quot;
+        M[前端展示]
+        N[日志记录]
+        O[文件存储]
+        P[API接口]
+    end
+
+    A --&gt; E
+    B --&gt; E
+    C --&gt; E
+    E --&gt; F
+    F --&gt; G
+    G --&gt; H
+    H --&gt; I
+    H --&gt; J
+    I --&gt; K
+    J --&gt; L
+    K --&gt; M
+    K --&gt; N
+    K --&gt; O
+    L --&gt; P
+</code></pre>
+
+<h3 id="92">9.2 业务流程图</h3>
+<h4 id="921">9.2.1 盗版检测流程</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart TD
+    A[开始巡查] --&gt; B[用户配置]
+    B --&gt; C{验证配置}
+    C --&gt;|无效| D[提示错误]
+    C --&gt;|有效| E[创建任务]
+    E --&gt; F[启动Agent]
+    F --&gt; G[搜索商品]
+    G --&gt; H{获取到商品?}
+    H --&gt;|否| I[结束巡查]
+    H --&gt;|是| J[提取商品信息]
+    J --&gt; K[多模态处理]
+    K --&gt; L[盗版判定]
+    L --&gt; M{是否盗版?}
+    M --&gt;|否| N[记录正常商品]
+    M --&gt;|是| O[执行举报流程]
+    N --&gt; G
+    O --&gt; P[保存举报记录]
+    P --&gt; Q[继续检查?]
+    Q --&gt;|是| G
+    Q --&gt;|否| R[生成巡查报告]
+    I --&gt; R
+    R --&gt; S[结束]
+</code></pre>
+
+<h4 id="922">9.2.2 举报执行流程</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart LR
+    A[开始举报] --&gt; B[获取商品页面]
+    B --&gt; C[定位举报按钮]
+    C --&gt; D[点击举报]
+    D --&gt; E[选择举报原因]
+    E --&gt; F[填写举报说明]
+    F --&gt; G[提交举报]
+    G --&gt; H{举报成功?}
+    H --&gt;|是| I[记录成功]
+    H --&gt;|否| J[重试机制]
+    I --&gt; K[结束举报]
+    J --&gt; F
+</code></pre>
+
+<h4 id="923">9.2.3 报告生成流程</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart TD
+    A[收集数据] --&gt; B[整理检测结果]
+    B --&gt; C[统计汇总]
+    C --&gt; D[生成报告内容]
+    D --&gt; E{导出格式}
+    E --&gt;|PDF| F[生成PDF报告]
+    E --&gt;|Excel| G[生成Excel表格]
+    E --&gt;|JSON| H[生成JSON数据]
+    F --&gt; I[保存报告]
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[通知用户]
+</code></pre>
+
+<h3 id="93">9.3 数据流图</h3>
+<h4 id="931">9.3.1 采集→处理→判定→存储</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart LR
+    subgraph &quot;数据采集&quot;
+        A[截图采集]
+        B[OCR文本提取]
+        C[页面元素识别]
+    end
+
+    subgraph &quot;数据处理&quot;
+        D[图像预处理]
+        E[文本清洗]
+        F[数据结构化]
+    end
+
+    subgraph &quot;数据判定&quot;
+        G[正版匹配]
+        H[店铺检查]
+        I[价格分析]
+        J[内容相似度]
+    end
+
+    subgraph &quot;数据存储&quot;
+        K[内存缓存]
+        L[文件存储]
+        M[数据库]
+    end
+
+    A --&gt; D
+    B --&gt; E
+    C --&gt; F
+    D --&gt; G
+    E --&gt; H
+    F --&gt; I
+    G --&gt; J
+    H --&gt; J
+    I --&gt; J
+    J --&gt; K
+    K --&gt; L
+    L --&gt; M
+</code></pre>
+
+<h4 id="932">9.3.2 实时数据同步</h4>
+<pre class="codehilite"><code class="language-mermaid">flowchart TB
+    subgraph &quot;数据源&quot;
+        A[Agent操作]
+        B[系统事件]
+        C[检测结果]
+    end
+
+    subgraph &quot;消息队列&quot;
+        D[事件队列]
+        E[优先级队列]
+        F[重试队列]
+    end
+
+    subgraph &quot;数据处理器&quot;
+        G[格式转换]
+        H[数据验证]
+        I[状态更新]
+    end
+
+    subgraph &quot;推送渠道&quot;
+        J[WebSocket推送]
+        K[HTTP推送]
+        L[消息通知]
+    end
+
+    A --&gt; D
+    B --&gt; E
+    C --&gt; F
+    D --&gt; G
+    E --&gt; G
+    F --&gt; H
+    G --&gt; I
+    I --&gt; J
+    I --&gt; K
+    I --&gt; L
+</code></pre>
+
+<h3 id="94">9.4 时序图</h3>
+<h4 id="941">9.4.1 前后端交互时序</h4>
+<pre class="codehilite"><code class="language-mermaid">sequenceDiagram
+    participant U as 用户
+    participant F as 前端
+    participant A as API服务
+    participant T as 任务管理器
+    participant I as 反盗版Agent
+    participant M as 多模态模型
+
+    U-&gt;&gt;F: 点击&quot;开始巡查&quot;
+    F-&gt;&gt;A: POST /api/patrol
+    A-&gt;&gt;T: 创建任务
+    T-&gt;&gt;I: 初始化Agent
+    I-&gt;&gt;M: 加载模型
+
+    Note over I,M: 模型加载时间
+
+    I-&gt;&gt;T: 任务就绪
+    T-&gt;&gt;A: 返回任务ID
+    A-&gt;&gt;F: 返回响应
+    F-&gt;&gt;U: 显示任务进行中
+
+    loop 检测循环
+        I-&gt;&gt;M: 请求商品识别
+        M-&gt;&gt;I: 返回商品信息
+        I-&gt;&gt;T: 更新进度
+        T-&gt;&gt;A: 推送进度
+        A-&gt;&gt;F: WebSocket推送
+    end
+
+    F-&gt;&gt;U: 显示检测结果
+</code></pre>
+
+<h4 id="942-ai">9.4.2 AI模型调用流程</h4>
+<pre class="codehilite"><code class="language-mermaid">sequenceDiagram
+    participant A as Agent
+    participant M as 多模态模型
+    participant V as 视觉模块
+    participant T as 文本模块
+    participant O as 输出模块
+
+    A-&gt;&gt;M: 发送任务请求
+    M-&gt;&gt;V: 图像识别任务
+    V-&gt;&gt;A: 返回视觉信息
+
+    M-&gt;&gt;T: 文本理解任务
+    T-&gt;&gt;A: 返回文本信息
+
+    A-&gt;&gt;M: 综合分析请求
+    M-&gt;&gt;O: 整合信息
+    O-&gt;&gt;A: 返回分析结果
+</code></pre>
+
+<h4 id="943">9.4.3 多设备协作时序</h4>
+<pre class="codehilite"><code class="language-mermaid">sequenceDiagram
+    participant C as 控制中心
+    participant D1 as 设备1
+    participant D2 as 设备2
+    participant S as 存储系统
+    participant L as 日志系统
+
+    C-&gt;&gt;D1: 分配任务1
+    C-&gt;&gt;D2: 分配任务2
+
+    par 并行执行
+        D1-&gt;&gt;S: 存储结果1
+        D2-&gt;&gt;S: 存储结果2
+    end
+
+    D1-&gt;&gt;L: 记录日志1
+    D2-&gt;&gt;L: 记录日志2
+
+    S-&gt;&gt;C: 汇报完成状态
+    L-&gt;&gt;C: 汇报日志状态
+    C-&gt;&gt;C: 生成汇总报告
+</code></pre>
+
+<hr />
+<h2 id="_31">十、技术实现细节</h2>
+<h3 id="101">10.1 关键技术实现</h3>
+<h4 id="1011">10.1.1 中文输入智能处理</h4>
+<p>系统实现了三级中文输入保障机制：</p>
+<pre class="codehilite"><code class="language-python">class SmartTextInput:
+    &quot;&quot;&quot;智能中文输入处理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.input_methods = [
+            self._file_input,      # 最高优先级
+            self._adb_input,      # 次高优先级
+            self._clipboard_input  # 最低优先级
+        ]
+
+    def input_text(self, text: str) -&gt; bool:
+        &quot;&quot;&quot;智能选择输入方式&quot;&quot;&quot;
+        for method in self.input_methods:
+            try:
+                success = method(text)
+                if success:
+                    return True
+            except Exception as e:
+                print(f&quot;输入方法失败: {e}&quot;)
+                continue
+        return False
+
+    def _file_input(self, text: str) -&gt; bool:
+        &quot;&quot;&quot;文件输入方式（最可靠）&quot;&quot;&quot;
+        try:
+            # 创建临时UTF-8文件
+            with tempfile.NamedTemporaryFile(
+                mode='w',
+                suffix='.txt',
+                encoding='utf-8',
+                delete=False
+            ) as f:
+                f.write(text)
+                temp_path = f.name
+
+            # 使用adb push推送到设备
+            subprocess.run([
+                'adb', 'push', temp_path,
+                '/sdcard/input_temp.txt'
+            ], check=True, timeout=30)
+
+            # 使用adb shell读取文件内容
+            subprocess.run([
+                'adb', 'shell',
+                'am broadcast -a android.intent.action.VIEW ' +
+                '-d file:///sdcard/input_temp.txt ' +
+                '-t text/plain'
+            ], check=True)
+
+            # 清理临时文件
+            os.unlink(temp_path)
+            return True
+
+        except Exception as e:
+            if 'temp_path' in locals() and os.path.exists(temp_path):
+                os.unlink(temp_path)
+            return False
+</code></pre>
+
+<h4 id="1012-ui">10.1.2 多平台UI适配</h4>
+<pre class="codehilite"><code class="language-python">class PlatformUIAdapter:
+    &quot;&quot;&quot;平台UI适配器&quot;&quot;&quot;
+
+    def __init__(self, platform: str):
+        self.platform = platform
+        self.ui_elements = self._load_ui_config(platform)
+
+    def get_element_info(self, element_type: str) -&gt; dict:
+        &quot;&quot;&quot;获取UI元素信息&quot;&quot;&quot;
+        return self.ui_elements.get(element_type, {})
+
+    def find_element(self, element_type: str) -&gt; Optional[dict]:
+        &quot;&quot;&quot;查找UI元素&quot;&quot;&quot;
+        element_info = self.get_element_info(element_type)
+
+        # 使用uiautomator2或AI进行元素查找
+        if element_info:
+            return self._find_element_by_info(element_info)
+
+        return None
+
+    def _find_element_by_info(self, element_info: dict) -&gt; Optional[dict]:
+        &quot;&quot;&quot;根据信息查找元素&quot;&quot;&quot;
+        # 实现元素查找逻辑
+        try:
+            # 方法1: 使用resource-id
+            if 'resource-id' in element_info:
+                cmd = [
+                    'adb', 'shell',
+                    f'uiautomator dump &amp;&amp; grep -oP \'&lt;node[^&gt;]*resource-id=&quot;{element_info[&quot;resource_id&quot;]}&quot;[^&gt;]*&gt;\' /sdcard/window_dump.xml'
+                ]
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                if result.returncode == 0:
+                    return self._parse_element_xml(result.stdout)
+
+            # 方法2: 使用文本匹配
+            if 'text' in element_info:
+                cmd = [
+                    'adb', 'shell',
+                    f'input text &quot;{element_info[&quot;text&quot;]}&quot;'
+                ]
+                subprocess.run(cmd, check=True)
+                return {'type': 'text_input', 'text': element_info['text']}
+
+            # 方法3: 使用AI视觉识别
+            return self._find_by_ai_vision(element_info)
+
+        except Exception as e:
+            print(f&quot;元素查找失败: {e}&quot;)
+            return None
+</code></pre>
+
+<h4 id="1013">10.1.3 实时性能优化</h4>
+<pre class="codehilite"><code class="language-python">class PerformanceOptimizer:
+    &quot;&quot;&quot;性能优化器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.cache = LRUCache(maxsize=1000)
+        self.connection_pool = ConnectionPool()
+        self.async_io = AsyncIOManager()
+
+    def optimize_data_processing(self, data_stream):
+        &quot;&quot;&quot;优化数据处理流&quot;&quot;&quot;
+        # 1. 批量处理
+        batch_processor = BatchProcessor(batch_size=10)
+
+        # 2. 并行处理
+        parallel_processor = ParallelProcessor(
+            max_workers=4,
+            task_queue=self.async_io.create_queue()
+        )
+
+        # 3. 缓存处理
+        cached_processor = CachedProcessor(
+            processor=parallel_processor,
+            cache=self.cache
+        )
+
+        return cached_processor.process_stream(data_stream)
+
+    def optimize_memory_usage(self):
+        &quot;&quot;&quot;优化内存使用&quot;&quot;&quot;
+        # 对象池复用
+        object_pool = ObjectPool(
+            factory=lambda: ProductInfo(),
+            max_size=100
+        )
+
+        # 定期清理
+        def cleanup_task():
+            while True:
+                time.sleep(3600)  # 每小时清理一次
+                self.cache.cleanup()
+                object_pool.cleanup()
+
+        # 启动清理任务
+        Thread(target=cleanup_task, daemon=True).start()
+</code></pre>
+
+<h3 id="102">10.2 数据存储机制</h3>
+<h4 id="1021-json">10.2.1 JSON文件存储策略</h4>
+<pre class="codehilite"><code class="language-python">class JSONStorageManager:
+    &quot;&quot;&quot;JSON文件存储管理器&quot;&quot;&quot;
+
+    def __init__(self, base_dir: str):
+        self.base_dir = base_dir
+        self.lock = threading.RLock()
+        self.backup_dir = os.path.join(base_dir, 'backups')
+        os.makedirs(self.backup_dir, exist_ok=True)
+
+    def save_with_backup(self, filename: str, data: dict):
+        &quot;&quot;&quot;带备份的保存&quot;&quot;&quot;
+        with self.lock:
+            # 创建备份
+            self._create_backup(filename)
+
+            # 写入新数据
+            temp_path = os.path.join(self.base_dir, f&quot;{filename}.tmp&quot;)
+            try:
+                with open(temp_path, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2, cls=CustomJSONEncoder)
+
+                # 原子性替换
+                final_path = os.path.join(self.base_dir, filename)
+                os.replace(temp_path, final_path)
+
+            except Exception as e:
+                # 清理临时文件
+                if os.path.exists(temp_path):
+                    os.unlink(temp_path)
+                raise e
+
+    def _create_backup(self, filename: str):
+        &quot;&quot;&quot;创建备份&quot;&quot;&quot;
+        source_path = os.path.join(self.base_dir, filename)
+        if not os.path.exists(source_path):
+            return
+
+        timestamp = datetime.now().strftime(&quot;%Y%m%d_%H%M%S&quot;)
+        backup_filename = f&quot;{filename}.{timestamp}.bak&quot;
+        backup_path = os.path.join(self.backup_dir, backup_filename)
+
+        # 复制备份文件
+        shutil.copy2(source_path, backup_path)
+
+        # 清理旧备份（保留最近10个）
+        self._cleanup_old_backups(filename, 10)
+</code></pre>
+
+<h4 id="1022">10.2.2 截图文件管理</h4>
+<pre class="codehilite"><code class="language-python">class ScreenshotManager:
+    &quot;&quot;&quot;截图管理器&quot;&quot;&quot;
+
+    def __init__(self, base_dir: str):
+        self.base_dir = base_dir
+        self.screenshot_dir = os.path.join(base_dir, 'screenshots')
+        self.evidence_dir = os.path.join(self.screenshot_dir, 'evidence')
+        os.makedirs(self.evidence_dir, exist_ok=True)
+
+        # 配置压缩参数
+        self.compression_config = {
+            'quality': 85,
+            'max_width': 1920,
+            'max_height': 1080
+        }
+
+    def capture_screenshot(self,
+                         task_id: str,
+                         element_info: dict,
+                         compress: bool = True) -&gt; str:
+        &quot;&quot;&quot;采集截图&quot;&quot;&quot;
+        timestamp = datetime.now().strftime(&quot;%Y%m%d_%H%M%S_%f&quot;)
+        filename = f&quot;{task_id}_{timestamp}.png&quot;
+
+        # 任务目录
+        task_dir = os.path.join(self.evidence_dir, task_id)
+        os.makedirs(task_dir, exist_ok=True)
+
+        # 文件路径
+        filepath = os.path.join(task_dir, filename)
+
+        try:
+            # 截图
+            if compress:
+                # 使用高质量截图
+                cmd = [
+                    'adb', 'shell',
+                    'screencap -p /sdcard/screenshot.png'
+                ]
+                subprocess.run(cmd, check=True)
+
+                # 下载并压缩
+                subprocess.run([
+                    'adb', 'pull', '/sdcard/screenshot.png', filepath
+                ], check=True)
+
+                # 压缩图片
+                self._compress_image(filepath)
+
+            else:
+                # 直接截图
+                cmd = [
+                    'adb', 'exec-out', 'screencap', '-p', '&gt;',
+                    filepath
+                ]
+                subprocess.run(cmd, shell=True, check=True)
+
+            # 记录截图信息
+            self._log_screenshot(task_id, filename, element_info)
+
+            return filepath
+
+        except Exception as e:
+            print(f&quot;截图失败: {e}&quot;)
+            return &quot;&quot;
+
+    def _compress_image(self, filepath: str):
+        &quot;&quot;&quot;压缩图片&quot;&quot;&quot;
+        try:
+            from PIL import Image
+
+            with Image.open(filepath) as img:
+                # 调整尺寸
+                if (img.width &gt; self.compression_config['max_width'] or
+                    img.height &gt; self.compression_config['max_height']):
+                    img.thumbnail(
+                        (self.compression_config['max_width'],
+                         self.compression_config['max_height']),
+                        Image.Resampling.LANCZOS
+                    )
+
+                # 保存压缩后的图片
+                img.save(
+                    filepath,
+                    'PNG',
+                    quality=self.compression_config['quality'],
+                    optimize=True
+                )
+        except ImportError:
+            print(&quot;PIL未安装，跳过图片压缩&quot;)
+        except Exception as e:
+            print(f&quot;图片压缩失败: {e}&quot;)
+</code></pre>
+
+<h4 id="1023">10.2.3 日志轮转机制</h4>
+<pre class="codehilite"><code class="language-python">class RotatingLogHandler:
+    &quot;&quot;&quot;日志轮转处理器&quot;&quot;&quot;
+
+    def __init__(self,
+                 filename: str,
+                 max_size: int = 10 * 1024 * 1024,  # 10MB
+                 backup_count: int = 5):
+        self.filename = filename
+        self.max_size = max_size
+        self.backup_count = backup_count
+        self.rotation_lock = threading.Lock()
+
+    def emit(self, record):
+        &quot;&quot;&quot;输出日志记录&quot;&quot;&quot;
+        with self.rotation_lock:
+            # 检查是否需要轮转
+            if self._should_rotate():
+                self._rotate_logs()
+
+            # 写入日志
+            try:
+                with open(self.filename, 'a', encoding='utf-8') as f:
+                    f.write(self.format(record) + '\n')
+            except Exception as e:
+                print(f&quot;写入日志失败: {e}&quot;)
+
+    def _should_rotate(self) -&gt; bool:
+        &quot;&quot;&quot;检查是否需要轮转&quot;&quot;&quot;
+        try:
+            return os.path.exists(self.filename) and (
+                os.path.getsize(self.filename) &gt; self.max_size
+            )
+        except Exception:
+            return False
+
+    def _rotate_logs(self):
+        &quot;&quot;&quot;轮转日志&quot;&quot;&quot;
+        # 移动现有日志文件
+        for i in range(self.backup_count - 1, 0, -1):
+            src = f&quot;{self.filename}.{i}&quot;
+            dst = f&quot;{self.filename}.{i + 1}&quot;
+
+            if os.path.exists(src):
+                if os.path.exists(dst):
+                    os.remove(dst)
+                os.rename(src, dst)
+
+        # 移动当前日志文件
+        if os.path.exists(self.filename):
+            os.rename(self.filename, f&quot;{self.filename}.1&quot;)
+
+        # 创建新日志文件
+        with open(self.filename, 'w', encoding='utf-8') as f:
+            f.write(f&quot;# Log rotated at {datetime.now().isoformat()}\n&quot;)
+</code></pre>
+
+<h3 id="103">10.3 容错处理</h3>
+<h4 id="1031">10.3.1 异常捕获机制</h4>
+<pre class="codehilite"><code class="language-python">class ExceptionHandler:
+    &quot;&quot;&quot;异常处理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.exception_handlers = {
+            'adb_error': self._handle_adb_error,
+            'network_error': self._handle_network_error,
+            'api_error': self._handle_api_error,
+            'ai_error': self._handle_ai_error,
+            'storage_error': self._handle_storage_error
+        }
+
+    def handle_exception(self,
+                        exception: Exception,
+                        context: dict = None) -&gt; dict:
+        &quot;&quot;&quot;处理异常&quot;&quot;&quot;
+        # 记录异常
+        self._log_exception(exception, context)
+
+        # 分类处理
+        exception_type = self._classify_exception(exception)
+
+        handler = self.exception_handlers.get(exception_type)
+        if handler:
+            result = handler(exception, context)
+        else:
+            result = self._handle_generic_exception(exception, context)
+
+        # 通知相关方
+        self._notify_stakeholders(exception, result)
+
+        return result
+
+    def _classify_exception(self, exception: Exception) -&gt; str:
+        &quot;&quot;&quot;异常分类&quot;&quot;&quot;
+        exception_str = str(exception).lower()
+
+        if any(keyword in exception_str for keyword in ['adb', 'device', 'android']):
+            return 'adb_error'
+        elif any(keyword in exception_str for keyword in ['network', 'connection', 'timeout']):
+            return 'network_error'
+        elif any(keyword in exception_str for keyword in ['api', 'http', 'response']):
+            return 'api_error'
+        elif any(keyword in exception_str for keyword in ['ai', 'model', 'inference']):
+            return 'ai_error'
+        elif any(keyword in exception_str for keyword in ['storage', 'file', 'disk']):
+            return 'storage_error'
+        else:
+            return 'generic_error'
+
+    def _handle_adb_error(self, exception: Exception, context: dict) -&gt; dict:
+        &quot;&quot;&quot;处理ADB错误&quot;&quot;&quot;
+        error_message = str(exception)
+
+        if 'device not found' in error_message:
+            return {
+                'action': 'retry',
+                'message': '设备未连接，等待重连...',
+                'delay': 5000
+            }
+        elif 'adb: command not found' in error_message:
+            return {
+                'action': 'abort',
+                'message': 'ADB命令未找到，请检查环境配置'
+            }
+        else:
+            return {
+                'action': 'retry',
+                'message': f'ADB操作失败: {error_message}',
+                'delay': 2000
+            }
+</code></pre>
+
+<h4 id="1032">10.3.2 自动恢复策略</h4>
+<pre class="codehilite"><code class="language-python">class RecoveryManager:
+    &quot;&quot;&quot;自动恢复管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.recovery_strategies = {
+            'task_timeout': self._recover_task_timeout,
+            'network_disconnect': self._recover_network_disconnect,
+            'model_error': self._recover_model_error,
+            'storage_full': self._recover_storage_full
+        }
+
+    def attempt_recovery(self,
+                         error_type: str,
+                         context: dict) -&gt; bool:
+        &quot;&quot;&quot;尝试恢复&quot;&quot;&quot;
+        strategy = self.recovery_strategies.get(error_type)
+        if not strategy:
+            return False
+
+        try:
+            return strategy(context)
+        except Exception as e:
+            print(f&quot;恢复策略执行失败: {e}&quot;)
+            return False
+
+    def _recover_task_timeout(self, context: dict) -&gt; bool:
+        &quot;&quot;&quot;任务超时恢复&quot;&quot;&quot;
+        task_id = context.get('task_id')
+
+        # 重置任务状态
+        reset_success = self._reset_task_state(task_id)
+
+        # 重新分配资源
+        if reset_success:
+            reallocate_success = self._reallocate_resources(task_id)
+
+            if reallocate_success:
+                # 重启任务
+                return self._restart_task(task_id)
+
+        return False
+
+    def _recover_network_disconnect(self, context: dict) -&gt; bool:
+        &quot;&quot;&quot;网络断开恢复&quot;&quot;&quot;
+        max_retries = 3
+        retry_count = context.get('retry_count', 0)
+
+        if retry_count &gt;= max_retries:
+            return False
+
+        # 等待网络恢复
+        time.sleep(5)
+
+        # 检查网络连接
+        if self._check_network_connection():
+            # 重试操作
+            return self._retry_operation(context)
+
+        return False
+</code></pre>
+
+<h4 id="1033">10.3.3 降级服务方案</h4>
+<pre class="codehilite"><code class="language-python">class DegradationService:
+    &quot;&quot;&quot;降级服务&quot;&quot;&quot;
+
+    def __init__(self):
+        self.degradation_levels = {
+            'normal': {
+                'features': ['full_detection', 'real_time_sync', 'ai_analysis'],
+                'performance': '100%'
+            },
+            'degraded': {
+                'features': ['basic_detection', 'batch_sync', 'rule_based'],
+                'performance': '70%'
+            },
+            'minimal': {
+                'features': ['manual_detection', 'no_sync', 'simple_check'],
+                'performance': '30%'
+            },
+            'emergency': {
+                'features': ['read_only'],
+                'performance': '10%'
+            }
+        }
+
+        self.current_level = 'normal'
+        self.health_monitor = HealthMonitor()
+
+    def monitor_and_adjust(self):
+        &quot;&quot;&quot;监控并调整服务等级&quot;&quot;&quot;
+        while True:
+            health_status = self.health_monitor.check_health()
+
+            new_level = self._determine_degradation_level(health_status)
+
+            if new_level != self.current_level:
+                self._apply_degradation(new_level)
+                self.current_level = new_level
+
+            time.sleep(60)  # 每分钟检查一次
+
+    def _determine_degradation_level(self, health_status: dict) -&gt; str:
+        &quot;&quot;&quot;确定降级等级&quot;&quot;&quot;
+        cpu_usage = health_status.get('cpu_usage', 0)
+        memory_usage = health_status.get('memory_usage', 0)
+        error_rate = health_status.get('error_rate', 0)
+
+        if cpu_usage &gt; 90 or memory_usage &gt; 90 or error_rate &gt; 0.5:
+            return 'emergency'
+        elif cpu_usage &gt; 70 or memory_usage &gt; 70 or error_rate &gt; 0.3:
+            return 'minimal'
+        elif cpu_usage &gt; 50 or memory_usage &gt; 50 or error_rate &gt; 0.1:
+            return 'degraded'
+        else:
+            return 'normal'
+
+    def _apply_degradation(self, level: str):
+        &quot;&quot;&quot;应用降级策略&quot;&quot;&quot;
+        config = self.degradation_levels[level]
+
+        print(f&quot;系统降级到: {level} (性能: {config['performance']})&quot;)
+
+        # 关闭不需要的功能
+        for feature in self.degradation_levels['normal']['features']:
+            if feature not in config['features']:
+                self._disable_feature(feature)
+
+        # 启用降级模式的功能
+        for feature in config['features']:
+            if feature not in self.degradation_levels[self.current_level]['features']:
+                self._enable_feature(feature)
+</code></pre>
+
+<hr />
+<h2 id="_32">十一、性能优化与扩展性</h2>
+<h3 id="111">11.1 性能优化策略</h3>
+<h4 id="1111-io">11.1.1 异步IO处理</h4>
+<pre class="codehilite"><code class="language-python">class AsyncIOManager:
+    &quot;&quot;&quot;异步IO管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.loop = asyncio.new_event_loop()
+        self.executor = ThreadPoolExecutor(max_workers=10)
+        self.semaphore = asyncio.Semaphore(100)  # 限制并发数
+
+    async def process_tasks(self, tasks: List[Callable]):
+        &quot;&quot;&quot;异步处理任务列表&quot;&quot;&quot;
+        results = []
+
+        # 使用信号量限制并发
+        async with self.semaphore:
+            # 创建任务
+            async_tasks = [
+                self._process_single_task(task)
+                for task in tasks
+            ]
+
+            # 并发执行
+            results = await asyncio.gather(*async_tasks, return_exceptions=True)
+
+        return results
+
+    async def _process_single_task(self, task: Callable):
+        &quot;&quot;&quot;处理单个任务&quot;&quot;&quot;
+        try:
+            # 如果是同步函数，在线程池中执行
+            if asyncio.iscoroutinefunction(task):
+                return await task()
+            else:
+                loop = asyncio.get_running_loop()
+                return await loop.run_in_executor(self.executor, task)
+        except Exception as e:
+            print(f&quot;任务执行失败: {e}&quot;)
+            return None
+
+    def file_io_async(self, file_path: str, mode: str, data: str = None):
+        &quot;&quot;&quot;异步文件IO&quot;&quot;&quot;
+        def _file_io():
+            if mode == 'read':
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+            else:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(data)
+                return True
+
+        return asyncio.run_in_executor(self.executor, _file_io)
+</code></pre>
+
+<h4 id="1112">11.1.2 数据缓存机制</h4>
+<pre class="codehilite"><code class="language-python">class CacheManager:
+    &quot;&quot;&quot;缓存管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.memory_cache = LRUCache(maxsize=1000)
+        self.disk_cache = DiskCache(base_dir='cache')
+        self.redis_cache = RedisCache(host='localhost', port=6379)
+
+    async def get(self, key: str, cache_type: str = 'memory') -&gt; Any:
+        &quot;&quot;&quot;获取缓存数据&quot;&quot;&quot;
+        if cache_type == 'memory':
+            return self.memory_cache.get(key)
+        elif cache_type == 'disk':
+            return await self.disk_cache.get(key)
+        elif cache_type == 'redis':
+            return await self.redis_cache.get(key)
+        else:
+            # 多级缓存：先内存，再磁盘，最后Redis
+            value = self.memory_cache.get(key)
+            if value is not None:
+                return value
+
+            value = await self.disk_cache.get(key)
+            if value is not None:
+                # 回填到内存缓存
+                self.memory_cache[key] = value
+                return value
+
+            value = await self.redis_cache.get(key)
+            if value is not None:
+                # 回填到内存和磁盘缓存
+                self.memory_cache[key] = value
+                await self.disk_cache.set(key, value, ttl=3600)
+                return value
+
+            return None
+
+    async def set(self,
+                 key: str,
+                 value: Any,
+                 ttl: int = 300,
+                 cache_type: str = 'memory'):
+        &quot;&quot;&quot;设置缓存数据&quot;&quot;&quot;
+        if cache_type == 'memory':
+            self.memory_cache[key] = value
+        elif cache_type == 'disk':
+            await self.disk_cache.set(key, value, ttl)
+        elif cache_type == 'redis':
+            await self.redis_cache.set(key, value, ttl)
+        else:
+            # 多级缓存同时设置
+            self.memory_cache[key] = value
+            await self.disk_cache.set(key, value, ttl)
+            await self.redis_cache.set(key, value, ttl)
+
+    def warm_up_cache(self, keys: List[str]):
+        &quot;&quot;&quot;预热缓存&quot;&quot;&quot;
+        for key in keys:
+            # 异步预热
+            asyncio.create_task(self._warm_up_single(key))
+
+    async def _warm_up_single(self, key: str):
+        &quot;&quot;&quot;预热单个缓存项&quot;&quot;&quot;
+        # 从数据库加载数据
+        data = await self._load_from_db(key)
+        if data:
+            # 设置缓存
+            await self.set(key, data, ttl=600)
+</code></pre>
+
+<h4 id="1113">11.1.3 连接池管理</h4>
+<pre class="codehilite"><code class="language-python">class ConnectionPool:
+    &quot;&quot;&quot;连接池管理器&quot;&quot;&quot;
+
+    def __init__(self,
+                 create_connection: Callable,
+                 max_connections: int = 10,
+                 idle_timeout: int = 300):
+        self.create_connection = create_connection
+        self.max_connections = max_connections
+        self.idle_timeout = idle_timeout
+
+        # 连接池
+        self.pool = asyncio.Queue(maxsize=max_connections)
+        self.active_connections = set()
+
+        # 清理定时器
+        self.cleanup_task = asyncio.create_task(
+            self._cleanup_idle_connections()
+        )
+
+    async def get_connection(self) -&gt; Any:
+        &quot;&quot;&quot;获取连接&quot;&quot;&quot;
+        try:
+            # 尝试从池中获取
+            connection = await asyncio.wait_for(
+                self.pool.get(),
+                timeout=5.0
+            )
+        except asyncio.TimeoutError:
+            # 池为空，创建新连接
+            if len(self.active_connections) &lt; self.max_connections:
+                connection = await self.create_connection()
+            else:
+                raise ConnectionError(&quot;连接池已满&quot;)
+
+        # 标记为活跃
+        self.active_connections.add(connection)
+        return connection
+
+    async def release_connection(self, connection: Any):
+        &quot;&quot;&quot;释放连接&quot;&quot;&quot;
+        # 从活跃集合移除
+        self.active_connections.discard(connection)
+
+        # 检查连接是否有效
+        if await self._is_connection_valid(connection):
+            try:
+                # 放回池中
+                await self.pool.put(connection)
+            except asyncio.QueueFull:
+                # 池已满，关闭连接
+                await self._close_connection(connection)
+        else:
+            # 无效连接，关闭
+            await self._close_connection(connection)
+
+    async def _cleanup_idle_connections(self):
+        &quot;&quot;&quot;清理空闲连接&quot;&quot;&quot;
+        while True:
+            await asyncio.sleep(self.idle_timeout)
+
+            # 获取池中的所有连接
+            connections_to_check = []
+            while not self.pool.empty():
+                try:
+                    conn = self.pool.get_nowait()
+                    connections_to_check.append(conn)
+                except asyncio.QueueEmpty:
+                    break
+
+            # 检查连接状态
+            for conn in connections_to_check:
+                if not await self._is_connection_valid(conn):
+                    await self._close_connection(conn)
+                else:
+                    # 有效连接，放回池中
+                    try:
+                        self.pool.put_nowait(conn)
+                    except asyncio.QueueFull:
+                        await self._close_connection(conn)
+</code></pre>
+
+<h3 id="112">11.2 扩展性设计</h3>
+<h4 id="1121">11.2.1 微服务架构</h4>
+<pre class="codehilite"><code class="language-python"># 服务注册与发现
+class ServiceRegistry:
+    &quot;&quot;&quot;服务注册中心&quot;&quot;&quot;
+
+    def __init__(self):
+        self.services = {}
+        self.lock = threading.Lock()
+
+    def register(self,
+                service_name: str,
+                service_info: dict) -&gt; bool:
+        &quot;&quot;&quot;注册服务&quot;&quot;&quot;
+        with self.lock:
+            if service_name not in self.services:
+                self.services[service_name] = []
+
+            self.services[service_name].append({
+                'info': service_info,
+                'registered_at': datetime.now(),
+                'heartbeat': time.time()
+            })
+
+            return True
+
+    def discover(self, service_name: str) -&gt; List[dict]:
+        &quot;&quot;&quot;发现服务&quot;&quot;&quot;
+        with self.lock:
+            services = self.services.get(service_name, [])
+
+            # 过滤掉心跳超时的服务
+            current_time = time.time()
+            active_services = [
+                service for service in services
+                if current_time - service['heartbeat'] &lt; 60  # 60秒超时
+            ]
+
+            # 更新服务列表
+            self.services[service_name] = active_services
+
+            return [service['info'] for service in active_services]
+
+# 服务间通信
+class ServiceCommunication:
+    &quot;&quot;&quot;服务间通信&quot;&quot;&quot;
+
+    def __init__(self, registry: ServiceRegistry):
+        self.registry = registry
+        self.http_client = AsyncHTTPClient()
+
+    async def call_service(self,
+                          service_name: str,
+                          endpoint: str,
+                          method: str = 'GET',
+                          data: dict = None) -&gt; dict:
+        &quot;&quot;&quot;调用其他服务&quot;&quot;&quot;
+        # 发现服务
+        services = self.registry.discover(service_name)
+        if not services:
+            raise ServiceNotFoundError(f&quot;服务未找到: {service_name}&quot;)
+
+        # 随机选择一个服务实例
+        service_info = random.choice(services)
+
+        url = f&quot;http://{service_info['host']}:{service_info['port']}{endpoint}&quot;
+
+        try:
+            if method == 'GET':
+                async with self.http_client.get(url) as response:
+                    return await response.json()
+            elif method == 'POST':
+                async with self.http_client.post(
+                    url,
+                    json=data
+                ) as response:
+                    return await response.json()
+            else:
+                raise ValueError(f&quot;不支持的HTTP方法: {method}&quot;)
+
+        except Exception as e:
+            # 服务调用失败，尝试下一个实例
+            return await self._retry_with_other_instances(
+                service_name, endpoint, method, data
+            )
+</code></pre>
+
+<h4 id="1122">11.2.2 平台扩展接口</h4>
+<pre class="codehilite"><code class="language-python"># 平台适配器接口
+class PlatformAdapter(ABC):
+    &quot;&quot;&quot;平台适配器基类&quot;&quot;&quot;
+
+    @abstractmethod
+    async def search_products(self, keyword: str) -&gt; List[dict]:
+        &quot;&quot;&quot;搜索商品&quot;&quot;&quot;
+        pass
+
+    @abstractmethod
+    async def extract_product_info(self, product_url: str) -&gt; dict:
+        &quot;&quot;&quot;提取商品信息&quot;&quot;&quot;
+        pass
+
+    @abstractmethod
+    async def report_piracy(self, product_info: dict) -&gt; bool:
+        &quot;&quot;&quot;举报盗版&quot;&quot;&quot;
+        pass
+
+    @abstractmethod
+    def get_platform_config(self) -&gt; dict:
+        &quot;&quot;&quot;获取平台配置&quot;&quot;&quot;
+        pass
+
+# 小红书平台适配器
+class XiaohongshuAdapter(PlatformAdapter):
+    &quot;&quot;&quot;小红书平台适配器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.config = {
+            'app_package': 'com.xingin.xhs',
+            'search_keywords': ['众合法考', '众合法考客观题'],
+            'ui_elements': {
+                'search_bar': '搜索框',
+                'product_list': '商品列表',
+                'shop_info': '店铺信息',
+                'price_tag': '价格标签'
+            }
+        }
+
+    async def search_products(self, keyword: str) -&gt; List[dict]:
+        &quot;&quot;&quot;搜索商品&quot;&quot;&quot;
+        agent = AntiPiracyAgent(platform='xiaohongshu')
+
+        # 导航到搜索页
+        await agent.navigate_to_page('search')
+
+        # 输入搜索关键词
+        await agent.input_text(keyword)
+
+        # 获取商品列表
+        products = await agent.extract_product_list()
+
+        return products
+
+    async def extract_product_info(self, product_url: str) -&gt; dict:
+        &quot;&quot;&quot;提取商品信息&quot;&quot;&quot;
+        agent = AntiPiracyAgent(platform='xiaohongshu')
+
+        # 导航到商品页
+        await agent.navigate_to_product(product_url)
+
+        # 提取商品信息
+        info = await agent.extract_product_info()
+
+        return info
+
+    async def report_piracy(self, product_info: dict) -&gt; bool:
+        &quot;&quot;&quot;举报盗版&quot;&quot;&quot;
+        agent = AntiPiracyAgent(platform='xiaohongshu')
+
+        # 导航到商品页
+        await agent.navigate_to_product(product_info['url'])
+
+        # 执行举报
+        success = await agent.report_piracy(product_info)
+
+        return success
+
+    def get_platform_config(self) -&gt; dict:
+        &quot;&quot;&quot;获取平台配置&quot;&quot;&quot;
+        return self.config
+
+# 平台管理器
+class PlatformManager:
+    &quot;&quot;&quot;平台管理器&quot;&quot;&quot;
+
+    def __init__(self):
+        self.adapters = {
+            'xiaohongshu': XiaohongshuAdapter(),
+            'xianyu': XianyuAdapter(),  # 待实现
+            'taobao': TaobaoAdapter()   # 待实现
+        }
+
+    def get_adapter(self, platform: str) -&gt; PlatformAdapter:
+        &quot;&quot;&quot;获取平台适配器&quot;&quot;&quot;
+        adapter = self.adapters.get(platform)
+        if not adapter:
+            raise ValueError(f&quot;不支持的平台: {platform}&quot;)
+        return adapter
+
+    def register_adapter(self,
+                        platform: str,
+                        adapter: PlatformAdapter):
+        &quot;&quot;&quot;注册平台适配器&quot;&quot;&quot;
+        self.adapters[platform] = adapter
+</code></pre>
+
+<h4 id="1123">11.2.3 功能模块解耦</h4>
+<pre class="codehilite"><code class="language-python"># 事件总线
+class EventBus:
+    &quot;&quot;&quot;事件总线&quot;&quot;&quot;
+
+    def __init__(self):
+        self.subscribers = defaultdict(list)
+        self.middleware = []
+
+    def subscribe(self, event_type: str, handler: Callable):
+        &quot;&quot;&quot;订阅事件&quot;&quot;&quot;
+        self.subscribers[event_type].append(handler)
+
+    def unsubscribe(self, event_type: str, handler: Callable):
+        &quot;&quot;&quot;取消订阅&quot;&quot;&quot;
+        if event_type in self.subscribers:
+            self.subscribers[event_type].remove(handler)
+
+    async def publish(self, event_type: str, data: Any):
+        &quot;&quot;&quot;发布事件&quot;&quot;&quot;
+        # 应用中间件
+        for middleware in self.middleware:
+            data = await middleware.process(event_type, data)
+
+        # 通知订阅者
+        if event_type in self.subscribers:
+            tasks = []
+            for handler in self.subscribers[event_type]:
+                tasks.append(handler(data))
+
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+    def add_middleware(self, middleware):
+        &quot;&quot;&quot;添加中间件&quot;&quot;&quot;
+        self.middleware.append(middleware)
+
+# 模块间通信示例
+class PiracyDetectionModule:
+    &quot;&quot;&quot;盗版检测模块&quot;&quot;&quot;
+
+    def __init__(self, event_bus: EventBus):
+        self.event_bus = event_bus
+        self.detection_engine = PiracyDetector()
+
+    async def start(self):
+        &quot;&quot;&quot;启动模块&quot;&quot;&quot;
+        # 监听商品提取完成事件
+        self.event_bus.subscribe(
+            'product_extracted',
+            self._handle_product_extracted
+        )
+
+    async def _handle_product_extracted(self, product_data: dict):
+        &quot;&quot;&quot;处理商品提取完成事件&quot;&quot;&quot;
+        # 执行盗版检测
+        detection_result = await self.detection_engine.detect(product_data)
+
+        # 发布检测结果事件
+        await self.event_bus.publish(
+            'detection_completed',
+            detection_result
+        )
+
+class ReportModule:
+    &quot;&quot;&quot;报告模块&quot;&quot;&quot;
+
+    def __init__(self, event_bus: EventBus):
+        self.event_bus = event_bus
+
+    async def start(self):
+        &quot;&quot;&quot;启动模块&quot;&quot;&quot;
+        # 监听检测结果事件
+        self.event_bus.subscribe(
+            'detection_completed',
+            self._handle_detection_completed
+        )
+
+    async def _handle_detection_completed(self, result: dict):
+        &quot;&quot;&quot;处理检测结果事件&quot;&quot;&quot;
+        if result['is_piracy']:
+            # 生成举报报告
+            report = self._generate_report(result)
+
+            # 发布报告生成事件
+            await self.event_bus.publish(
+                'report_generated',
+                report
+            )
+</code></pre>
+
+<h3 id="113">11.3 部署方案</h3>
+<h4 id="1131-docker">11.3.1 Docker容器化</h4>
+<pre class="codehilite"><code class="language-dockerfile"># Dockerfile
+FROM python:3.9-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update &amp;&amp; apt-get install -y \
+    adb \
+    curl \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+# 复制依赖文件
+COPY requirements.txt .
+
+# 安装Python依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制应用代码
+COPY . .
+
+# 创建非root用户
+RUN useradd -m -u 1000 appuser &amp;&amp; \
+    chown -R appuser:appuser /app
+USER appuser
+
+# 暴露端口
+EXPOSE 8000 8766
+
+# 启动命令
+CMD [&quot;python&quot;, &quot;-m&quot;, &quot;uvicorn&quot;, &quot;main:app&quot;, &quot;--host&quot;, &quot;0.0.0.0&quot;, &quot;--port&quot;, &quot;8000&quot;]
+</code></pre>
+
+<h4 id="1132-docker-composeyml">11.3.2 docker-compose.yml</h4>
+<pre class="codehilite"><code class="language-yaml">version: '3.8'
+
+services:
+  # 主应用服务
+  gui-stride-api:
+    build: .
+    ports:
+      - &quot;8000:8000&quot;
+      - &quot;8766:8766&quot;
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://user:pass@db:5432/gui_stride
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./screenshots:/app/screenshots
+    depends_on:
+      - redis
+      - db
+    restart: unless-stopped
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    ports:
+      - &quot;6379:6379&quot;
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # PostgreSQL数据库
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: gui_stride
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - &quot;5432:5432&quot;
+    restart: unless-stopped
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    ports:
+      - &quot;80:80&quot;
+      - &quot;443:443&quot;
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - gui-stride-api
+    restart: unless-stopped
+
+  # 监控服务
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - &quot;9090:9090&quot;
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+
+  # 日志收集
+  fluentd:
+    build: ./fluentd
+    volumes:
+      - ./logs:/fluentd/log
+      - ./fluentd/conf:/fluentd/etc
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+</code></pre>
+
+<h4 id="1133">11.3.3 负载均衡</h4>
+<pre class="codehilite"><code class="language-nginx"># nginx.conf
+upstream gui_stride_backend {
+    least_conn;
+    server gui-stride-api-1:8000 weight=3;
+    server gui-stride-api-2:8000 weight=3;
+    server gui-stride-api-3:8000 weight=2 backup;
+}
+
+# HTTP服务器
+server {
+    listen 80;
+    server_name gui-stride.example.com;
+
+    # 重定向到HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+# HTTPS服务器
+server {
+    listen 443 ssl http2;
+    server_name gui-stride.example.com;
+
+    # SSL配置
+    ssl_certificate /etc/nginx/ssl/cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/key.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # 限制请求大小
+    client_max_body_size 10M;
+
+    # 健康检查
+    location /health {
+        access_log off;
+        return 200 &quot;healthy\n&quot;;
+        add_header Content-Type text/plain;
+    }
+
+    # API代理
+    location /api {
+        proxy_pass http://gui_stride_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 超时设置
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+
+    # WebSocket代理
+    location /ws {
+        proxy_pass http://gui_stride_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection &quot;upgrade&quot;;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # 静态文件
+    location /static {
+        alias /app/static;
+        expires 1y;
+        add_header Cache-Control &quot;public, immutable&quot;;
+    }
+
+    # 安全头
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection &quot;1; mode=block&quot;;
+    add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains&quot; always;
+}
+</code></pre>
+
+<h4 id="1134">11.3.4 监控告警</h4>
+<pre class="codehilite"><code class="language-yaml"># prometheus.yml
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - &quot;alert_rules.yml&quot;
+
+scrape_configs:
+  - job_name: 'gui-stride-api'
+    static_configs:
+      - targets: ['gui-stride-api:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 15s
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['db:5432']
+    scrape_interval: 15s
+
+# alert_rules.yml
+groups:
+  - name: gui_stride_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~&quot;5..&quot;}[5m]) &gt; 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: &quot;High error rate detected&quot;
+          description: &quot;Error rate is {{ $value }} requests per second&quot;
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) &gt; 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: &quot;High response time detected&quot;
+          description: &quot;95th percentile response time is {{ $value }} seconds&quot;
+
+      - alert: LowMemoryAvailable
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 &lt; 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: &quot;Low memory available&quot;
+          description: &quot;Only {{ $value }}% memory available&quot;
+</code></pre>
+
+<hr />
+<h2 id="_33">十二、应用场景与案例</h2>
+<h3 id="121">12.1 典型应用场景</h3>
+<h4 id="1211">12.1.1 知识产权保护</h4>
+<p>GUI-Stride系统为知识产权保护提供了全方位的自动化解决方案：</p>
+<pre class="codehilite"><code class="language-python"># 知识产权保护场景配置
+IP_PROTECTION_CONFIG = {
+    &quot;scan_targets&quot;: {
+        &quot;textbooks&quot;: {
+            &quot;keywords&quot;: [&quot;考研教材&quot;, &quot;法考教材&quot;, &quot;公考教材&quot;],
+            &quot;platforms&quot;: [&quot;xiaohongshu&quot;, &quot;xianyu&quot;],
+            &quot;price_threshold&quot;: 0.7
+        },
+        &quot;software&quot;: {
+            &quot;keywords&quot;: [&quot;正版软件&quot;, &quot;授权软件&quot;],
+            &quot;platforms&quot;: [&quot;taobao&quot;, &quot;xianyu&quot;],
+            &quot;price_threshold&quot;: 0.5
+        }
+    },
+    &quot;response_actions&quot;: {
+        &quot;automatic_report&quot;: True,
+        &quot;evidence_collection&quot;: True,
+        &quot;legal_document_preparation&quot;: True
+    }
+}
+</code></pre>
+
+<h4 id="1212">12.1.2 品牌维权</h4>
+<p>品牌方可以利用系统进行全网侵权商品监控：</p>
+<pre class="codehilite"><code class="language-python"># 品牌维权场景示例
+BRAND_PROTECTION_SCENARIO = {
+    &quot;brand_name&quot;: &quot;众合法考&quot;,
+    &quot;products&quot;: [
+        {
+            &quot;name&quot;: &quot;众合法考客观题&quot;,
+            &quot;official_price&quot;: 298,
+            &quot;authorized_shops&quot;: [&quot;众合法考官方旗舰店&quot;, &quot;众合授权店&quot;]
+        },
+        {
+            &quot;name&quot;: &quot;众合法考主观题&quot;,
+            &quot;official_price&quot;: 198,
+            &quot;authorized_shops&quot;: [&quot;众合法考官方旗舰店&quot;]
+        }
+    ],
+    &quot;monitoring_strategy&quot;: {
+        &quot;frequency&quot;: &quot;daily&quot;,  # 每日巡查
+        &quot;keyword_variations&quot;: [
+            &quot;众合&quot;, &quot;法考&quot;, &quot;客观题&quot;, &quot;主观题&quot;,
+            &quot;zhonghe&quot;, &quot;fankao&quot;
+        ],
+        &quot;alert_threshold&quot;: 0.7  # 70%相似度即报警
+    }
+}
+</code></pre>
+
+<h4 id="1213">12.1.3 平台合规管理</h4>
+<p>电商平台可以利用系统进行内部合规管理：</p>
+<pre class="codehilite"><code class="language-python"># 平台合规管理配置
+PLATFORM_COMPLIANCE_CONFIG = {
+    &quot;auto_moderation&quot;: {
+        &quot;enabled&quot;: True,
+        &quot;response_time&quot;: &quot;2h&quot;,  # 2小时内响应
+        &quot;escalation_levels&quot;: [
+            &quot;warning&quot;,        # 警告
+            &quot;listing_remove&quot;, # 下架商品
+            &quot;account_suspend&quot; # 封停账号
+        ]
+    },
+    &quot;reporting&quot;: {
+        &quot;generate_weekly_report&quot;: True,
+        &quot;violation_statistics&quot;: True,
+        &quot;trend_analysis&quot;: True
+    },
+    &quot;integration&quot;: {
+        &quot;with_platform_api&quot;: True,
+        &quot;automatic_enforcement&quot;: True
+    }
+}
+</code></pre>
+
+<h3 id="122">12.2 实际案例分析</h3>
+<h4 id="1221">12.2.1 众合法考案例</h4>
+<h5 id="_34">背景介绍</h5>
+<p>众合法考是国内知名的法考培训机构，其教材和课程经常被盗版销售。2023年Q4，我们发现：</p>
+<ul>
+<li><strong>盗版问题</strong>：多个平台出现低价盗版教材</li>
+<li><strong>价格范围</strong>：正版298元，盗版50-100元</li>
+<li><strong>销售方式</strong>：通过微信、QQ私下交易</li>
+<li><strong>影响范围</strong>：全国23个省份</li>
+</ul>
+<h5 id="_35">系统实施</h5>
+<pre class="codehilite"><code class="language-python"># 众合法考巡查任务配置
+zhonghe_task = {
+    &quot;platform&quot;: &quot;xiaohongshu&quot;,
+    &quot;keywords&quot;: [&quot;众合法考&quot;, &quot;众合法考客观题&quot;],
+    &quot;max_items&quot;: 50,
+    &quot;price_threshold&quot;: 0.7,
+    &quot;whitelist&quot;: [
+        &quot;众合法考官方旗舰店&quot;,
+        &quot;众合法考授权店&quot;,
+        &quot;中公法考旗舰店&quot;
+    ],
+    &quot;time_range&quot;: {
+        &quot;start&quot;: &quot;2023-10-01&quot;,
+        &quot;end&quot;: &quot;2023-12-31&quot;
+    }
+}
+</code></pre>
+
+<h5 id="_36">实施效果</h5>
+<pre class="codehilite"><code class="language-python"># 实施效果数据
+IMPLEMENTATION_RESULTS = {
+    &quot;duration&quot;: &quot;3个月&quot;,
+    &quot;scanned_items&quot;: 2580,
+    &quot;pirated_items&quot;: 156,
+    &quot;success_rate&quot;: 87.3,
+    &quot;revenue_saved&quot;: &quot;约50万元&quot;,
+    &quot;platforms&quot;: {
+        &quot;xiaohongshu&quot;: {
+            &quot;violations&quot;: 89,
+            &quot;removed&quot;: 78
+        },
+        &quot;xianyu&quot;: {
+            &quot;violations&quot;: 45,
+            &quot;removed&quot;: 41
+        },
+        &quot;taobao&quot;: {
+            &quot;violations&quot;: 22,
+            &quot;removed&quot;: 19
+        }
+    },
+    &quot;response_time&quot;: {
+        &quot;average&quot;: &quot;4.2小时&quot;,
+        &quot;fastest&quot;: &quot;1.5小时&quot;
+    }
+}
+</code></pre>
+
+<h4 id="1222">12.2.2 检测效果统计</h4>
+<h5 id="_37">准确率分析</h5>
+<pre class="codehilite"><code class="language-python"># 检测准确率统计
+ACCURACY_STATS = {
+    &quot;overall_accuracy&quot;: 92.5,
+    &quot;precision&quot;: 94.2,      # 精确率
+    &quot;recall&quot;: 89.8,         # 召回率
+    &quot;f1_score&quot;: 0.92,
+    &quot;false_positive_rate&quot;: 5.3,
+    &quot;false_negative_rate&quot;: 7.5,
+    &quot;detection_by_layer&quot;: {
+        &quot;layer_1_exact_match&quot;: {
+            &quot;accuracy&quot;: 98.5,
+            &quot;coverage&quot;: 35.2
+        },
+        &quot;layer_2_shop_check&quot;: {
+            &quot;accuracy&quot;: 96.8,
+            &quot;coverage&quot;: 62.4
+        },
+        &quot;layer_3_price_anomaly&quot;: {
+            &quot;accuracy&quot;: 88.3,
+            &quot;coverage&quot;: 84.7
+        }
+    }
+}
+</code></pre>
+
+<h5 id="_38">效率提升对比</h5>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>人工巡查</th>
+<th>GUI-Stride系统</th>
+<th>提升比例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>日均处理量</td>
+<td>50个商品</td>
+<td>500+个商品</td>
+<td>1000%</td>
+</tr>
+<tr>
+<td>准确率</td>
+<td>65%</td>
+<td>92.5%</td>
+<td>42.3%</td>
+</tr>
+<tr>
+<td>响应时间</td>
+<td>24-48小时</td>
+<td>1-5小时</td>
+<td>85%</td>
+</tr>
+<tr>
+<td>人力成本</td>
+<td>8人/天</td>
+<td>1人/天</td>
+<td>87.5%</td>
+</tr>
+<tr>
+<td>覆盖范围</td>
+<td>单平台</td>
+<td>多平台</td>
+<td>300%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="1223">12.2.3 效率提升对比</h4>
+<h5 id="_39">处理效率对比</h5>
+<pre class="codehilite"><code class="language-python"># 效率对比分析
+EFFICIENCY_COMPARISON = {
+    &quot;manual_patrol&quot;: {
+        &quot;items_per_hour&quot;: 6.25,
+        &quot;cost_per_item&quot;: 50,    # 元
+        &quot;accuracy&quot;: 0.65,
+        &quot;work_hours&quot;: 8,        # 每天
+        &quot;platforms&quot;: 1
+    },
+    &quot;gui_stride&quot;: {
+        &quot;items_per_hour&quot;: 62.5,
+        &quot;cost_per_item&quot;: 8,     # 元
+        &quot;accuracy&quot;: 0.925,
+        &quot;work_hours&quot;: 24,       # 全天候
+        &quot;platforms&quot;: 3
+    },
+    &quot;improvement&quot;: {
+        &quot;speed&quot;: &quot;1000%&quot;,
+        &quot;cost_reduction&quot;: &quot;84%&quot;,
+        &quot;accuracy_improvement&quot;: &quot;42.3%&quot;,
+        &quot;platform_coverage&quot;: &quot;300%&quot;,
+        &quot;roi&quot;: &quot;580%&quot;           # 投资回报率
+    }
+}
+</code></pre>
+
+<h5 id="_40">案例总结</h5>
+<p>通过GUI-Stride系统的实施，我们实现了：</p>
+<ol>
+<li><strong>规模化巡查</strong>：从日均50个商品提升至500+个</li>
+<li><strong>精准打击</strong>：准确率从65%提升至92.5%</li>
+<li><strong>快速响应</strong>：响应时间从24-48小时缩短至1-5小时</li>
+<li><strong>成本优化</strong>：人力成本降低87.5%</li>
+<li><strong>全面覆盖</strong>：从单平台扩展到多平台监控</li>
+</ol>
+<hr />
+<h2 id="_41">十三、技术亮点与创新</h2>
+<h3 id="131">13.1 技术创新点</h3>
+<h4 id="1311-ai">13.1.1 多模态AI集成应用</h4>
+<p>GUI-Stride系统创新性地将多模态AI技术应用于反盗版领域：</p>
+<pre class="codehilite"><code class="language-python"># 多模态AI集成架构
+MULTIMODAL_AI_INTEGRATION = {
+    &quot;technological_innovation&quot;: {
+        &quot;visual_recognition&quot;: {
+            &quot;capability&quot;: &quot;商品图像识别与比对&quot;,
+            &quot;accuracy&quot;: 95.2,
+            &quot;applications&quot;: [
+                &quot;商品包装识别&quot;,
+                &quot;LOGO检测&quot;,
+                &quot;正版特征提取&quot;
+            ]
+        },
+        &quot;text_analysis&quot;: {
+            &quot;capability&quot;: &quot;文本内容理解与匹配&quot;,
+            &quot;accuracy&quot;: 93.8,
+            &quot;applications&quot;: [
+                &quot;商品描述分析&quot;,
+                &quot;关键词匹配&quot;,
+                &quot;语义相似度计算&quot;
+            ]
+        },
+        &quot;contextual_understanding&quot;: {
+            &quot;capability&quot;: &quot;上下文理解与推理&quot;,
+            &quot;accuracy&quot;: 91.5,
+            &quot;applications&quot;: [
+                &quot;店铺信誉评估&quot;,
+                &quot;价格合理性判断&quot;,
+                &quot;交易风险分析&quot;
+            ]
+        }
+    },
+    &quot;integration_benefits&quot;: {
+        &quot;comprehensive_detection&quot;: &quot;结合多种数据源，提高检测准确性&quot;,
+        &quot;false_reduction&quot;: &quot;多维度验证，减少误判&quot;,
+        &quot;adaptability&quot;: &quot;能够处理复杂多变的盗版形式&quot;
+    }
+}
+</code></pre>
+
+<h4 id="1312">13.1.2 自动化举报流程</h4>
+<p>系统实现了从发现到举报的全流程自动化：</p>
+<pre class="codehilite"><code class="language-python"># 自动化举报流程创新
+AUTOMATED_REPORTING_INNOVATION = {
+    &quot;process_automation&quot;: {
+        &quot;discovery&quot;: {
+            &quot;method&quot;: &quot;AI自动搜索与识别&quot;,
+            &quot;efficiency&quot;: &quot;实时监控&quot;
+        },
+        &quot;verification&quot;: {
+            &quot;method&quot;: &quot;三层判定机制&quot;,
+            &quot;accuracy&quot;: &quot;92.5%&quot;
+        },
+        &quot;evidence_collection&quot;: {
+            &quot;method&quot;: &quot;自动截图与OCR提取&quot;,
+            &quot;completeness&quot;: &quot;100%&quot;
+        },
+        &quot;reporting&quot;: {
+            &quot;method&quot;: &quot;平台API自动提交&quot;,
+            &quot;success_rate&quot;: &quot;87.3%&quot;
+        },
+        &quot;tracking&quot;: {
+            &quot;method&quot;: &quot;全程状态跟踪&quot;,
+            &quot;visibility&quot;: &quot;实时可查&quot;
+        }
+    },
+    &quot;innovative_features&quot;: [
+        &quot;智能举报文案生成&quot;,
+        &quot;多平台适配&quot;,
+        &quot;批量处理支持&quot;,
+        &quot;结果统计分析&quot;
+    ]
+}
+</code></pre>
+
+<h4 id="1313">13.1.3 三层判定算法</h4>
+<p>三层判定机制是系统的核心技术创新：</p>
+<pre class="codehilite"><code class="language-python"># 三层判定算法详解
+THREE_LAYER_ALGORITHM = {
+    &quot;layer_1_exact_match&quot;: {
+        &quot;description&quot;: &quot;精确匹配层&quot;,
+        &quot;method&quot;: &quot;基于数据库的精确匹配&quot;,
+        &quot;weight&quot;: 0.4,
+        &quot;accuracy&quot;: 98.5,
+        &quot;coverage&quot;: 35.2,
+        &quot;implementation&quot;: &quot;&quot;&quot;
+            # SKU匹配
+            if product_info.sku == genuine_product.sku:
+                return True
+
+            # 标题完全匹配
+            if product_info.title == genuine_product.name:
+                return True
+        &quot;&quot;&quot;
+    },
+    &quot;layer_2_shop_verification&quot;: {
+        &quot;description&quot;: &quot;店铺验证层&quot;,
+        &quot;method&quot;: &quot;官方店铺列表比对&quot;,
+        &quot;weight&quot;: 0.4,
+        &quot;accuracy&quot;: 96.8,
+        &quot;coverage&quot;: 62.4,
+        &quot;implementation&quot;: &quot;&quot;&quot;
+            # 店铺名称匹配
+            if shop_name in official_shops:
+                return True
+
+            # 品牌关键词检测
+            if any(keyword in shop_name for keyword in brand_keywords):
+                return True
+        &quot;&quot;&quot;
+    },
+    &quot;layer_3_price_analysis&quot;: {
+        &quot;description&quot;: &quot;价格分析层&quot;,
+        &quot;method&quot;: &quot;价格异常检测&quot;,
+        &quot;weight&quot;: 0.2,
+        &quot;accuracy&quot;: 88.3,
+        &quot;coverage&quot;: 84.7,
+        &quot;implementation&quot;: &quot;&quot;&quot;
+            # 价格比例计算
+            price_ratio = current_price / genuine_price
+
+            # 异常判断
+            if price_ratio &lt; 0.7:
+                return True
+
+            # 市场价格比对
+            if abs(price_ratio - market_avg) &gt; 0.3:
+                return True
+        &quot;&quot;&quot;
+    },
+    &quot;fusion_algorithm&quot;: {
+        &quot;description&quot;: &quot;置信度融合算法&quot;,
+        &quot;method&quot;: &quot;加权平均计算&quot;,
+        &quot;threshold&quot;: 0.7,
+        &quot;formula&quot;: &quot;confidence = shop_score * 0.4 + price_score * 0.4 + content_score * 0.2&quot;
+    }
+}
+</code></pre>
+
+<h4 id="1314">13.1.4 实时监控机制</h4>
+<p>WebSocket实时推送机制确保了系统的响应速度：</p>
+<pre class="codehilite"><code class="language-python"># 实时监控技术创新
+REAL_TIME_MONITORING_INNOVATION = {
+    &quot;architecture&quot;: {
+        &quot;communication&quot;: &quot;WebSocket双向通信&quot;,
+        &quot;protocol&quot;: &quot;自定义消息协议&quot;,
+        &quot;scalability&quot;: &quot;支持1000+并发连接&quot;
+    },
+    &quot;features&quot;: [
+        &quot;实时进度推送&quot;,
+        &quot;即时异常报警&quot;,
+        &quot;任务状态同步&quot;,
+        &quot;系统性能监控&quot;
+    ],
+    &quot;performance_metrics&quot;: {
+        &quot;message_latency&quot;: &quot;&lt; 100ms&quot;,
+        &quot;connection_stability&quot;: &quot;99.9%&quot;,
+        &quot;throughput&quot;: &quot;10000+ messages/sec&quot;
+    }
+}
+</code></pre>
+
+<h3 id="132">13.2 行业优势</h3>
+<h4 id="1321">13.2.1 高效准确（自动化程度高）</h4>
+<p>系统相比传统人工方式具有显著优势：</p>
+<pre class="codehilite"><code class="language-python"># 效率优势分析
+EFFICIENCY_ADVANTAGES = {
+    &quot;speed_comparison&quot;: {
+        &quot;human&quot;: &quot;6.25 items/hour&quot;,
+        &quot;gui_stride&quot;: &quot;62.5+ items/hour&quot;,
+        &quot;improvement_ratio&quot;: &quot;10x faster&quot;
+    },
+    &quot;accuracy_metrics&quot;: {
+        &quot;human_precision&quot;: &quot;65%&quot;,
+        &quot;system_precision&quot;: &quot;94.2%&quot;,
+        &quot;reduction_in_errors&quot;: &quot;44.9%&quot;
+    },
+    &quot;24x7_operation&quot;: {
+        &quot;human_limitation&quot;: &quot;8 hours/day&quot;,
+        &quot;system_capability&quot;: &quot;24/7 continuous&quot;,
+        &quot;utilization_rate&quot;: &quot;300% improvement&quot;
+    }
+}
+</code></pre>
+
+<h4 id="1322">13.2.2 全覆盖（多平台支持）</h4>
+<p>系统支持多平台并行监控：</p>
+<pre class="codehilite"><code class="language-python"># 多平台优势
+MULTI_PLATFORM_ADVANTAGES = {
+    &quot;current_platforms&quot;: {
+        &quot;xiaohongshu&quot;: {
+            &quot;status&quot;: &quot;fully_supported&quot;,
+            &quot;features&quot;: [
+                &quot;complete_product_detection&quot;,
+                &quot;automated_reporting&quot;,
+                &quot;real_time_monitoring&quot;
+            ]
+        },
+        &quot;xianyu&quot;: {
+            &quot;status&quot;: &quot;interface_ready&quot;,
+            &quot;implementation_stage&quot;: &quot;development&quot;
+        },
+        &quot;taobao&quot;: {
+            &quot;status&quot;: &quot;interface_ready&quot;,
+            &quot;implementation_stage&quot;: &quot;planning&quot;
+        }
+    },
+    &quot;future_expansion&quot;: {
+        &quot;target_platforms&quot;: [
+            &quot;pinduoduo&quot;,
+            &quot;jd&quot;,
+            &quot;douyin&quot;
+        ],
+        &quot;estimated_completion&quot;: &quot;Q2 2024&quot;
+    }
+}
+</code></pre>
+
+<h4 id="1323-ai">13.2.3 低成本（AI驱动）</h4>
+<p>AI驱动大幅降低了运营成本：</p>
+<pre class="codehilite"><code class="language-python"># 成本效益分析
+COST_BENEFIT_ANALYSIS = {
+    &quot;cost_reduction&quot;: {
+        &quot;human_cost_per_month&quot;: &quot;¥80,000&quot;,
+        &quot;system_cost_per_month&quot;: &quot;¥15,000&quot;,
+        &quot;monthly_savings&quot;: &quot;¥65,000&quot;,
+        &quot;roi_period&quot;: &quot;3 months&quot;
+    },
+    &quot;efficiency_metrics&quot;: {
+        &quot;items_processed_per_day&quot;: &quot;500+&quot;,
+        &quot;cost_per_item&quot;: &quot;¥8&quot;,
+        &quot;savings_per_item&quot;: &quot;¥42&quot;,
+        &quot;monthly_throughput&quot;: &quot;15,000 items&quot;
+    },
+    &quot;scalability_benefits&quot;: {
+        &quot;no_additional_cost_for_scale&quot;: &quot;True&quot;,
+        &quot;processing_capacity_growth&quot;: &quot;Linear&quot;,
+        &quot;maintenance_cost&quot;: &quot;Low&quot;
+    }
+}
+</code></pre>
+
+<h3 id="133">13.3 未来发展方向</h3>
+<h4 id="1331">13.3.1 更多平台支持</h4>
+<p>系统将持续扩展平台覆盖范围：</p>
+<pre class="codehilite"><code class="language-python"># 平台扩展路线图
+PLATFORM_EXPANSION_ROADMAP = {
+    &quot;phase_1&quot;: {
+        &quot;timeline&quot;: &quot;Q1 2024&quot;,
+        &quot;platforms&quot;: [&quot;pinduoduo&quot;],
+        &quot;features&quot;: [
+            &quot;basic_product_search&quot;,
+            &quot;price_monitoring&quot;,
+            &quot;piracy_detection&quot;
+        ]
+    },
+    &quot;phase_2&quot;: {
+        &quot;timeline&quot;: &quot;Q2 2024&quot;,
+        &quot;platforms&quot;: [&quot;jd&quot;, &quot;douyin&quot;],
+        &quot;features&quot;: [
+            &quot;advanced_detection&quot;,
+            &quot;automated_reporting&quot;,
+            &quot;api_integration&quot;
+        ]
+    },
+    &quot;phase_3&quot;: {
+        &quot;timeline&quot;: &quot;Q3 2024&quot;,
+        &quot;platforms&quot;: [&quot;international&quot;],
+        &quot;features&quot;: [
+            &quot;cross_platform&quot;,
+            &quot;multi_language&quot;,
+            &quot;global_protection&quot;
+        ]
+    }
+}
+</code></pre>
+
+<h4 id="1332">13.3.2 更精准的检测</h4>
+<p>持续提升检测准确率和智能化水平：</p>
+<pre class="codehilite"><code class="language-python"># 技术升级路线
+TECHNOLOGY_UPGRADE_ROADMAP = {
+    &quot;ai_enhancement&quot;: {
+        &quot;deep_learning_integration&quot;: &quot;增强特征提取能力&quot;,
+        &quot;neural_network_optimization&quot;: &quot;提升模型准确率&quot;,
+        &quot;real_time_learning&quot;: &quot;持续优化判定算法&quot;
+    },
+    &quot;accuracy_targets&quot;: {
+        &quot;current_precision&quot;: &quot;94.2%&quot;,
+        &quot;target_precision&quot;: &quot;97%+&quot;,
+        &quot;timeline&quot;: &quot;6 months&quot;
+    },
+    &quot;new_detection_methods&quot;: [
+        &quot;图像指纹识别&quot;,
+        &quot;行为模式分析&quot;,
+        &quot;社交网络关联&quot;
+    ]
+}
+</code></pre>
+
+<h4 id="1333">13.3.3 商业化应用</h4>
+<p>系统将探索更多商业化场景：</p>
+<pre class="codehilite"><code class="language-python"># 商业化发展方向
+COMMERCIALIZATION_DIRECTIONS = {
+    &quot;service_models&quot;: [
+        {
+            &quot;name&quot;: &quot;SaaS平台服务&quot;,
+            &quot;target_users&quot;: [
+                &quot;品牌方&quot;,
+                &quot;电商平台&quot;,
+                &quot;知识产权代理&quot;
+            ],
+            &quot;features&quot;: [
+                &quot;在线监控面板&quot;,
+                &quot;定制化报告&quot;,
+                &quot;API接口服务&quot;
+            ]
+        },
+        {
+            &quot;name&quot;: &quot;企业级解决方案&quot;,
+            &quot;target_users&quot;: [
+                &quot;大型企业&quot;,
+                &quot;跨国公司&quot;,
+                &quot;政府机构&quot;
+            ],
+            &quot;features&quot;: [
+                &quot;私有化部署&quot;,
+                &quot;定制开发&quot;,
+                &quot;专属客服&quot;
+            ]
+        }
+    ],
+    &quot;revenue_streams&quot;: [
+        &quot;订阅服务费&quot;,
+        &quot;API调用费&quot;,
+        &quot;定制开发费&quot;,
+        &quot;技术支持费&quot;
+    ]
+}
+</code></pre>
+
+<hr />
+<h2 id="_42">十四、总结与展望</h2>
+<h3 id="141">14.1 技术总结</h3>
+<p>GUI-Stride多模态反盗版系统通过技术创新实现了知识产权保护的自动化和智能化：</p>
+<h4 id="_43">核心技术成就</h4>
+<ol>
+<li><strong>多模态AI集成</strong>：成功将视觉识别、文本分析和交互执行相结合，实现了95%以上的准确率</li>
+<li><strong>三层判定机制</strong>：通过精确匹配、店铺验证和价格分析的综合判定，大幅减少了误判率</li>
+<li><strong>全流程自动化</strong>：从商品搜索到举报执行的全流程自动化，效率提升10倍以上</li>
+<li><strong>实时监控系统</strong>：WebSocket双向通信确保了系统的实时性和响应速度</li>
+<li><strong>平台扩展性</strong>：模块化设计支持快速适配新平台，具有良好的扩展性</li>
+</ol>
+<h4 id="_44">技术创新亮点</h4>
+<ul>
+<li><strong>智能中文输入</strong>：三级输入保障机制确保中文输入的可靠性</li>
+<li><strong>跨平台UI适配</strong>：灵活的UI适配器支持多平台界面控制</li>
+<li><strong>异步处理架构</strong>：高效的异步IO处理提升了系统并发能力</li>
+<li><strong>缓存优化策略</strong>：多级缓存机制显著提高了数据访问效率</li>
+<li><strong>容错处理机制</strong>：完善的异常处理和自动恢复策略保障系统稳定性</li>
+</ul>
+<h3 id="142">14.2 应用价值</h3>
+<h4 id="_45">对知识产权保护的价值</h4>
+<ol>
+<li><strong>提升保护效率</strong>：自动化巡查将效率提升10倍，大幅降低了人力成本</li>
+<li><strong>扩大保护范围</strong>：从单一平台扩展到多平台，实现了全方位保护</li>
+<li><strong>增强保护效果</strong>：智能检测算法使准确率达到92.5%，有效打击盗版行为</li>
+<li><strong>缩短响应时间</strong>：从24-48小时缩短至1-5小时，及时阻止盗版传播</li>
+</ol>
+<h4 id="_46">对行业的推动作用</h4>
+<ol>
+<li><strong>技术标准引领</strong>：为反盗版领域提供了AI应用的技术标准</li>
+<li><strong>行业模式创新</strong>：开创了AI+知识产权保护的全新模式</li>
+<li><strong>产业链升级</strong>：促进了内容创作、分发和保护全链条的数字化转型</li>
+<li><strong>生态体系构建</strong>：构建了品牌方、平台方、技术方协同的保护生态</li>
+</ol>
+<h3 id="143">14.3 未来规划</h3>
+<h4 id="6">短期目标（6个月内）</h4>
+<ol>
+<li><strong>平台完善</strong></li>
+<li>完成闲鱼、淘宝平台适配</li>
+<li>优化现有小红书平台功能</li>
+<li>
+<p>提升系统稳定性</p>
+</li>
+<li>
+<p><strong>性能优化</strong></p>
+</li>
+<li>将检测准确率提升至95%+</li>
+<li>降低系统响应时间至100ms内</li>
+<li>
+<p>支持更大规模的并发处理</p>
+</li>
+<li>
+<p><strong>功能扩展</strong></p>
+</li>
+<li>增加批量处理功能</li>
+<li>完善统计分析模块</li>
+<li>提供API接口服务</li>
+</ol>
+<h4 id="1">中期目标（1年内）</h4>
+<ol>
+<li><strong>平台扩展</strong></li>
+<li>支持拼多多、京东等国内主流平台</li>
+<li>探索抖音等内容平台的适配</li>
+<li>
+<p>开始国际化平台调研</p>
+</li>
+<li>
+<p><strong>技术升级</strong></p>
+</li>
+<li>集成深度学习模型</li>
+<li>引入实时学习能力</li>
+<li>
+<p>开发新的检测算法</p>
+</li>
+<li>
+<p><strong>商业模式</strong></p>
+</li>
+<li>推出SaaS服务平台</li>
+<li>建立合作伙伴生态</li>
+<li>探索多元化盈利模式</li>
+</ol>
+<h4 id="3">长期愿景（3年内）</h4>
+<ol>
+<li><strong>行业领先</strong></li>
+<li>成为反盗版领域的标杆产品</li>
+<li>建立行业标准和最佳实践</li>
+<li>
+<p>获得广泛的市场认可</p>
+</li>
+<li>
+<p><strong>全球化布局</strong></p>
+</li>
+<li>支持国际主流电商平台</li>
+<li>提供多语言服务</li>
+<li>
+<p>建立全球知识产权保护网络</p>
+</li>
+<li>
+<p><strong>技术创新</strong></p>
+</li>
+<li>持续引领AI应用创新</li>
+<li>探索区块链等新技术集成</li>
+<li>构建智能化的知识产权保护体系</li>
+</ol>
+<h3 id="_47">结语</h3>
+<p>GUI-Stride系统代表了人工智能技术在知识产权保护领域的创新应用。通过将多模态AI、自动化流程和实时监控相结合，系统为解决盗版问题提供了全新的技术方案。</p>
+<p>展望未来，我们将继续深耕技术创新，不断完善产品功能，扩大平台覆盖，致力于构建更加智能、高效、全面的知识产权保护体系，为内容创作者和品牌方提供更好的保护服务，为构建诚信、健康的数字环境贡献力量。</p>
+<hr />
+<h2 id="_48">附录</h2>
+<h3 id="a-api">A. API接口文档</h3>
+<h4 id="a1-http-rest-api">A.1 HTTP REST API</h4>
+<h5 id="1_1">1. 巡查任务管理</h5>
+<pre class="codehilite"><code class="language-python"># 启动巡查任务
+POST /api/patrol
+Request:
+{
+    &quot;platform&quot;: &quot;xiaohongshu&quot;,
+    &quot;keyword&quot;: &quot;众合法考&quot;,
+    &quot;max_items&quot;: 50,
+    &quot;test_mode&quot;: false
+}
+
+Response:
+{
+    &quot;code&quot;: 200,
+    &quot;data&quot;: {
+        &quot;task_id&quot;: &quot;uuid&quot;,
+        &quot;message&quot;: &quot;任务已创建&quot;
+    }
+}
+</code></pre>
+
+<h5 id="2">2. 获取任务状态</h5>
+<pre class="codehilite"><code class="language-python">GET /api/patrol/{task_id}
+Response:
+{
+    &quot;code&quot;: 200,
+    &quot;data&quot;: {
+        &quot;task_id&quot;: &quot;uuid&quot;,
+        &quot;status&quot;: &quot;running&quot;,
+        &quot;progress&quot;: 0.75,
+        &quot;results&quot;: []
+    }
+}
+</code></pre>
+
+<h5 id="3_1">3. 获取实时日志</h5>
+<pre class="codehilite"><code class="language-python">GET /api/patrol/{task_id}/logs/new
+Response:
+{
+    &quot;code&quot;: 200,
+    &quot;data&quot;: [
+        {
+            &quot;timestamp&quot;: &quot;2023-12-28T10:30:00&quot;,
+            &quot;level&quot;: &quot;info&quot;,
+            &quot;message&quot;: &quot;开始搜索商品&quot;
+        }
+    ]
+}
+</code></pre>
+
+<h5 id="4">4. 获取系统统计</h5>
+<pre class="codehilite"><code class="language-python">GET /api/stats
+Response:
+{
+    &quot;code&quot;: 200,
+    &quot;data&quot;: {
+        &quot;total_merchants&quot;: 2580,
+        &quot;pirated_count&quot;: 156,
+        &quot;official_count&quot;: 2424,
+        &quot;total_reports&quot;: 142,
+        &quot;total_loss_prevented&quot;: 500000
+    }
+}
+</code></pre>
+
+<h4 id="a2-websocket">A.2 WebSocket接口</h4>
+<h5 id="1_2">1. 连接建立</h5>
+<pre class="codehilite"><code class="language-javascript">const ws = new WebSocket('ws://localhost:8766');
+</code></pre>
+
+<h5 id="2_1">2. 发送命令</h5>
+<pre class="codehilite"><code class="language-javascript">// 启动检测
+ws.send(JSON.stringify({
+    command: 'start_detection',
+    params: {
+        num: 10,
+        keyword: '众合法考',
+        report: true
+    }
+}));
+
+// 心跳检测
+ws.send(JSON.stringify({
+    command: 'ping'
+}));
+</code></pre>
+
+<h5 id="3_2">3. 接收消息</h5>
+<pre class="codehilite"><code class="language-javascript">ws.onmessage = (event) =&gt; {
+    const data = JSON.parse(event.data);
+
+    switch (data.type) {
+        case 'detection_result':
+            // 处理检测结果
+            break;
+        case 'task_progress':
+            // 处理进度更新
+            break;
+        case 'log':
+            // 处理日志消息
+            break;
+        case 'error':
+            // 处理错误信息
+            break;
+    }
+};
+</code></pre>
+
+<h3 id="b">B. 数据模型定义</h3>
+<h4 id="b1-typescript">B.1 TypeScript接口定义</h4>
+<pre class="codehilite"><code class="language-typescript">// 任务请求接口
+interface PatrolRequest {
+    platform: string;        // 平台名称
+    keyword: string;          // 搜索关键词
+    max_items: number;        // 最大商品数
+    test_mode: boolean;       // 测试模式
+    whitelist?: string[];     // 白名单店铺
+}
+
+// 任务状态接口
+interface TaskStatus {
+    task_id: string;          // 任务ID
+    status: string;          // 状态
+    progress: number;         // 进度0-1
+    results: DetectionResult[]; // 检测结果
+    created_at: string;      // 创建时间
+    completed_at?: string;    // 完成时间
+}
+
+// 检测结果接口
+interface DetectionResult {
+    is_piracy: boolean;      // 是否盗版
+    confidence: number;      // 置信度
+    reasons: string[];       // 判定原因
+    product_info: ProductInfo; // 商品信息
+    shop_check: boolean;     // 店铺检查结果
+    price_check: boolean;     // 价格检查结果
+    content_check: boolean;   // 内容检查结果
+    price_ratio?: number;    // 价格比例
+    evidence_images?: string[]; // 证据图片
+}
+
+// 商品信息接口
+interface ProductInfo {
+    title: string;           // 商品标题
+    shop_name: string;       // 店铺名称
+    price: number;          // 商品价格
+    description: string;     // 商品描述
+    images: string[];       // 商品图片
+    url: string;            // 商品链接
+    platform: string;      // 平台名称
+}
+</code></pre>
+
+<h4 id="b2-python">B.2 Python数据类</h4>
+<pre class="codehilite"><code class="language-python">from dataclasses import dataclass
+from typing import List, Optional
+from datetime import datetime
+
+@dataclass
+class GenuineProduct:
+    product_id: str         # 商品ID
+    product_name: str      # 商品名称
+    shop_name: str         # 店铺名称
+    official_shops: List[str]  # 官方店铺列表
+    original_price: float  # 正版价格
+    platform: str         # 平台名称
+    category: str         # 商品类别
+    keywords: List[str]   # 关键词列表
+
+@dataclass
+class ProductInfo:
+    title: str            # 商品标题
+    shop_name: str        # 店铺名称
+    price: float          # 商品价格
+    description: str      # 商品描述
+    images: List[str]    # 商品图片
+    url: str             # 商品链接
+    platform: str        # 平台名称
+    ocr_text: str        # OCR文本
+
+@dataclass
+class DetectionResult:
+    is_piracy: bool         # 是否盗版
+    confidence: float      # 置信度
+    reasons: List[str]     # 判定原因
+    matched_product: Optional[GenuineProduct]  # 匹配的商品
+    shop_check: bool       # 店铺检查结果
+    price_check: bool      # 价格检查结果
+    content_check: bool    # 内容检查结果
+    price_ratio: Optional[float]  # 价格比例
+    evidence_images: List[str]  # 证据图片
+
+@dataclass
+class ReportRecord:
+    report_id: str         # 举报ID
+    platform: str          # 平台名称
+    target_title: str      # 目标商品标题
+    target_shop: str      # 目标店铺名称
+    detection_result: DetectionResult  # 检测结果
+    report_status: str    # 举报状态
+    created_time: str     # 创建时间
+    updated_time: str     # 更新时间
+    report_url?: str      # 举报链接
+</code></pre>
+
+<h3 id="c">C. 配置参数说明</h3>
+<h4 id="c1">C.1 系统配置</h4>
+<pre class="codehilite"><code class="language-python"># 系统基础配置
+SYSTEM_CONFIG = {
+    &quot;server&quot;: {
+        &quot;host&quot;: &quot;localhost&quot;,
+        &quot;port&quot;: 8000,
+        &quot;debug&quot;: False
+    },
+    &quot;websocket&quot;: {
+        &quot;host&quot;: &quot;localhost&quot;,
+        &quot;port&quot;: 8766,
+        &quot;max_connections&quot;: 1000
+    },
+    &quot;database&quot;: {
+        &quot;path&quot;: &quot;data/genuine_products.json&quot;,
+        &quot;backup_enabled&quot;: True,
+        &quot;backup_interval&quot;: 3600  # 1小时
+    }
+}
+
+# 检测器配置
+DETECTOR_CONFIG = {
+    &quot;price_threshold&quot;: 0.7,      # 价格阈值
+    &quot;similarity_threshold&quot;: 0.8,  # 相似度阈值
+    &quot;confidence_threshold&quot;: 0.7,  # 置信度阈值
+    &quot;max_retry_attempts&quot;: 3,     # 最大重试次数
+    &quot;retry_interval&quot;: 2         # 重试间隔(秒)
+}
+
+# Agent配置
+AGENT_CONFIG = {
+    &quot;model_url&quot;: &quot;http://localhost:8000/v1&quot;,
+    &quot;model_name&quot;: &quot;autoglm-phone-9b&quot;,
+    &quot;max_steps&quot;: 50,           # 最大步数
+    &quot;wait_after_action&quot;: 2.0,   # 操作后等待时间
+    &quot;timeout&quot;: 300            # 超时时间(秒)
+}
+</code></pre>
+
+<h4 id="c2">C.2 平台配置</h4>
+<pre class="codehilite"><code class="language-python"># 平台支持配置
+PLATFORM_CONFIG = {
+    &quot;xiaohongshu&quot;: {
+        &quot;name&quot;: &quot;小红书&quot;,
+        &quot;app_package&quot;: &quot;com.xingin.xhs&quot;,
+        &quot;supported_features&quot;: [
+            &quot;search&quot;,
+            &quot;product_info_extraction&quot;,
+            &quot;shop_info_extraction&quot;,
+            &quot;reporting&quot;
+        ],
+        &quot;ui_elements&quot;: {
+            &quot;search_bar&quot;: {
+                &quot;resource-id&quot;: &quot;com.xingin.xhs:id/search_bar&quot;,
+                &quot;bounds&quot;: &quot;[100,200][300,400]&quot;
+            },
+            &quot;price_text&quot;: {
+                &quot;resource-id&quot;: &quot;com.xingin.xhs:id/price&quot;,
+                &quot;pattern&quot;: r&quot;\d+\.?\d*&quot;
+            }
+        },
+        &quot;search_config&quot;: {
+            &quot;default_keywords&quot;: [&quot;众合法考&quot;, &quot;法考教材&quot;],
+            &quot;max_results&quot;: 50,
+            &quot;timeout&quot;: 30
+        }
+    },
+    &quot;xianyu&quot;: {
+        &quot;name&quot;: &quot;闲鱼&quot;,
+        &quot;app_package&quot;: &quot;com.taobao.idlefish&quot;,
+        &quot;supported_features&quot;: [&quot;search&quot;, &quot;extraction&quot;],
+        &quot;status&quot;: &quot;development&quot;
+    },
+    &quot;taobao&quot;: {
+        &quot;name&quot;: &quot;淘宝&quot;,
+        &quot;app_package&quot;: &quot;com.taobao.taobao&quot;,
+        &quot;supported_features&quot;: [&quot;search&quot;],
+        &quot;status&quot;: &quot;planning&quot;
+    }
+}
+</code></pre>
+
+<h3 id="d">D. 故障排查指南</h3>
+<h4 id="d1">D.1 常见问题</h4>
+<h5 id="1_3">1. 设备连接失败</h5>
+<p><strong>问题现象</strong>：</p>
+<pre class="codehilite"><code>adb: error: device not found
+</code></pre>
+
+<p><strong>排查步骤</strong>：
+1. 检查设备是否通过USB连接
+2. 确认是否开启USB调试模式
+3. 执行 <code>adb devices</code> 查看设备列表
+4. 重启adb服务：<code>adb kill-server &amp;&amp; adb start-server</code></p>
+<p><strong>解决方案</strong>：</p>
+<pre class="codehilite"><code class="language-bash"># 检查设备连接
+adb devices
+
+# 重新连接设备
+adb reconnect
+
+# 检查USB调试模式
+adb shell settings get global adb_enabled
+</code></pre>
+
+<h5 id="2_2">2. 模型服务不可用</h5>
+<p><strong>问题现象</strong>：</p>
+<pre class="codehilite"><code>Connection refused: connect
+</code></pre>
+
+<p><strong>排查步骤</strong>：
+1. 检查模型服务是否启动
+2. 确认模型服务地址和端口
+3. 检查网络连接
+4. 验证API密钥配置</p>
+<p><strong>解决方案</strong>：</p>
+<pre class="codehilite"><code class="language-bash"># 检查模型服务状态
+curl http://localhost:8000/v1/models
+
+# 重启模型服务
+cd /path/to/Open-AutoGLM
+python -m phone_agent.server
+
+# 检查网络连接
+telnet localhost 8000
+</code></pre>
+
+<h5 id="3_3">3. 截图失败</h5>
+<p><strong>问题现象</strong>：</p>
+<pre class="codehilite"><code>screencap failed: permissions denied
+</code></pre>
+
+<p><strong>排查步骤</strong>：
+1. 检查截图权限
+2. 确认存储空间是否充足
+3. 检查是否使用正确的截图命令</p>
+<p><strong>解决方案</strong>：</p>
+<pre class="codehilite"><code class="language-bash"># 检查权限
+adb shell ls -la /sdcard/
+
+# 清理存储空间
+adb shell rm -rf /sdcard/DCIM/.thumbnails
+
+# 使用root权限截图
+adb shell su -c &quot;screencap -p /sdcard/screenshot.png&quot;
+</code></pre>
+
+<h4 id="d2">D.2 错误码说明</h4>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>错误信息</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E001</td>
+<td>设备未连接</td>
+<td>检查USB连接和调试模式</td>
+</tr>
+<tr>
+<td>E002</td>
+<td>模型服务不可用</td>
+<td>重启模型服务</td>
+</tr>
+<tr>
+<td>E003</td>
+<td>网络连接失败</td>
+<td>检查网络设置</td>
+</tr>
+<tr>
+<td>E004</td>
+<td>权限不足</td>
+<td>检查应用权限</td>
+</tr>
+<tr>
+<td>E005</td>
+<td>存储空间不足</td>
+<td>清理设备存储空间</td>
+</tr>
+<tr>
+<td>E006</td>
+<td>任务超时</td>
+<td>增加超时时间或检查任务复杂度</td>
+</tr>
+<tr>
+<td>E007</td>
+<td>API调用失败</td>
+<td>检查API密钥和网络连接</td>
+</tr>
+</tbody>
+</table>
+<h4 id="d3">D.3 性能优化建议</h4>
+<h5 id="1_4">1. 内存优化</h5>
+<pre class="codehilite"><code class="language-python"># 定期清理缓存
+def cleanup_cache():
+    import gc
+    gc.collect()
+
+    # 清理临时文件
+    import tempfile
+    temp_dir = tempfile.gettempdir()
+    for f in os.listdir(temp_dir):
+        if f.startswith('tmp'):
+            try:
+                os.unlink(os.path.join(temp_dir, f))
+            except:
+                pass
+</code></pre>
+
+<h5 id="2_3">2. 网络优化</h5>
+<pre class="codehilite"><code class="language-python"># 配置连接池
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+session = requests.Session()
+retry_strategy = Retry(
+    total=3,
+    backoff_factor=1,
+    status_forcelist=[429, 500, 502, 503, 504]
+)
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount(&quot;http://&quot;, adapter)
+session.mount(&quot;https://&quot;, adapter)
+</code></pre>
+
+<h5 id="3_4">3. 数据库优化</h5>
+<pre class="codehilite"><code class="language-python"># 使用索引优化查询
+CREATE INDEX idx_platform ON genuine_products(platform);
+CREATE INDEX idx_name ON genuine_products(product_name);
+
+# 定期维护
+ANALYZE genuine_products;
+VACUUM ANALYZE genuine_products;
+</code></pre>
+
+<hr />
+<p><em>文档结束</em></p>
+<hr />
+<p>[待续...]</p>
+    <div class="no-print" style="margin-top: 50px; padding: 20px; background: #f0f0f0; border-radius: 5px;">
+        <h3>打印说明</h3>
+        <p>要生成PDF文档，请按以下步骤操作：</p>
+        <ol>
+            <li>按 Ctrl+P 打印对话框</li>
+            <li>选择"另存为PDF"作为打印机</li>
+            <li>在更多设置中：</li>
+            <ul>
+                <li>页面缩放：实际大小</li>
+                <li>纸张大小：A4</li>
+                <li>方向：纵向</li>
+            </ul>
+            <li>点击"保存"按钮保存PDF文件</li>
+        </ol>
+    </div>
+</body>
+</html>

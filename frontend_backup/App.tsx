@@ -1,18 +1,18 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  LayoutDashboard,
-  ShieldCheck,
-  Settings,
-  Terminal,
-  Plus,
-  Trash2,
-  User,
-  Monitor,
-  Play,
-  FileSpreadsheet,
-  Activity,
-  Zap,
+import { 
+  LayoutDashboard, 
+  ShieldCheck, 
+  Settings, 
+  Terminal, 
+  Plus, 
+  Trash2, 
+  User, 
+  Monitor, 
+  Play, 
+  FileSpreadsheet, 
+  Activity, 
+  Zap, 
   X,
   SlidersHorizontal,
   Tags,
@@ -21,40 +21,67 @@ import {
   AlertTriangle,
   CheckCircle2,
   DollarSign,
-  ArrowUpRight,
-  StopCircle,
-  RefreshCw
+  ArrowUpRight
 } from 'lucide-react';
-import { Merchant, LogEntry, WhitelistEntry, ReportRecord } from './types';
-import { MOCK_MERCHANTS, INITIAL_LOGS, MOCK_REPORTS } from './constants';
+import { Merchant, LogEntry, WhitelistEntry, ReportRecord, Device } from './types';
+import { fetchMerchants, fetchLogs, fetchReports, startPatrol, getPatrolStatus, getPlatforms, getSystemStats, fetchWhitelist, addWhitelistEntry, deleteWhitelistEntry, getNewPatrolLogs, getPatrolLogs } from './src/services/api';
 import { MerchantCard } from './components/MerchantCard';
 import { PhoneMockup } from './components/PhoneMockup';
-import { startPatrol, stopPatrol, getProductDatabase, addProduct, deleteProduct, checkProcessStatus, onPythonLog, getStatistics, exportReports, type PatrolOptions, type ProductData, type Statistics } from './services/api';
 
-type ViewType = 'terminal' | 'summary' | 'settings';
+type ViewType = 'terminal' | 'summary' | 'settings' | 'devices';
 
 const AUDIT_KEYWORDS = [
-  "正版", "授权", "官方", "旗舰店", "全套", "考研", "法考", "公考", "PDF", "电子版", 
-  "网盘", "秒发", "引流", "微信", "私聊", "低价", "正品", "出版社", "水印", "盗版", 
+  "正版", "授权", "官方", "旗舰店", "全套", "考研", "法考", "公考", "PDF", "电子版",
+  "网盘", "秒发", "引流", "微信", "私聊", "低价", "正品", "出版社", "水印", "盗版",
   "翻印", "扫描", "讲义", "真题", "解析", "押题", "专柜", "代购", "包邮", "原装"
+];
+
+const MOCK_DEVICES: Device[] = [
+  { id: 'dev-001', name: 'Pixel 6 Pro - Node 01', status: 'online', isSelected: true },
+  { id: 'dev-002', name: 'Samsung S22 - Node 02', status: 'online', isSelected: false },
+  { id: 'dev-003', name: 'Xiaomi 13 - Node 03', status: 'offline', isSelected: false },
+  { id: 'dev-004', name: 'Oppo Find X5 - Node 04', status: 'online', isSelected: false },
 ];
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<ViewType>('terminal');
-  const [merchants] = useState<Merchant[]>(MOCK_MERCHANTS);
-  const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(MOCK_MERCHANTS[0]);
-  const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS);
-  const [platform, setPlatform] = useState<'xiaohongshu' | 'xianyu' | 'taobao'>('xiaohongshu');
+  const [merchants, setMerchants] = useState<Merchant[]>([]);
+  const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(null);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [reports, setReports] = useState<ReportRecord[]>([]);
+  const [platform, setPlatform] = useState<'xianyu' | 'xhs'>('xianyu');
   const [searchCount, setSearchCount] = useState<number>(20);
   const [showConfig, setShowConfig] = useState(false);
-  const [testMode, setTestMode] = useState<boolean>(true);
-  const [isProcessRunning, setIsProcessRunning] = useState<boolean>(false);
-  const [statistics, setStatistics] = useState<Statistics | null>(null);
-  const [keyword, setKeyword] = useState<string>('得到');
+  const [patrolTaskId, setPatrolTaskId] = useState<string | null>(null);
+  const [isPatrolRunning, setIsPatrolRunning] = useState(false);
+  const [keyword, setKeyword] = useState<string>(''); // 搜索关键词
 
-  const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([
-    { id: '1', officialMerchantName: '官方出版社', productName: '2025法考全套资料', price: '299', allowedShops: ['官方旗舰店', '正版分销商'] }
-  ]);
+  // Fetch initial data from backend
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [merchantsData, logsData, whitelistData, reportsData] = await Promise.all([
+          fetchMerchants(),
+          fetchLogs(),
+          fetchWhitelist(),
+          fetchReports(),
+        ]);
+        setMerchants(merchantsData);
+        if (merchantsData.length > 0) {
+          setSelectedMerchant(merchantsData[0]);
+        }
+        setLogs(logsData);
+        setWhitelist(whitelistData);
+        setReports(reportsData);
+      } catch (error) {
+        console.error('Failed to load initial data:', error);
+        // Fallback to empty states
+      }
+    };
+    loadData();
+  }, []);
+
+  const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(['1']));
 
   const [leftWidth, setLeftWidth] = useState(380);
@@ -98,68 +125,6 @@ const App: React.FC = () => {
     };
   }, [isResizingLeft, isResizingRight, handleMouseMove, stopResizing]);
 
-  // 监听 Python 进程日志
-  useEffect(() => {
-    const cleanup = onPythonLog((log) => {
-      const logType = log.type === 'error' ? 'performance' :
-                     log.type === 'warning' ? 'performance' : 'info';
-
-      setLogs(prev => [...prev, {
-        id: Date.now().toString(),
-        timestamp: new Date().toLocaleTimeString(),
-        type: logType,
-        message: `[Python] ${log.message}`
-      }]);
-
-      // 更新进程状态
-      if (log.message.includes('进程退出') || log.message.includes('启动失败')) {
-        setIsProcessRunning(false);
-      } else if (log.message.includes('启动 Python 进程')) {
-        setIsProcessRunning(true);
-      }
-    });
-
-    // 检查当前进程状态
-    checkProcessStatus().then(status => {
-      setIsProcessRunning(status.running);
-    });
-
-    // 加载数据库
-    loadProductDatabase();
-
-    // 加载统计信息
-    loadStatistics();
-
-    return cleanup;
-  }, []);
-
-  // 加载统计信息
-  const loadStatistics = async () => {
-    try {
-      const stats = await getStatistics();
-      setStatistics(stats);
-    } catch (error) {
-      console.error('加载统计信息失败:', error);
-    }
-  };
-
-  // 加载正版商品数据库
-  const loadProductDatabase = async () => {
-    try {
-      const db = await getProductDatabase();
-      const entries: WhitelistEntry[] = Object.values(db).map((product: any) => ({
-        id: product.product_id,
-        officialMerchantName: product.shop_name,
-        productName: product.product_name,
-        price: product.original_price.toString(),
-        allowedShops: product.official_shops || []
-      }));
-      setWhitelist(entries);
-    } catch (error) {
-      console.error('加载数据库失败:', error);
-    }
-  };
-
   const addWhitelistRow = () => {
     const newEntry: WhitelistEntry = {
       id: Math.random().toString(36).substr(2, 9),
@@ -175,37 +140,11 @@ const App: React.FC = () => {
     setWhitelist(whitelist.map(item => item.id === id ? { ...item, [field]: value } : item));
   };
 
-  const removeWhitelistRow = async (id: string) => {
-    try {
-      const result = await deleteProduct(id);
-      if (result.success) {
-        setWhitelist(whitelist.filter(item => item.id !== id));
-        const next = new Set(selectedIds);
-        next.delete(id);
-        setSelectedIds(next);
-        setLogs(prev => [...prev, {
-          id: Date.now().toString(),
-          timestamp: new Date().toLocaleTimeString(),
-          type: 'info',
-          message: `已从数据库删除商品: ${id}`
-        }]);
-      } else {
-        setLogs(prev => [...prev, {
-          id: Date.now().toString(),
-          timestamp: new Date().toLocaleTimeString(),
-          type: 'performance',
-          message: `删除商品失败: ${result.error}`
-        }]);
-      }
-    } catch (error) {
-      console.error('删除商品失败:', error);
-      setLogs(prev => [...prev, {
-        id: Date.now().toString(),
-        timestamp: new Date().toLocaleTimeString(),
-        type: 'performance',
-        message: `删除商品时出错: ${error}`
-      }]);
-    }
+  const removeWhitelistRow = (id: string) => {
+    setWhitelist(whitelist.filter(item => item.id !== id));
+    const next = new Set(selectedIds);
+    next.delete(id);
+    setSelectedIds(next);
   };
 
   const toggleSelect = (id: string) => {
@@ -215,17 +154,7 @@ const App: React.FC = () => {
     setSelectedIds(next);
   };
 
-  const handleStartSearch = () => {
-    if (isProcessRunning) {
-      setLogs(prev => [...prev, {
-        id: Date.now().toString(),
-        timestamp: new Date().toLocaleTimeString(),
-        type: 'performance',
-        message: '已有任务正在运行，请等待完成或停止当前任务。'
-      }]);
-      return;
-    }
-
+  const handleStartSearch = async () => {
     const activeRows = whitelist.filter(row => selectedIds.has(row.id));
     if (activeRows.length === 0) {
       setLogs(prev => [...prev, {
@@ -237,48 +166,118 @@ const App: React.FC = () => {
       return;
     }
 
-    // 使用第一个选中的白名单项作为关键词（实际应该使用所有，这里简化）
-    const firstRow = activeRows[0];
-    const searchKeyword = firstRow.productName || keyword;
-
-    const options: PatrolOptions = {
-      platform: platform,
-      keyword: searchKeyword,
-      maxItems: searchCount,
-      testMode: testMode
-    };
-
-    setLogs(prev => [...prev, {
-      id: Date.now().toString(),
-      timestamp: new Date().toLocaleTimeString(),
-      type: 'action',
-      message: `[EXE] 启动 Python 巡查: 平台=${platform}, 关键词="${searchKeyword}", 数量=${searchCount}, 模式=${testMode ? '测试' : '正式'}`
-    }]);
-
-    startPatrol(options);
-    setIsProcessRunning(true);
-  };
-
-  const handleStopSearch = () => {
-    if (!isProcessRunning) {
+    // 确定搜索关键词：优先使用手动输入的关键词，否则使用第一个选中白名单条目的商品名称
+    let searchKeyword = keyword.trim();
+    if (!searchKeyword && activeRows.length > 0) {
+      searchKeyword = activeRows[0].productName;
+    }
+    if (!searchKeyword) {
       setLogs(prev => [...prev, {
         id: Date.now().toString(),
         timestamp: new Date().toLocaleTimeString(),
         type: 'performance',
-        message: '没有正在运行的任务。'
+        message: '操作中断: 请输入搜索关键词或在白名单中指定商品名称。'
       }]);
       return;
     }
 
-    stopPatrol();
-    setLogs(prev => [...prev, {
-      id: Date.now().toString(),
-      timestamp: new Date().toLocaleTimeString(),
-      type: 'action',
-      message: '[EXE] 停止当前巡查任务'
-    }]);
-    setIsProcessRunning(false);
+    try {
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'action',
+        message: `[EXE] 启动自动搜索: 平台=${platform.toUpperCase()}, 关键词=${searchKeyword}, 搜索条数=${searchCount}`
+      }]);
+
+      // 调用后端API启动巡查任务
+      const response = await startPatrol({
+        platform: platform, // 'xianyu' 或 'xhs'
+        keyword: searchKeyword,
+        max_items: searchCount,
+        test_mode: true // 测试模式，不实际举报
+      });
+
+      setPatrolTaskId(response.task_id);
+      setIsPatrolRunning(true);
+
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'info',
+        message: `[SYS] 巡查任务已启动，任务ID: ${response.task_id}`
+      }]);
+    } catch (error) {
+      console.error('启动巡查任务失败:', error);
+      setLogs(prev => [...prev, {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleTimeString(),
+        type: 'performance',
+        message: `[ERR] 启动巡查任务失败: ${error instanceof Error ? error.message : String(error)}`
+      }]);
+    }
   };
+
+  // 轮询巡查任务状态和日志
+  useEffect(() => {
+    if (!patrolTaskId || !isPatrolRunning) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        // 1. 获取任务状态
+        const status = await getPatrolStatus(patrolTaskId);
+
+        // 2. 获取新日志
+        try {
+          const newLogs = await getNewPatrolLogs(patrolTaskId);
+          if (newLogs.length > 0) {
+            // 将任务日志转换为前端日志格式
+            const formattedLogs: LogEntry[] = newLogs.map((log: any) => ({
+              id: log.id,
+              timestamp: log.timestamp_display || new Date(log.timestamp).toLocaleTimeString(),
+              type: log.level === 'error' ? 'performance' : (log.level === 'warning' ? 'action' : 'info'),
+              message: log.message
+            }));
+            setLogs(prev => [...prev, ...formattedLogs]);
+          }
+        } catch (logError) {
+          console.error('获取任务日志失败:', logError);
+          // 不中断轮询，继续获取状态
+        }
+
+        // 3. 处理任务完成或失败
+        if (status.status === 'completed') {
+          setIsPatrolRunning(false);
+          clearInterval(pollInterval);
+
+          if (status.result) {
+            setLogs(prev => [...prev, {
+              id: Date.now().toString(),
+              timestamp: new Date().toLocaleTimeString(),
+              type: 'info',
+              message: `[SYS] 巡查任务完成: 检查商品数=${status.result.checked_count}, 发现疑似盗版=${status.result.piracy_count}, 已举报=${status.result.reported_count}`
+            }]);
+          }
+        } else if (status.status === 'failed') {
+          setIsPatrolRunning(false);
+          clearInterval(pollInterval);
+          setLogs(prev => [...prev, {
+            id: Date.now().toString(),
+            timestamp: new Date().toLocaleTimeString(),
+            type: 'performance',
+            message: `[ERR] 巡查任务失败${status.error ? ': ' + status.error : ''}`
+          }]);
+        }
+        // 如果状态是 'pending' 或 'running'，继续轮询
+      } catch (error) {
+        console.error('轮询任务状态失败:', error);
+        // 出错时不停止轮询，可能只是网络暂时问题
+      }
+    }, 2000); // 每2秒轮询一次
+
+    return () => {
+      clearInterval(pollInterval);
+    };
+  }, [patrolTaskId, isPatrolRunning]);
 
   const renderSummary = () => (
     <div className="flex-1 bg-slate-50 p-10 overflow-y-auto scrollbar-thin animate-in fade-in duration-500">
@@ -296,66 +295,22 @@ const App: React.FC = () => {
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">System Online</span>
              </div>
-             <button
-               onClick={async () => {
-                 try {
-                   const result = await exportReports('json');
-                   if (result.success && result.data) {
-                     const blob = new Blob([result.data], { type: 'application/json' });
-                     const url = URL.createObjectURL(blob);
-                     const a = document.createElement('a');
-                     a.href = url;
-                     a.download = `reports_${new Date().toISOString().split('T')[0]}.json`;
-                     document.body.appendChild(a);
-                     a.click();
-                     document.body.removeChild(a);
-                     URL.revokeObjectURL(url);
-
-                     setLogs(prev => [...prev, {
-                       id: Date.now().toString(),
-                       timestamp: new Date().toLocaleTimeString(),
-                       type: 'info',
-                       message: '举报记录已导出为JSON文件'
-                     }]);
-                   } else {
-                     setLogs(prev => [...prev, {
-                       id: Date.now().toString(),
-                       timestamp: new Date().toLocaleTimeString(),
-                       type: 'performance',
-                       message: `导出失败: ${result.error || '未知错误'}`
-                     }]);
-                   }
-                 } catch (error) {
-                   console.error('导出失败:', error);
-                   setLogs(prev => [...prev, {
-                     id: Date.now().toString(),
-                     timestamp: new Date().toLocaleTimeString(),
-                     type: 'performance',
-                     message: `导出出错: ${error}`
-                   }]);
-                 }
-               }}
-               className="bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm flex items-center gap-2 hover:bg-slate-50 transition-colors"
-             >
-               <FileSpreadsheet size={14} className="text-slate-600" />
-               <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">导出报告</span>
-             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: '正版商品总数', value: statistics ? statistics.product_stats.total_products.toString() : '0', icon: Monitor, color: 'text-blue-600', trend: '' },
-            { label: '总举报数量', value: statistics ? statistics.report_stats.total_reports.toString() : '0', icon: AlertTriangle, color: 'text-rose-600', trend: '' },
-            { label: '平台分布', value: statistics ? Object.keys(statistics.report_stats.by_platform).length.toString() + '个' : '0个', icon: DollarSign, color: 'text-emerald-600', trend: '' },
-            { label: '系统状态', value: isProcessRunning ? '运行中' : '就绪', icon: Zap, color: isProcessRunning ? 'text-emerald-600' : 'text-indigo-600', trend: '' },
+            { label: '累计扫描节点', value: '14,292', icon: Monitor, color: 'text-blue-600', trend: '+12.5%' },
+            { label: '识别违规商家', value: '1,084', icon: AlertTriangle, color: 'text-rose-600', trend: '+4.2%' },
+            { label: '挽回资产损失', value: '¥248,500', icon: DollarSign, color: 'text-emerald-600', trend: '+18.1%' },
+            { label: '系统拦截效率', value: '98.2%', icon: Zap, color: 'text-indigo-600', trend: '+0.5%' },
           ].map((stat, i) => (
             <div key={i} className="luxoa-card p-6 flex flex-col justify-between">
               <div className="flex items-start justify-between">
                 <div className={`p-3 rounded-2xl bg-slate-50 ${stat.color}`}>
                   <stat.icon size={20} />
                 </div>
-                {stat.trend && <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">{stat.trend}</span>}
+                <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">{stat.trend}</span>
               </div>
               <div className="mt-6">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
@@ -397,34 +352,22 @@ const App: React.FC = () => {
               <ShieldCheck size={16} className="text-emerald-500" /> 平台风险分布
             </h3>
             <div className="space-y-6">
-              {statistics && Object.keys(statistics.report_stats.by_platform).length > 0 ? (
-                (() => {
-                  const platformData = statistics.report_stats.by_platform;
-                  const total = Object.values(platformData).reduce((sum, val) => sum + val, 0);
-                  const colors = ['bg-yellow-500', 'bg-rose-500', 'bg-orange-500', 'bg-slate-600', 'bg-blue-500', 'bg-green-500'];
-                  let colorIndex = 0;
-                  return Object.entries(platformData).map(([platformName, count], i) => {
-                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
-                    const color = colors[colorIndex % colors.length];
-                    colorIndex++;
-                    return (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                          <span className="text-slate-700">{platformName}</span>
-                          <span className="text-slate-400">{percentage}% ({count})</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                          <div className={`h-full ${color}`} style={{ width: `${percentage}%` }}></div>
-                        </div>
-                      </div>
-                    );
-                  });
-                })()
-              ) : (
-                <div className="text-center py-4 text-slate-400 text-sm">
-                  暂无举报数据
+              {[
+                { name: '闲鱼 (Xianyu)', val: 65, color: 'bg-yellow-500' },
+                { name: '小红书 (XHS)', val: 25, color: 'bg-rose-500' },
+                { name: '淘宝/天猫', val: 7, color: 'bg-orange-500' },
+                { name: '其他', val: 3, color: 'bg-slate-600' },
+              ].map((p, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-slate-700">{p.name}</span>
+                    <span className="text-slate-400">{p.val}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full ${p.color}`} style={{ width: `${p.val}%` }}></div>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
             <div className="mt-12 p-5 bg-slate-50 rounded-2xl border border-slate-100">
               <p className="text-[10px] font-bold text-slate-500 leading-relaxed italic">
@@ -456,7 +399,7 @@ const App: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 text-slate-700 font-medium">
-                {MOCK_REPORTS.map((report) => (
+                {reports.map((report) => (
                   <tr key={report.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-8 py-5 mono text-indigo-600 font-bold">{report.reportNumber}</td>
                     <td className="px-8 py-5 font-black text-slate-900">{report.merchantName}</td>
@@ -575,10 +518,9 @@ const App: React.FC = () => {
               <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em]">OPERATOR ONLINE</span>
             </div>
           </div>
-          <div className="flex p-1 bg-slate-100 rounded-xl w-48 border border-slate-200/50 shadow-inner">
-            <button onClick={() => setPlatform('xiaohongshu')} className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all ${platform === 'xiaohongshu' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>小红书</button>
-            <button onClick={() => setPlatform('xianyu')} className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all ${platform === 'xianyu' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>闲鱼</button>
-            <button onClick={() => setPlatform('taobao')} className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all ${platform === 'taobao' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>淘宝</button>
+          <div className="flex p-1 bg-slate-100 rounded-xl w-36 border border-slate-200/50 shadow-inner">
+            <button onClick={() => setPlatform('xianyu')} className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all ${platform === 'xianyu' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>咸鱼</button>
+            <button onClick={() => setPlatform('xhs')} className={`flex-1 py-1.5 text-[9px] font-black rounded-lg transition-all ${platform === 'xhs' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`}>小红书</button>
           </div>
         </div>
 
@@ -680,37 +622,51 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="space-y-2">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">搜索关键词</p>
-              <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl flex items-center px-4 shadow-inner">
-                <input type="text" value={keyword} onChange={(e) => setKeyword(e.target.value)} className="w-full h-full bg-transparent border-none focus:ring-0 font-black text-slate-900 text-xs p-0" placeholder="输入关键词..." />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">运行模式</p>
-              <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200/50 shadow-inner h-10">
-                <button onClick={() => setTestMode(true)} className={`flex-1 text-[9px] font-black rounded-lg transition-all ${testMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>测试模式</button>
-                <button onClick={() => setTestMode(false)} className={`flex-1 text-[9px] font-black rounded-lg transition-all ${!testMode ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-500'}`}>正式模式</button>
-              </div>
-            </div>
-          </div>
-
           <div className="flex gap-4 items-end">
             <div className="flex-1 space-y-2">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">自动搜索条数</p>
-              <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl flex items-center px-4 shadow-inner">
-                 <input type="number" value={searchCount} onChange={(e) => setSearchCount(parseInt(e.target.value) || 0)} className="w-full h-full bg-transparent border-none focus:ring-0 font-black text-slate-900 text-xs p-0" />
-                 <span className="text-[9px] font-black text-slate-300 ml-2">ITEMS</span>
+              <div>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">搜索关键词</p>
+                <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl flex items-center px-4 shadow-inner">
+                  <input
+                    type="text"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="输入搜索关键词（如：法考资料）"
+                    className="w-full h-full bg-transparent border-none focus:ring-0 font-black text-slate-900 text-xs p-0"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">平台</p>
+                  <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl flex items-center px-4 shadow-inner">
+                    <select
+                      value={platform}
+                      onChange={(e) => setPlatform(e.target.value as 'xianyu' | 'xhs')}
+                      className="w-full h-full bg-transparent border-none focus:ring-0 font-black text-slate-900 text-xs p-0"
+                    >
+                      <option value="xianyu">闲鱼</option>
+                      <option value="xhs">小红书</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">搜索条数</p>
+                  <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl flex items-center px-4 shadow-inner">
+                    <input
+                      type="number"
+                      value={searchCount}
+                      onChange={(e) => setSearchCount(parseInt(e.target.value) || 0)}
+                      className="w-full h-full bg-transparent border-none focus:ring-0 font-black text-slate-900 text-xs p-0"
+                    />
+                    <span className="text-[9px] font-black text-slate-300 ml-2">ITEMS</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex-[2.5] flex gap-3">
               <button onClick={() => setShowConfig(!showConfig)} className={`h-10 px-4 rounded-xl font-black text-[10px] uppercase border transition-all flex items-center gap-2 ${showConfig ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}><SlidersHorizontal size={14} /> 审计配置</button>
-              {isProcessRunning ? (
-                <button onClick={handleStopSearch} className="flex-1 h-10 bg-rose-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 shadow-xl shadow-rose-900/20 active:scale-95 transition-all"><StopCircle size={14} fill="white" /> 停止任务</button>
-              ) : (
-                <button onClick={handleStartSearch} className="flex-1 h-10 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20 active:scale-95 transition-all"><Play size={14} fill="white" /> 启动执行自动搜索</button>
-              )}
+              <button onClick={handleStartSearch} className="flex-1 h-10 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.25em] flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20 active:scale-95 transition-all"><Play size={14} fill="white" /> 启动执行自动搜索</button>
             </div>
           </div>
 

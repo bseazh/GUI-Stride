@@ -1,0 +1,8 @@
+{
+  "name": "GUI-Stride 界面行者",
+  "description": "A professional monitoring interface for automated merchant reporting systems, featuring real-time terminal logs, device previews, and task management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

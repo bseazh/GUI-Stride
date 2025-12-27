@@ -39,3 +39,10 @@ export interface WhitelistEntry {
   price: string;
   allowedShops: string[];
 }
+
+export interface Device {
+  id: string;
+  name: string;
+  status: 'online' | 'offline';
+  isSelected: boolean;
+}
