@@ -1,0 +1,30 @@
+{
+  "report_20251227_020451_0": {
+    "report_id": "report_20251227_020451_0",
+    "platform": "淘宝",
+    "target_title": "得到 薛兆丰经济学 课程资料",
+    "target_shop": "便宜资料店",
+    "target_price": 19.9,
+    "target_url": null,
+    "detection_result": {
+      "is_piracy": true,
+      "confidence": 0.8,
+      "reasons": [
+        "❌ 店铺名称'便宜资料店'不在官方授权列表中(官方店铺: 得到官方旗舰店, 得到App官方店, 得到官方授权店)",
+        "❌ 价格异常: ¥19.9 仅为原价¥199.0的10%,低于70%阈值"
+      ],
+      "matched_product_id": "dedao_001",
+      "matched_product_name": "薛兆丰的经济学课",
+      "shop_check": false,
+      "price_check": false,
+      "content_check": false,
+      "price_ratio": 0.09999999999999999,
+      "detected_at": "2025-12-27T02:04:51.996548"
+    },
+    "report_reason": "根据系统检测(置信度80%),该商品疑似盗版,具体依据如下:\n1. ❌ 店铺名称'便宜资料店'不在官方授权列表中(官方店铺: 得到官方旗舰店, 得到App官方店, 得到官方授权店)\n2. ❌ 价格异常: ¥19.9 仅为原价¥199.0的10%,低于70%阈值\n\n该商品疑似盗版自正版商品: 薛兆丰的经济学课",
+    "report_status": "pending",
+    "evidence_screenshots": [],
+    "reported_at": "2025-12-27T02:04:51.996571",
+    "notes": null
+  }
+}

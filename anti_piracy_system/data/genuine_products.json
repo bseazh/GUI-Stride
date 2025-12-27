@@ -1,0 +1,67 @@
+{
+  "dedao_001": {
+    "product_id": "dedao_001",
+    "product_name": "薛兆丰的经济学课",
+    "shop_name": "得到官方旗舰店",
+    "official_shops": [
+      "得到官方旗舰店",
+      "得到App官方店",
+      "得到官方授权店"
+    ],
+    "original_price": 199.0,
+    "platform": "得到",
+    "category": "电子书",
+    "description": "薛兆丰教授的经济学入门课程,包含完整视频和文字内容",
+    "keywords": [
+      "薛兆丰",
+      "经济学",
+      "得到",
+      "经济学课"
+    ],
+    "created_at": "2025-01-01T00:00:00",
+    "updated_at": "2025-01-01T00:00:00"
+  },
+  "dedao_002": {
+    "product_id": "dedao_002",
+    "product_name": "吴军的阅读与写作讲义",
+    "shop_name": "得到官方旗舰店",
+    "official_shops": [
+      "得到官方旗舰店",
+      "得到App官方店"
+    ],
+    "original_price": 68.0,
+    "platform": "得到",
+    "category": "电子书",
+    "description": "吴军老师关于阅读和写作方法的系统讲解",
+    "keywords": [
+      "吴军",
+      "阅读",
+      "写作",
+      "得到",
+      "讲义"
+    ],
+    "created_at": "2025-01-01T00:00:00",
+    "updated_at": "2025-01-01T00:00:00"
+  },
+  "dedao_003": {
+    "product_id": "dedao_003",
+    "product_name": "罗振宇跨年演讲2024",
+    "shop_name": "得到官方旗舰店",
+    "official_shops": [
+      "得到官方旗舰店",
+      "得到App官方店"
+    ],
+    "original_price": 99.0,
+    "platform": "得到",
+    "category": "视频课程",
+    "description": "罗振宇2024时间的朋友跨年演讲完整版",
+    "keywords": [
+      "罗振宇",
+      "跨年演讲",
+      "得到",
+      "时间的朋友"
+    ],
+    "created_at": "2025-01-01T00:00:00",
+    "updated_at": "2025-01-01T00:00:00"
+  }
+}
