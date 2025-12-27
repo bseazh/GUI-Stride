@@ -183,7 +183,6 @@ class PiracyDetector:
         # 方法1: 通过商品名称精确匹配
         results = self.product_db.search_by_name(product_info.title)
         if results:
-            # 返回第一个匹配结果
             return results[0]
 
         # 方法2: 通过关键词匹配
@@ -193,11 +192,26 @@ class PiracyDetector:
             if results:
                 return results[0]
 
-        # 方法3: 通过OCR文本匹配
+        # 方法3: 检查商品标题是否包含数据库中商品的关键词
+        combined_text = f"{product_info.title} {product_info.description or ''}"
+        for product in self.product_db.get_all_products():
+            if product.keywords:
+                # 计算关键词匹配数
+                match_count = sum(1 for kw in product.keywords if kw in combined_text)
+                # 如果匹配到至少2个关键词，认为匹配成功
+                if match_count >= 2:
+                    return product
+                # 如果匹配到1个关键词且商品名也部分匹配
+                if match_count >= 1 and any(
+                    part in combined_text for part in product.product_name.split()
+                    if len(part) > 1
+                ):
+                    return product
+
+        # 方法4: 通过OCR文本匹配
         if product_info.ocr_text:
             for product in self.product_db.get_all_products():
                 if product.keywords:
-                    # 检查是否有关键词出现在OCR文本中
                     if any(kw in product_info.ocr_text for kw in product.keywords):
                         return product
 

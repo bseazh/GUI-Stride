@@ -22,6 +22,7 @@ from phone_agent.model import ModelConfig
 from product_database import ProductDatabase, GenuineProduct
 from piracy_detector import PiracyDetector, ProductInfo, DetectionResult
 from report_manager import ReportManager, ReportRecord
+from reporter import create_reporter, ReportContext
 from config_anti_piracy import (
     PATHS, DETECTOR_CONFIG, AGENT_CONFIG, SUPPORTED_PLATFORMS,
     get_task_prompt, get_ui_text, get_report_reason
@@ -88,6 +89,14 @@ class AntiPiracyAgent:
         # 截图目录
         self.screenshot_dir = PATHS["screenshots_dir"]
         os.makedirs(self.screenshot_dir, exist_ok=True)
+
+        # 创建平台对应的举报器
+        self.reporter = create_reporter(
+            platform=platform,
+            agent=self.base_agent,
+            report_manager=self.report_manager,
+            screenshot_dir=self.screenshot_dir
+        )
 
         print(f"✅ 反盗版 Agent 初始化完成")
         print(f"   平台: {self.platform_config['name']}")
@@ -392,6 +401,13 @@ class AntiPiracyAgent:
         """
         举报盗版商品
 
+        使用解耦的 reporter 模块执行完整的举报流程：
+        1. 点击右上角"..."菜单
+        2. 下滑找到"举报"按钮
+        3. 选择举报原因
+        4. 填写举报说明并上传证据
+        5. 提交举报
+
         Args:
             product_info: 商品信息
             detection_result: 检测结果
@@ -411,32 +427,51 @@ class AntiPiracyAgent:
             target_url=product_info.url
         )
 
-        # 保存当前页面截图作为证据
-        screenshot_path = self._save_screenshot(report.report_id)
-        if screenshot_path:
-            self.report_manager.add_screenshot(report.report_id, screenshot_path)
+        # 构建举报上下文
+        context = ReportContext(
+            product_title=product_info.title,
+            shop_name=product_info.shop_name,
+            price=product_info.price,
+            platform=product_info.platform,
+            detection_reasons=detection_result.reasons,
+            confidence=detection_result.confidence,
+            matched_product_name=detection_result.matched_product.product_name if detection_result.matched_product else None,
+            original_price=detection_result.matched_product.original_price if detection_result.matched_product else None,
+            report_id=report.report_id
+        )
 
-        # 执行举报操作(使用 Agent 自动化)
+        # 使用举报器执行举报流程
         try:
-            task = get_task_prompt(
-                "report_piracy",
-                report_reason=report.report_reason
-            )
+            success = self.reporter.execute_report(context)
 
-            self.base_agent.run(task)
+            if success:
+                # 更新举报状态
+                self.report_manager.update_status(
+                    report.report_id,
+                    "submitted",
+                    "举报已通过应用内举报功能提交"
+                )
 
-            # 更新举报状态
-            self.report_manager.update_status(
-                report.report_id,
-                "submitted",
-                "举报已通过应用内举报功能提交"
-            )
+                # 如果有截图，添加到举报记录
+                if context.screenshot_path:
+                    self.report_manager.add_screenshot(
+                        report.report_id,
+                        context.screenshot_path
+                    )
 
-            print(f"✅ 举报成功! (举报ID: {report.report_id})")
-            return True
+                print(f"✅ 举报成功! (举报ID: {report.report_id})")
+                return True
+            else:
+                self.report_manager.update_status(
+                    report.report_id,
+                    "failed",
+                    "举报流程未能完成"
+                )
+                print(f"❌ 举报失败")
+                return False
 
         except Exception as e:
-            print(f"❌ 举报失败: {e}")
+            print(f"❌ 举报出错: {e}")
             self.report_manager.update_status(
                 report.report_id,
                 "failed",
