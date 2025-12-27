@@ -11,19 +11,35 @@ import re
 from typing import Optional, List, Dict, Tuple
 from datetime import datetime
 
-# 添加 Open-AutoGLM 到 Python 路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../Open-AutoGLM'))
+# 添加 Open-AutoGLM 到 Python 路径（如果 phone_agent 不可用则尝试添加）
+try:
+    from phone_agent import PhoneAgent
+    from phone_agent.agent import AgentConfig
+    from phone_agent.model import ModelConfig
+except ImportError:
+    # 尝试添加可能的 Open-AutoGLM 路径
+    import sys
+    import os
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), '../Open-AutoGLM'),
+        os.path.join(os.path.dirname(__file__), '../../Open-AutoGLM'),
+        'E:/DIY/bohack/Open-AutoGLM',  # 已知的安装路径
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            sys.path.insert(0, path)
+            break
+    # 重试导入
+    from phone_agent import PhoneAgent
+    from phone_agent.agent import AgentConfig
+    from phone_agent.model import ModelConfig
 
-from phone_agent import PhoneAgent
-from phone_agent.agent import AgentConfig
-from phone_agent.model import ModelConfig
-
-# 导入反盗版系统模块
-from product_database import ProductDatabase, GenuineProduct
-from piracy_detector import PiracyDetector, ProductInfo, DetectionResult
-from report_manager import ReportManager, ReportRecord
-from reporter import create_reporter, ReportContext
-from config_anti_piracy import (
+# 导入反盗版系统模块（使用相对导入）
+from .product_database import ProductDatabase, GenuineProduct
+from .piracy_detector import PiracyDetector, ProductInfo, DetectionResult
+from .report_manager import ReportManager, ReportRecord
+from .reporter import create_reporter, ReportContext
+from .config_anti_piracy import (
     PATHS, DETECTOR_CONFIG, AGENT_CONFIG, SUPPORTED_PLATFORMS,
     get_task_prompt, get_ui_text, get_report_reason
 )

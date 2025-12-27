@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 
-from product_database import ProductDatabase, GenuineProduct
+from .product_database import ProductDatabase, GenuineProduct
 
 
 @dataclass
