@@ -1,0 +1,38 @@
+{
+  "keyword": "众合法考",
+  "timestamp": "20251227_214135",
+  "detection_time": "2025-12-27 21:42:38",
+  "total_shops": 3,
+  "shops": [
+    {
+      "shop_name": "方圆众合教育官方旗舰店",
+      "folder": "方圆众合教育官方旗舰店",
+      "title": "方圆众合教育 · 【不过全退】2026众合法考客观题学习包书课包不过全退技术流",
+      "price": 898.0,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    },
+    {
+      "shop_name": "满分上岸直通车的店",
+      "folder": "满分上岸直通车的店",
+      "title": "2026众合法考客观精讲背诵卷真金题戴鹏李佳柏浪涛电子PDF无视频",
+      "price": 898.0,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    },
+    {
+      "shop_name": "学习考试资料大全的店",
+      "folder": "学习考试资料大全的店",
+      "title": "2026年法考众合先锋全程班（主客一体）送25年全部课程 持续更新",
+      "price": 78.0,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    }
+  ]
+}

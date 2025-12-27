@@ -1,0 +1,38 @@
+{
+  "keyword": "众合法考",
+  "timestamp": "20251227_220800",
+  "detection_time": "2025-12-27 22:14:42",
+  "total_shops": 3,
+  "shops": [
+    {
+      "shop_name": "满分上岸直通车的店",
+      "folder": "满分上岸直通车的店",
+      "title": "2026众合法考客观精讲背诵卷真金题戴鹏李佳柏浪涛电子PDF无视频",
+      "price": 898.0,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    },
+    {
+      "shop_name": "未知店铺_2",
+      "folder": "未知店铺_2",
+      "title": "回到上一页会清空当前输入的信息，是否返回上一页？",
+      "price": null,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    },
+    {
+      "shop_name": "未知店铺_3",
+      "folder": "未知店铺_3",
+      "title": "_Q3ymcgN3lSIp2VLczKVbeHj61St7pEt7IJ9xMaKk325AL4?sign=4463e19e87b5eb78c1bc582891c30e4b&amp;t=1766845815",
+      "price": null,
+      "screenshots": {
+        "product": "1_商品介绍.png",
+        "shop": "2_店铺信息.png"
+      }
+    }
+  ]
+}
