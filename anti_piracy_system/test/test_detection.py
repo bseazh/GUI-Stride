@@ -892,26 +892,64 @@ class ProductExtractor:
 
 # ==================== 举报相关函数 ====================
 
-def generate_report_text(keyword: str, shop_name: str, price: float) -> str:
+def generate_report_text(keyword: str, shop_name: str, price: float,
+                         title: str = None, original_price: float = 299) -> str:
     """
-    生成举报说明文本（200字以内，简洁有力）
+    生成举报说明文本（200字以内，简洁有力，包含三条关键证据）
 
     Args:
         keyword: 搜索关键词（品牌名）
         shop_name: 店铺名称
         price: 商品价格
+        title: 商品标题（用于提取关键词特征）
+        original_price: 正版原价（默认299）
 
     Returns:
         格式化的举报说明文本
     """
+    # 格式化价格
     price_str = f"¥{price:.0f}" if price else "异常低价"
+    original_str = f"¥{original_price:.0f}"
 
-    # 简洁版本（约150字，适合200字限制）
+    # 检测商品标题中的盗版关键词
+    piracy_keywords = []
+    if title:
+        keyword_patterns = [
+            ("百度网盘", "百度网盘"),
+            ("网盘", "网盘分发"),
+            ("秒发", "秒发"),
+            ("电子版", "电子版"),
+            ("PDF", "PDF电子版"),
+            ("视频课程", "视频课程"),
+            ("录屏", "录屏"),
+            ("资料包", "资料包"),
+            ("全套", "全套资料"),
+            ("永久", "永久有效"),
+            ("链接", "链接分发"),
+        ]
+        for pattern, desc in keyword_patterns:
+            if pattern in title:
+                piracy_keywords.append(desc)
+
+    # 构建关键词描述
+    if piracy_keywords:
+        keywords_desc = "、".join(piracy_keywords[:3])  # 最多取3个
+        keyword_evidence = f"商品描述中包含"{keywords_desc}"等非法分发关键词"
+    else:
+        keyword_evidence = "商品以电子资料形式销售，涉嫌非法复制分发"
+
+    # 判断店铺类型
+    if "旗舰" in shop_name or "官方" in shop_name or "专营" in shop_name:
+        shop_type = "冒充官方店铺"
+    else:
+        shop_type = "个人店铺，无出版社授权证明"
+
+    # 生成三条关键举报理由（约180字，符合200字限制）
     text = f"""该商品涉嫌盗版侵权，具体如下：
-1.未经授权销售：卖家"{shop_name}"并非"{keyword}"官方授权经销商，无权销售相关产品
-2.价格明显异常：售价{price_str}远低于正版价格，符合盗版商品特征
-3.侵权证据确凿：商品使用正版名称和图片进行销售，已截图取证
-请平台核实并下架处理，保护知识产权。"""
+1.价格异常：售价显著低于正版定价({original_str} vs {price_str})，明显不符合正规渠道价格
+2.分发方式违规：{keyword_evidence}
+3.店铺资质存疑："{shop_name}"为{shop_type}，无"{keyword}"正版授权
+已截图取证，请平台核实下架。"""
 
     return text
 
@@ -1330,7 +1368,7 @@ def fill_report_text(adb: ADBController, text: str, debug: bool = False) -> bool
 def report_product(adb: ADBController, evidence: EvidenceManager,
                    shop_name: str, product_index: int,
                    keyword: str = SEARCH_KEYWORD, price: float = 0,
-                   debug: bool = False) -> bool:
+                   title: str = None, debug: bool = False) -> bool:
     """
     执行商品举报流程（适配小红书实际UI - 两级选择）
 
@@ -1455,7 +1493,7 @@ def report_product(adb: ADBController, evidence: EvidenceManager,
 
     # Step 5: 填写举报描述（举报描述输入框，0/200字）
     print("\n[Step 5] 填写举报描述...")
-    report_text = generate_report_text(keyword, shop_name, price)
+    report_text = generate_report_text(keyword, shop_name, price, title=title)
     fill_report_text(adb, report_text, debug=debug)
 
     # Step 6: 上传图片证据（最多3张）
@@ -1650,6 +1688,7 @@ def extract_single_product(adb: ADBController, extractor: ProductExtractor,
                 adb, evidence, shop_name, product_index,
                 keyword=keyword,
                 price=final_info.get("price", 0),
+                title=final_info.get("title"),
                 debug=debug
             )
             final_info["reported"] = report_success
